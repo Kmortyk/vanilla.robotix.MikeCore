@@ -8,6 +8,7 @@
 
 int main(int argc, char **argv) {
 
+    // init ros node
     ros::init(argc, argvm "mike_network");
     ros::NodeHandle n;
     ros::Publisher pub = n.advertise<std_msgs::String>("network_messages", 1000);

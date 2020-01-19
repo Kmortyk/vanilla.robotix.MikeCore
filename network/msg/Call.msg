@@ -1,0 +1,3 @@
+string serviceName
+string serviceMethod
+string content
