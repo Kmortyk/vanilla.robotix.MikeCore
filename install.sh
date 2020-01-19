@@ -1,0 +1,1 @@
+export ROS_PACKAGE_PATH=~/ros:${ROS_PACKAGE_PATH}
