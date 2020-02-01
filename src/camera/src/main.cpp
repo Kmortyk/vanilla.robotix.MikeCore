@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::Publisher pub = nh.advertise<sensor_msgs::Image>("image", 2, false);
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(1);
 
     if(!cap.isOpened()){ // Check if camera opened successfully
         ROS_ERROR("Error opening video stream or file");
@@ -32,7 +32,9 @@ int main(int argc, char **argv)
         lo_img.image = frame;
 
         pub.publish(lo_img.toImageMsg());
-
+	
+        ROS_INFO("Frame published");
+	
         ros::spinOnce();
     }
 }
