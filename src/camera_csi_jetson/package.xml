@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>jetson_camera_csi</name>
+  <name>camera_csi_jetson</name>
   <version>0.0.0</version>
-  <description>The jetbot_ros package</description>
+  <description>The camera_csi_jetson package</description>
   <maintainer email="dustinf@nvidia.com">Dustin Franklin</maintainer>
   <license>MIT</license>
   <buildtool_depend>catkin</buildtool_depend>
