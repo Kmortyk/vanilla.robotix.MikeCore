@@ -16,8 +16,6 @@
 
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include <unistd.h>
-#include <caca_conio.h>
 
 #define DELAY_TIME 500
 
@@ -36,7 +34,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 1 > /sys/class/gpio/gpio200/value");
         system("echo 1 > /sys/class/gpio/gpio12/value");
         system("echo 1 > /sys/class/gpio/gpio51/value");
-        delay(DELAY_TIME);
+        usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio149/value");
         system("echo 0 > /sys/class/gpio/gpio200/value");
         system("echo 0 > /sys/class/gpio/gpio12/value");
@@ -46,18 +44,18 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 1 > /sys/class/gpio/gpio76/value");
         system("echo 1 > /sys/class/gpio/gpio77/value");
         system("echo 1 > /sys/class/gpio/gpio78/value");
-        delay(DELAY_TIME);
+        usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio38/value");
         system("echo 0 > /sys/class/gpio/gpio76/value");
         system("echo 0 > /sys/class/gpio/gpio77/value");
         system("echo 0 > /sys/class/gpio/gpio78/value");
     } else if (message == MOVE_LEFT) {
         system("echo 1 > /sys/class/gpio/gpio200/value");
-        delay(DELAY_TIME);
+        usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio200/value");
     } else if (message == MOVE_RIGHT) {
         system("echo 1 > /sys/class/gpio/gpio149/value");
-        delay(DELAY_TIME);
+        usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio149/value");
     } else if (message == STOP) {
         system("echo 0 > /sys/class/gpio/gpio149/value");
