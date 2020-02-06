@@ -17,7 +17,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-#define DELAY_TIME 500
+#define DELAY_TIME 1000
 
 #define MOVE_FORWARD "forward"
 #define MOVE_BACKWARD "backward"

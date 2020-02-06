@@ -12,13 +12,14 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "gpio_jetson_test");
     ros::NodeHandle n;
     ros::Publisher chatter_pub = n.advertise<std_msgs::String>("gpio", 1000);
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(1);
     int count = 0;
+    std::string directions[] = {"forward", "backward", "left", "right"};
     while (ros::ok())
     {
         std_msgs::String msg;
         std::stringstream ss;
-        ss << "hello world " << count;
+        ss << directions[count % 4];
         msg.data = ss.str();
         ROS_INFO("%s", msg.data.c_str());
         chatter_pub.publish(msg);
