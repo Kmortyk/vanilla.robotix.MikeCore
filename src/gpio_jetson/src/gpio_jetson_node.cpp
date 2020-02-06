@@ -17,7 +17,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-#define DELAY_TIME 1000
+#define DELAY_TIME 1
 
 #define MOVE_FORWARD "forward"
 #define MOVE_BACKWARD "backward"
@@ -35,7 +35,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 1 > /sys/class/gpio/gpio200/value");
         system("echo 1 > /sys/class/gpio/gpio12/value");
         system("echo 1 > /sys/class/gpio/gpio51/value");
-        usleep(DELAY_TIME);
+        sleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio149/value");
         system("echo 0 > /sys/class/gpio/gpio200/value");
         system("echo 0 > /sys/class/gpio/gpio12/value");
@@ -46,7 +46,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 1 > /sys/class/gpio/gpio76/value");
         system("echo 1 > /sys/class/gpio/gpio77/value");
         system("echo 1 > /sys/class/gpio/gpio78/value");
-        usleep(DELAY_TIME);
+        sleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio38/value");
         system("echo 0 > /sys/class/gpio/gpio76/value");
         system("echo 0 > /sys/class/gpio/gpio77/value");
@@ -54,12 +54,12 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
     } else if (message.find(MOVE_LEFT) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio200/value");
-        usleep(DELAY_TIME);
+        sleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio200/value");
     } else if (message.find(MOVE_RIGHT) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio149/value");
-        usleep(DELAY_TIME);
+        sleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio149/value");
     } else if (message.find(STOP) != std::string::npos) {
         ROS_INFO("Command [%s]", msg->data.c_str());
