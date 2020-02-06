@@ -28,8 +28,8 @@
 void chatterCallback(const std_msgs::String::ConstPtr& msg)
 {
     //ROS_INFO("I heard: [%s]", msg->data.c_str());
-    auto message = msg->data.c_str();
-    if (message == MOVE_FORWARD) {
+    std::string message = msg->data;
+    if (message.find(MOVE_FORWARD) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio149/value");
         system("echo 1 > /sys/class/gpio/gpio200/value");
@@ -40,7 +40,7 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 0 > /sys/class/gpio/gpio200/value");
         system("echo 0 > /sys/class/gpio/gpio12/value");
         system("echo 0 > /sys/class/gpio/gpio51/value");
-    } else if (message == MOVE_BACKWARD) {
+    } else if (message.find(MOVE_BACKWARD) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio38/value");
         system("echo 1 > /sys/class/gpio/gpio76/value");
@@ -51,17 +51,17 @@ void chatterCallback(const std_msgs::String::ConstPtr& msg)
         system("echo 0 > /sys/class/gpio/gpio76/value");
         system("echo 0 > /sys/class/gpio/gpio77/value");
         system("echo 0 > /sys/class/gpio/gpio78/value");
-    } else if (message == MOVE_LEFT) {
+    } else if (message.find(MOVE_LEFT) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio200/value");
         usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio200/value");
-    } else if (message == MOVE_RIGHT) {
+    } else if (message.find(MOVE_RIGHT) != std::string::npos) {
         ROS_INFO("Moving to: [%s]", msg->data.c_str());
         system("echo 1 > /sys/class/gpio/gpio149/value");
         usleep(DELAY_TIME);
         system("echo 0 > /sys/class/gpio/gpio149/value");
-    } else if (message == STOP) {
+    } else if (message.find(STOP) != std::string::npos) {
         ROS_INFO("Command [%s]", msg->data.c_str());
         system("echo 0 > /sys/class/gpio/gpio149/value");
         system("echo 0 > /sys/class/gpio/gpio200/value");
