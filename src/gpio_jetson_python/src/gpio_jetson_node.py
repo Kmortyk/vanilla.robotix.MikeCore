@@ -17,37 +17,37 @@ def callback(data):
     rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
     if MOVE_FORWARD in data.data:
         print("Forward")
-        pins = [149, 200, 12, 51]
+        pins = [29, 31, 37, 36]
         GPIO.output(pins, GPIO.HIGH)
         time.sleep(DELAY_TIME)
         GPIO.output(pins, GPIO.LOW)
     if MOVE_BACKWARD in data.data:
         print("Backward")
-        pins = [38, 76, 77, 78]
+        pins = [33, 35, 38, 40]
         GPIO.output(pins, GPIO.HIGH)
         time.sleep(DELAY_TIME)
         GPIO.output(pins, GPIO.LOW)
     if MOVE_LEFT in data.data:
         print("Left")
-        pins = [200]
+        pins = [31]
         GPIO.output(pins, GPIO.HIGH)
         time.sleep(DELAY_TIME)
         GPIO.output(pins, GPIO.LOW)
     if MOVE_RIGHT in data.data:
         print("Right")
-        pins = [149]
+        pins = [29]
         GPIO.output(pins, GPIO.HIGH)
         time.sleep(DELAY_TIME)
         GPIO.output(pins, GPIO.LOW)
     if STOP in data.data:
         print("Stop")
-        pins = [149, 200, 38, 76, 12, 51, 77, 78]
+        pins = [29, 31, 33, 35, 37, 36, 38, 40]
         GPIO.output(pins, GPIO.LOW)
 
 
 def gpio_init():
     GPIO.setmode(GPIO.BOARD)
-    pins = [149, 200, 38, 76, 12, 51, 77, 78]
+    pins = [29, 31, 33, 35, 37, 36, 38, 40]
     GPIO.setup(pins, GPIO.output, initial=GPIO.LOW)
 
 
