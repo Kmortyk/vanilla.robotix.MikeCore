@@ -56,21 +56,41 @@ const char* file_name()
    return ss.str().c_str();
 }
 
-void callback(const sensor_msgs::ImageConstPtr& msg)
+cv::VideoWriter* video_writer()
+{
+    return new cv::VideoWriter(file_name(), cv::VideoWriter::fourcc('D','I','V','X'), 10, cv::Size(frame_width, frame_height));
+}
+
+void reset()
+{
+    cur_frame = 0;
+    if(writer != nullptr)
+        writer.release();
+
+    writer = video_writer();
+}
+
+void save_frame(const sensor_msgs::ImageConstPtr& msg)
 {
    cv::Mat img = cv_bridge::toCvShare(msg, "bgr8")->image;
+
+   cur_frame++;
+   if(cur_frame > max_frames) {
+       reset();
+   }
+
+   writer.write(frame);
    ROS_INFO("Get image [%s]", file_name());
 }
 
 int main(int argc, char **argv)
 {
-    writer = new cv::VideoWriter("outcpp.avi", cv::VideoWriter::fourcc('D','I','V','X'), 10, cv::Size(frame_width, frame_height));
-
     create_dir();
+    reset();
 
     ros::init(argc, argv, "mike_hard_drive");
     ros::NodeHandle nh;
 
-    ros::Subscriber sub = nh.subscribe("jetbot_camera/raw", 1000, callback);
+    ros::Subscriber sub = nh.subscribe("jetbot_camera/raw", 1000, save_frame);
     ros::spin();
 }
