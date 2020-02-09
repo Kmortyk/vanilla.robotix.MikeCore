@@ -58,5 +58,6 @@ def listener():
 
 
 if __name__ == '__main__':
+    gpio_init()
     listener()
     GPIO.cleanup()
