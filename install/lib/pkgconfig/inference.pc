@@ -1,8 +1,0 @@
-prefix=/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/install
-
-Name: inference
-Description: Description of inference
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

@@ -1,5 +1,0 @@
-inference
-/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/.private/inference/cmake.lock /home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/./cmake.lock
-/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/.private/inference/share/inference/cmake/inferenceConfig.cmake /home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/share/inference/cmake/inferenceConfig.cmake
-/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/.private/inference/share/inference/cmake/inferenceConfig-version.cmake /home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/share/inference/cmake/inferenceConfig-version.cmake
-/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/.private/inference/lib/pkgconfig/inference.pc /home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/devel/lib/pkgconfig/inference.pc

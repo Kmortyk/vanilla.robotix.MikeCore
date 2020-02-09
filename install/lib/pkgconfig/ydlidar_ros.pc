@@ -1,8 +1,0 @@
-prefix=/home/kmortyk/ros-workspaces/vanilla.robotix.MikeCore/install
-
-Name: ydlidar_ros
-Description: Description of ydlidar_ros
-Version: 1.4.5
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
