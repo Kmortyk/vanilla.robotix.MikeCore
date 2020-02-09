@@ -48,7 +48,7 @@ def callback(data):
 def gpio_init():
     GPIO.setmode(GPIO.BOARD)
     pins = [29, 31, 33, 35, 37, 36, 38, 40]
-    GPIO.setup(pins, GPIO.output, initial=GPIO.LOW)
+    GPIO.setup(pins, GPIO.OUT, initial=GPIO.LOW)
 
 
 def listener():
