@@ -46,7 +46,7 @@ def callback(data):
 
 
 def gpio_init():
-    GPIO.setmode(GPIO.BCM)
+    GPIO.setmode(GPIO.BOARD)
     pins = [149, 200, 38, 76, 12, 51, 77, 78]
     GPIO.setup(pins, GPIO.output, initial=GPIO.LOW)
 
