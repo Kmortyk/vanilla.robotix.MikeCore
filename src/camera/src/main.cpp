@@ -1,3 +1,10 @@
+/**
+ * Run example:
+ *  
+ * rosrun camera camera _index:=0 
+ * 
+ */
+
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
