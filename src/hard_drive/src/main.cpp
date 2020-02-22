@@ -9,7 +9,9 @@
 #include <ctime>
 #include <sys/stat.h>
 
-const char* path = "/media/B6CE9388CE934013/video/";
+// const char* path = "/media/B6CE9388CE934013/video/";
+const char* path = "/mnt/sda1/Projects/Mike/video/";
+
 const char* base_name = "mike-video-";
 const char* extension = ".avi";
 
@@ -65,21 +67,21 @@ void reset()
 {
     cur_frame = 0;
     if(writer != nullptr)
-        writer.release();
+        writer->release();
 
     writer = video_writer();
 }
 
 void save_frame(const sensor_msgs::ImageConstPtr& msg)
 {
-   cv::Mat img = cv_bridge::toCvShare(msg, "bgr8")->image;
+   cv::Mat frame = cv_bridge::toCvShare(msg, "bgr8")->image;
 
    cur_frame++;
    if(cur_frame > max_frames) {
        reset();
    }
 
-   writer.write(frame);
+   writer->write(frame);
    ROS_INFO("Get image [%s]", file_name());
 }
 
@@ -91,6 +93,6 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "mike_hard_drive");
     ros::NodeHandle nh;
 
-    ros::Subscriber sub = nh.subscribe("jetbot_camera/raw", 1000, save_frame);
+    ros::Subscriber sub = nh.subscribe("mike_camera/raw", 1000, save_frame);
     ros::spin();
 }

@@ -76,7 +76,7 @@ bool aquireFrame()
 // node main loop
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "jetbot_camera");
+	ros::init(argc, argv, "mike_camera");
  
 	ros::NodeHandle nh;
 	ros::NodeHandle private_nh("~");

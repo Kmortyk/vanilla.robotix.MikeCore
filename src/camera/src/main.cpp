@@ -8,10 +8,14 @@
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "mike_camera");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
-    ros::Publisher pub = nh.advertise<sensor_msgs::Image>("image", 2, false);
-    cv::VideoCapture cap(1);
+    int index;
+    nh.getParam("index", index);
+    ROS_INFO("Index = %d", index);
+
+    ros::Publisher pub = nh.advertise<sensor_msgs::Image>("raw", 2, false);
+    cv::VideoCapture cap(index);
 
     if(!cap.isOpened()){ // Check if camera opened successfully
         ROS_ERROR("Error opening video stream or file");
