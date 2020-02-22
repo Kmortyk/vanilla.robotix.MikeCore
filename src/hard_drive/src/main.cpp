@@ -51,11 +51,11 @@ std::string datetime()
   return str;
 }
 
-const char* file_name()
+std::string file_name()
 {
    std::stringstream ss;
    ss << path << base_name << datetime() << extension;
-   return ss.str().c_str();
+   return ss.str();
 }
 
 cv::VideoWriter* video_writer()
@@ -82,7 +82,7 @@ void save_frame(const sensor_msgs::ImageConstPtr& msg)
    }
 
    writer->write(frame);
-   ROS_INFO("Get image [%s]", file_name());
+   ROS_INFO("Get image [%s]", file_name().c_str());
 }
 
 int main(int argc, char **argv)
