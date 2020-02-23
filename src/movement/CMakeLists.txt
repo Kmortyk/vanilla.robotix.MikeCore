@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   ydlidar_ros
+  pcl_ros
 )
 
 ## System dependencies are found with CMake's conventions
