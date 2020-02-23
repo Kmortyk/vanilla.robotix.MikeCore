@@ -10,7 +10,7 @@ void ydLidarPointsCallback(const sensor_msgs::PointCloud2ConstPtr& message) {
     pcl::fromROSMsg(*message, depth);
     int x = 0, y = 0; // set x and y
     pcl::PointXYZ p1 = depth.at(x, y);
-    ROS_INFO("x = %f y = %f z = %f", p1.x, p1.y, p1.z);
+    ROS_INFO("x = %f y = %f", p1.x, p1.y);
 }
 
 int main(int argc, char **argv) {
