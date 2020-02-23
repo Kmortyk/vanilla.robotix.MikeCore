@@ -6,9 +6,11 @@
 #include "pcl_ros/point_cloud.h"
 
 void ydLidarPointsCallback(const sensor_msgs::PointCloud2ConstPtr& message) {
+    ROS_INFO("Gotcha: [=============================]");
     for (auto m : message->data) {
         ROS_INFO("Gotcha: [%c]", m);
     }
+    ROS_INFO("Gotcha: [=============================]");
 }
 
 int main(int argc, char **argv) {
