@@ -6,11 +6,11 @@
 #include "pcl_ros/point_cloud.h"
 
 void ydLidarPointsCallback(const sensor_msgs::PointCloud2ConstPtr& message) {
-    ROS_INFO("Gotcha: [=============================]");
-    for (auto m : message->data) {
-        ROS_INFO("Gotcha: [%c]", m);
-    }
-    ROS_INFO("Gotcha: [=============================]");
+    pcl::PointCloud<pcl::PointXYZ> depth;
+    pcl::fromROSMsg(*message, depth);
+    int x = 0, y = 0; // set x and y
+    pcl::PointXYZ p1 = depth.at(x, y);
+    ROS_INFO("x = %f y = %f z = %f", p1.x, p1.y, p1.z)
 }
 
 int main(int argc, char **argv) {
