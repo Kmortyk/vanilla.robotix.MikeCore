@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "gpio_control");
     ros::NodeHandle nodeHandle;
-    ros::Publisher publisher = nodeHandle.advertise<std_msgs::String>("gpio_jetson_node", 1000);
+    ros::Publisher publisher = nodeHandle.advertise<std_msgs::String>("gpio", 1000);
     std::stringstream ss;
     while (ros::ok())
     {
@@ -36,6 +36,7 @@ int main(int argc, char **argv)
         msg.data = ss.str();
         publisher.publish(msg);
         ss.clear();
+        ros::spinOnce();
     }
     return 0;
 }
