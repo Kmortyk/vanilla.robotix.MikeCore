@@ -16,21 +16,25 @@ int main(int argc, char **argv)
         std_msgs::String msg;
         char c;
         std::cin >> c;
-        puts("Test");
         switch (c) {
             case 'w':
+                ROS_INFO("forward");
                 ss << "forward";
                 break;
             case 'a':
+                ROS_INFO("left");
                 ss << "left";
                 break;
             case 's':
+                ROS_INFO("backward");
                 ss << "backward";
                 break;
             case 'd':
+                ROS_INFO("right");
                 ss << "right";
                 break;
             default:
+                ROS_INFO("stop");
                 ss << "stop";
                 break;
         }
