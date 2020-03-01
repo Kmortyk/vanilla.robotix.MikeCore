@@ -15,3 +15,8 @@ int main(int argc, char **argv)
     //ros::ServiceServer service = nodeHandle.advertiseService("gpio_service", )
     return 0;
 }*/
+
+int main(int argc, char **argv)
+{
+    return 0;
+}
