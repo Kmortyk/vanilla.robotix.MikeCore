@@ -14,7 +14,7 @@
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "mike_camera");
+    ros::init(argc, argv, "mike_camera");
     ros::NodeHandle nh("~");
 
     int index;

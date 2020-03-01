@@ -18,7 +18,7 @@ const char* extension = ".avi";
 int frame_width = 640;
 int frame_height = 480;
 
-const int max_frames = 300;
+const int max_frames = 1000;
 const int frame_rate = 20;
 
 int cur_frame = -1;

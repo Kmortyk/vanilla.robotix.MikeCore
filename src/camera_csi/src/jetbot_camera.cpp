@@ -26,7 +26,6 @@
 #include <sensor_msgs/image_encodings.h>
 
 #include <jetson-utils/gstCamera.h>
-
 #include "image_converter.h"
 
 
