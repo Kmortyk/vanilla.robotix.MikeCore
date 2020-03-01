@@ -16,6 +16,7 @@ int main(int argc, char **argv)
         std_msgs::String msg;
         char c;
         std::cin >> c;
+        puts("Test");
         switch (c) {
             case 'w':
                 ss << "forward";
