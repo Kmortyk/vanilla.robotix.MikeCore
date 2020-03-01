@@ -3,14 +3,15 @@
 //
 
 #include "ros/ros.h"
-#include ""
+//#include ""
 
-bool callback()
+//bool callback()
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "gpio_service");
     ros::NodeHandle nodeHandle;
 
-    ros::ServiceServer service = nodeHandle.advertiseService("gpio_service", )
+    //ros::ServiceServer service = nodeHandle.advertiseService("gpio_service", )
+    return 0;
 }
