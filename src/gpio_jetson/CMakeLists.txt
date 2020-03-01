@@ -134,6 +134,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/gpio_jetson_node.cpp)
 add_executable(${PROJECT_NAME}_test src/gpio_jetson_test.cpp)
+add_executable(${PROJECT_NAME}_control src/gpio_jetson_control.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,6 +152,10 @@ target_link_libraries(${PROJECT_NAME}_node
 )
 
 target_link_libraries(${PROJECT_NAME}_test
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_control
         ${catkin_LIBRARIES}
 )
 
