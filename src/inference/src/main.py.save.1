@@ -10,9 +10,7 @@ def callback(data):
 def listener():
     print(sys.version)
     rospy.init_node('mike_inference', anonymous=True)
-    # rospy.Subscriber('mike_camera/raw', String, callback)
-
-    # spin() simply keeps python from exiting until this node is stopped
+    rospy.Subscriber('mike_camera/raw', String, callback)
     rospy.spin()
 
 if __name__ == '__main__':
