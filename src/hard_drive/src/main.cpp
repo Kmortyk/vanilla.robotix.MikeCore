@@ -15,12 +15,13 @@ const char* path = "/media/B6CE9388CE934013/video/";
 const char* base_name = "mike-video-";
 const char* extension = ".avi";
 
-const int frame_width = 640;
-const int frame_height = 480;
+int frame_width = 640;
+int frame_height = 480;
+
 const int max_frames = 300;
 const int frame_rate = 20;
 
-int cur_frame = 0;
+int cur_frame = -1;
 
 cv::VideoWriter* writer = nullptr;
 
@@ -76,10 +77,14 @@ void save_frame(const sensor_msgs::ImageConstPtr& msg)
 {
    cv::Mat frame = cv_bridge::toCvShare(msg, "bgr8")->image;
 
-   cur_frame++;
-   if(cur_frame > max_frames) {
+   frame_width = msg->width;
+   frame_height = msg->height;
+
+   if(cur_frame == -1 || cur_frame > max_frames) {
        reset();
    }
+
+   cur_frame++;
 
    writer->write(frame);
    ROS_INFO("Get image [%s]", file_name().c_str());
@@ -88,7 +93,6 @@ void save_frame(const sensor_msgs::ImageConstPtr& msg)
 int main(int argc, char **argv)
 {
     create_dir();
-    reset();
 
     ros::init(argc, argv, "mike_hard_drive");
     ros::NodeHandle nh;
