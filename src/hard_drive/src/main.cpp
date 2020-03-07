@@ -82,12 +82,13 @@ void save_frame(const sensor_msgs::ImageConstPtr& msg)
 
    if(cur_frame == -1 || cur_frame > max_frames) {
        reset();
+       ROS_INFO("Writing video on the disk.");
    }
 
    cur_frame++;
 
    writer->write(frame);
-   ROS_INFO("Get image [%s]", file_name().c_str());
+   ROS_INFO("Get image [%s] (%d/%d)", file_name().c_str(), cur_frame, max_frames);
 }
 
 int main(int argc, char **argv)
