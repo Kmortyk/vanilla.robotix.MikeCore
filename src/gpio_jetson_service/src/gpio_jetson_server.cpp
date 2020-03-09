@@ -3,7 +3,7 @@
 //
 
 #include "ros/ros.h"
-#include "gpio_jetson_server/gpio_srv.h"
+#include "gpio_jetson_service/gpio_srv.h"
 #include <iostream>
 #include <sstream>
 

@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -72,6 +72,7 @@ add_service_files(
  generate_messages(
    DEPENDENCIES
    actionlib_msgs
+   std_msgs
  )
 
 ################################################
@@ -119,6 +120,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -140,7 +142,7 @@ add_executable(${PROJECT_NAME} src/gpio_jetson_server.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME service PREFIX "")
+#set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME service PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
