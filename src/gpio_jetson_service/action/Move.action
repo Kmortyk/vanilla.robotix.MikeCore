@@ -1,0 +1,8 @@
+#goal
+uint8 command #codes of commands defined in commands.hpp
+---
+#result
+bool result
+---
+#feedback
+uint8 odometry

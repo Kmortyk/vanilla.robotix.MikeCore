@@ -1,3 +1,3 @@
-string command
+uint8 command
 ---
-string response
+bool success
