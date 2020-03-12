@@ -164,7 +164,6 @@ int GPIO_Movement::pin_export(std::vector<int> &pins)
     int result = 0;
     for (int pin : pins) {
         std::string command = "echo " + std::to_string(pin) + " > /sys/class/gpio/export";
-        std::cout << command << std::endl;
         result += system(command.c_str());
     }
     return result;
@@ -201,6 +200,7 @@ int GPIO_Movement::pin_direction(std::vector<int> &pins, Pin_Direction pin_direc
     {
         std::string direction = pin_direction == IN ? "IN" : "OUT";
         std::string command = "echo " + direction + " > /sys/class/gpio/gpio" + std::to_string(pin) + "/direction";
+        std::cout << command << std::endl;
         result += system(command.c_str());
     }
     return result;
