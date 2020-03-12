@@ -164,6 +164,7 @@ int GPIO_Movement::pin_export(std::vector<int> &pins)
     int result = 0;
     for (int pin : pins) {
         std::string command = "echo " + std::to_string(pin) + " > /sys/class/gpio/export";
+        std::cout << command << std::endl;
         result += system(command.c_str());
     }
     return result;
