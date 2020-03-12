@@ -16,12 +16,11 @@ bool GPIO_Movement::init()
     int result = 0;
     all_pins = {149, 200, 38, 76, 12, 51, 77, 78};
     result += pin_export(all_pins);
-    result += pin_direction(all_pins);
+    if (!result)
+        result += pin_direction(all_pins);
 
     //If result is zero then init is successfully!
-    //something mistake in this place
-    initialized = true;
-    //return initialized = !result;
+    return initialized = !result;
 }
 
 bool GPIO_Movement::de_init()

@@ -94,9 +94,9 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "gpio_jetson_service");
     ros::NodeHandle nodeHandle;
     ros::ServiceServer service = nodeHandle.advertiseService("gpio_jetson_service", serviceHandler);
-    ROS_INFO("Init of GPIO: %d", GPIO_Movement::init());
+    ROS_INFO("Init of GPIO: %s", GPIO_Movement::init() ? "success" : "failed");
     ROS_INFO("GPIO service ready to work");
     ros::spin();
-    ROS_INFO("De-init of GPIO: %d", GPIO_Movement::de_init());
+    ROS_INFO("De-init of GPIO: %s", GPIO_Movement::de_init() ? "success" : "failed");
     return EXIT_SUCCESS;
 }
