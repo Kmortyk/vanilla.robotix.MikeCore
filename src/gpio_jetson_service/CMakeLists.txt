@@ -138,6 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME} src/gpio_jetson_server.cpp src/movement.cpp src/commands.cpp)
 add_executable(${PROJECT_NAME}_manual src/manual_control.cpp)
+add_executable(${PROJECT_NAME}_manual_full src/manual_full_control.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,6 +150,7 @@ add_executable(${PROJECT_NAME}_manual src/manual_control.cpp)
 ## same as for the library above
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_manual ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_manual_full ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
@@ -156,6 +158,10 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}_manual
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_manual_full
         ${catkin_LIBRARIES}
 )
 
