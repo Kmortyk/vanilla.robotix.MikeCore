@@ -200,7 +200,6 @@ int GPIO_Movement::pin_direction(std::vector<int> &pins, Pin_Direction pin_direc
     {
         std::string direction = pin_direction == IN ? "in" : "out";
         std::string command = "echo " + direction + " > /sys/class/gpio/gpio" + std::to_string(pin) + "/direction";
-        std::cout << command << std::endl;
         result += system(command.c_str());
     }
     return result;
