@@ -19,7 +19,9 @@ bool GPIO_Movement::init()
     result += pin_direction(all_pins);
 
     //If result is zero then init is successfully!
-    return initialized = !result;
+    //something mistake in this place
+    initialized = true;
+    //return initialized = !result;
 }
 
 bool GPIO_Movement::de_init()
