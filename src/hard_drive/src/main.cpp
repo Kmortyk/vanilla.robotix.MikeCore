@@ -24,6 +24,7 @@ const int frame_rate = 20;
 int cur_frame = -1;
 
 cv::VideoWriter* writer = nullptr;
+std::string cur_file_name = "";
 
 void create_dir()
 {
@@ -61,7 +62,8 @@ std::string file_name()
 
 cv::VideoWriter* video_writer()
 {
-    return new cv::VideoWriter(file_name(), cv::VideoWriter::fourcc('D','I','V','X'), 10, cv::Size(frame_width, frame_height));
+    cur_file_name = file_name();
+    return new cv::VideoWriter(cur_file_name, cv::VideoWriter::fourcc('D','I','V','X'), 10, cv::Size(frame_width, frame_height));
 }
 
 void reset()
@@ -81,14 +83,15 @@ void save_frame(const sensor_msgs::ImageConstPtr& msg)
    frame_height = msg->height;
 
    if(cur_frame == -1 || cur_frame > max_frames) {
+       if(cur_frame > 0)
+           ROS_INFO("writing video on the disk [%s]", cur_file_name.c_str());
        reset();
-       ROS_INFO("Writing video on the disk.");
    }
 
    cur_frame++;
 
    writer->write(frame);
-   ROS_INFO("Get image [%s] (%d/%d)", file_name().c_str(), cur_frame, max_frames);
+   ROS_INFO("collecting images (%d/%d)", cur_frame, max_frames);
 }
 
 int main(int argc, char **argv)
