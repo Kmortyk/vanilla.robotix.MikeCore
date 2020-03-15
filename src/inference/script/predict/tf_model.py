@@ -5,6 +5,7 @@ from keras.backend.tensorflow_backend import set_session
 import tensorflow as tf
 import numpy as np
 import cv2
+import gc
 
 from predict.data_process.nms import NonMaximumSuppression
 from predict.data_process.minthresh import MinThreshold
@@ -23,6 +24,7 @@ class TFModel:
 
     # returns zipped (box, score, label_id)'s
     def predict(self, image, data_processors=None):
+        gc.collect()
         # init processors
         if data_processors is None:
             data_processors = [MinThreshold, NonMaximumSuppression]
@@ -70,6 +72,7 @@ class TFModel:
     @staticmethod
     def __gpu_allow_growth():
         config = tf.ConfigProto()
+        config.gpu_options.per_process_gpu_memory_fraction = 0.4
         config.gpu_options.allow_growth = True
         sess = tf.Session(config=config)
         set_session(sess)
