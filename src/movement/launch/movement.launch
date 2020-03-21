@@ -1,4 +1,5 @@
 <launch>
     <include file="$(find ydlidar_ros)/launch/X4.launch" />
     <node name="node" pkg="movement" type="node" />
+    <node name="gpio_jetson_service" pkg="gpio_jetson_service" type="gpio_jetson_service" />
 </launch>
