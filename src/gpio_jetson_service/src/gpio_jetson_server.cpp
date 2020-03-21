@@ -106,6 +106,8 @@ int main(int argc, char **argv)
     {
         ros::spinOnce();
     }
+    GPIO_Movement::stop(Motor::LEFT);
+    GPIO_Movement::stop(Motor::RIGHT);
     result = GPIO_Movement::de_init();
     ROS_INFO("De-init of GPIO: %s", result ? "success" : "failed");
     if (!result) {
