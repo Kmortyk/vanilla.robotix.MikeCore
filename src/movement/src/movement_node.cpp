@@ -36,6 +36,8 @@ int main(int argc, char **argv) {
             service.request.command = MoveCommands::RIGHT_FORWARD_FAST;
             client.call(service);
             sleep(1);
+            service.request.command = MoveCommands::RIGHT_STOP;
+            client.call(service);
             crashing = false;
             service.request.command = MoveCommands::FORWARD_FAST;
             client.call(service);
@@ -43,5 +45,7 @@ int main(int argc, char **argv) {
         }
         ros::spinOnce();
     }
+    service.request.command = MoveCommands::FULL_STOP;
+    client.call(service);
     return EXIT_SUCCESS;
 }
