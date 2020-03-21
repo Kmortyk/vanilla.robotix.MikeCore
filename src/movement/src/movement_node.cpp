@@ -6,6 +6,7 @@
 #include "ros/ros.h"
 #include "pcl_ros/point_cloud.h"
 #include "gpio_jetson_service/gpio_srv.h"
+//FIX IT
 #include "../../gpio_jetson_service/include/gpio_jetson_service/commands.hpp"
 #include <vector>
 
@@ -34,6 +35,13 @@ int main(int argc, char **argv) {
             crashing = false;
         } else {
             service.request.command = MoveCommands::FORWARD_FAST;
+        }
+        if (client.call(service))
+        {
+            ROS_WARN("Command %d executed!", service.request.command);
+        } else
+        {
+            ROS_ERROR("Failed to call gpio service!");
         }
         ros::spinOnce();
     }
