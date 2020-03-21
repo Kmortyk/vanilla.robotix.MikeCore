@@ -102,7 +102,10 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     ROS_INFO("GPIO service ready to work");
-    ros::spin();
+    while (ros::ok())
+    {
+        ros::spinOnce();
+    }
     result = GPIO_Movement::de_init();
     ROS_INFO("De-init of GPIO: %s", result ? "success" : "failed");
     if (!result) {
