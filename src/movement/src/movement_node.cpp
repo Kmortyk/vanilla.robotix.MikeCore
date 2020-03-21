@@ -25,8 +25,10 @@ int main(int argc, char **argv) {
     ros::Subscriber ydlidarPointsSub =
             nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
     ros::ServiceClient client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
+    gpio_jetson_service::gpio_srv service;
+    service.request.command = MoveCommands::FORWARD_FAST;
+    client.call(service);
     while (ros::ok()) {
-        gpio_jetson_service::gpio_srv service;
         if (crashing) {
             service.request.command = MoveCommands::FULL_STOP;
             client.call(service);
