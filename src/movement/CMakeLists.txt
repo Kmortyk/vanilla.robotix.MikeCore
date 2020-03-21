@@ -9,7 +9,7 @@ project(movement)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   cartographer_ydlidar
-  gpio_jetson
+  gpio_jetson_service REQUIRED
   roscpp
   std_msgs
   ydlidar_ros
@@ -108,7 +108,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES movement
-  CATKIN_DEPENDS cartographer_ydlidar gpio_jetson ros_cpp std_msgs ydlidar_ros
+  CATKIN_DEPENDS cartographer_ydlidar ros_cpp std_msgs ydlidar_ros
 #  DEPENDS system_lib
 )
 
@@ -121,6 +121,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${gpio_jetson_service_lib_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library

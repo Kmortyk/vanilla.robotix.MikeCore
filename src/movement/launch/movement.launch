@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find ydlidar_ros)/launch/X4.launch" />
+    <node name="node" pkg="movement" type="node" />
+</launch>
