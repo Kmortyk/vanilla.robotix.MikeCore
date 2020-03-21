@@ -31,10 +31,11 @@ int main(int argc, char **argv) {
             service.request.command = MoveCommands::FULL_STOP;
             sleep(1);
             service.request.command = MoveCommands::RIGHT_FORWARD_FAST;
-            usleep(100);
+            usleep(100000);
             crashing = false;
         } else {
             service.request.command = MoveCommands::FORWARD_FAST;
+            usleep(100000);
         }
         if (client.call(service))
         {
