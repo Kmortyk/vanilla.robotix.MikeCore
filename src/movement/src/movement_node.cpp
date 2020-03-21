@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
             sleep(1);
             service.request.command = MoveCommands::RIGHT_STOP;
             client.call(service);
+            sleep(1);
             crashing = false;
             service.request.command = MoveCommands::FORWARD_FAST;
             client.call(service);
