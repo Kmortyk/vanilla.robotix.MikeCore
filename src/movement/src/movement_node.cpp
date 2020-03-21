@@ -29,20 +29,15 @@ int main(int argc, char **argv) {
         gpio_jetson_service::gpio_srv service;
         if (crashing) {
             service.request.command = MoveCommands::FULL_STOP;
+            client.call(service);
             sleep(1);
             service.request.command = MoveCommands::RIGHT_FORWARD_FAST;
-            usleep(100000);
+            client.call(service);
+            sleep(1);
             crashing = false;
-        } else {
             service.request.command = MoveCommands::FORWARD_FAST;
-            usleep(100000);
-        }
-        if (client.call(service))
-        {
-            ROS_WARN("Command %d executed!", service.request.command);
-        } else
-        {
-            ROS_ERROR("Failed to call gpio service!");
+            client.call(service);
+        } else {
         }
         ros::spinOnce();
     }
