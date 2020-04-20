@@ -74,6 +74,21 @@ void gpio_command(const uint8_t command) {
 void movement() {
     if (forward) {
         gpio_command(MoveCommands::FULL_STOP);
+        int min = std::min_element(left_m, right_m);
+        switch (min) {
+            case 0:
+                gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+                sleep(1);
+                gpio_command(MoveCommands::FORWARD_LOW);
+                break;
+            case 1:
+                gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+                sleep(1);
+                gpio_command(MoveCommands::FORWARD_LOW);
+                break;
+            default:
+                ROS_ERROR("Case doesn't exist!");
+        }
     } else {
         gpio_command(MoveCommands::FORWARD_LOW);
     }
@@ -89,7 +104,7 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        //movement();
+        movement();
         ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
