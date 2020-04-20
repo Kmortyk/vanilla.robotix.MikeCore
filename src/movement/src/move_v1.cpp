@@ -41,25 +41,25 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
             }
         }
     }
-    backward_m = left_m = forward_m = right_m = 0;
+    float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
     for (int i = 0; i < 720; ++i) {
         if (i > 270 && i < 450) {
-            backward_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+            backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 90 && i < 270) {
-            left_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+            left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 630 || i < 90) {
-            forward_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+            forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 450 && i < 630) {
-            right_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+            right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         }
     }
-    backward_m /= 180;
-    left_m /= 180;
-    forward_m /= 180;
-    right_m /= 180;
+    backward_m = backward_lm / 180;
+    left_m = left_lm / 180;
+    forward_m = forward_lm / 180;
+    right_m = right_lm / 180;
 }
 
 void gpio_command(const uint8_t command) {
