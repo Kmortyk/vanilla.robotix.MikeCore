@@ -10,12 +10,12 @@
 #include <vector>
 
 bool backward, left, forward, right;
-float backward_m, left_m, forward_m, right_m;
+float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 ros::ServiceClient gpio_client;
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
-    for (int i = 0; i < 720; ++i) {
+    for (int i = 1; i < 720; ++i) {
         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
