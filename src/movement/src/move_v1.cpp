@@ -78,15 +78,19 @@ void movement() {
         switch (min) {
             case 0:
                 ROS_INFO("left!!");
+                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
+                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
                 ROS_INFO("Right!!");
+                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
                 gpio_command(MoveCommands::FORWARD_LOW);
+                gpio_command(MoveCommands::FULL_STOP);
                 break;
             default:
                 ROS_ERROR("Case doesn't exist!");
