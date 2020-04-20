@@ -140,18 +140,20 @@ include_directories(
 add_executable(${PROJECT_NAME}_node src/movement_node.cpp)
 add_executable(${PROJECT_NAME}_handler src/pcl_handler.cpp)
 add_executable(${PROJECT_NAME}_cartographer src/cartographer_test.cpp)
+add_executable(${PROJECT_NAME}_move_v1 src/move_v1.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
- set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
- add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(${PROJECT_NAME}_handler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(${PROJECT_NAME}_cartographer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_handler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_cartographer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_move_v1 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
@@ -161,6 +163,10 @@ target_link_libraries(${PROJECT_NAME}_handler
         ${catkin_LIBRARIES}
 )
 target_link_libraries(${PROJECT_NAME}_cartographer
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_move_v1
         ${catkin_LIBRARIES}
 )
 
