@@ -39,5 +39,8 @@ int main(int argc, char **argv) {
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
     client.call(service);
+    while (ros::ok()) {
+        ros::spinOnce();
+    }
     return EXIT_SUCCESS;
 }
