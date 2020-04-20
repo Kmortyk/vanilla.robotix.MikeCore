@@ -16,27 +16,28 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     /*if (message->ranges[360] > 0 && message->ranges[360] < 0.2f) {
     }*/
     for (int i = 0; i < 720; i++) {
+        left = right = backward = forward = false;
         if (message->ranges[i] > 0 && message->ranges[i] < 0.3f) {
             if (i > 270 && i < 450) {
                 ROS_WARN("Backward!");
                 backward = true;
                 return;
-            } else backward = false;
+            } else
             if (i > 90 && i < 270) {
                 ROS_WARN("Left!");
                 left = true;
                 return;
-            } else left = false;
+            } else
             if (i > 630 || i < 90) {
                 ROS_WARN("Forward!");
                 forward = true;
                 return;
-            } else forward = false;
+            } else
             if (i > 450 && i < 630) {
                 ROS_WARN("Right!");
                 right = true;
                 return;
-            } else right = false;
+            }
         }
     }
 }
