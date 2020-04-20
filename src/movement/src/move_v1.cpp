@@ -74,14 +74,16 @@ void gpio_command(const uint8_t command) {
 void movement() {
     if (forward) {
         gpio_command(MoveCommands::FULL_STOP);
-        int min = std::min_element(left_m, right_m);
+        int min = left_m >= right_m ? 0 : 1;
         switch (min) {
             case 0:
+                ROS_INFO("left!!");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
                 gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
+                ROS_INFO("Right!!");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
                 gpio_command(MoveCommands::FORWARD_LOW);
