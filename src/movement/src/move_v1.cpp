@@ -10,6 +10,7 @@
 #include <vector>
 
 bool backward, left, forward, right;
+float backward_m, left_m, forward_m, right_m;
 ros::ServiceClient gpio_client;
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -42,6 +43,25 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
             }
         }
     }
+    backward_m = left_m = forward_m = right_m = 0;
+    for (int i = 0; i < 720; ++i) {
+        if (i > 270 && i < 450) {
+            backward_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+        } else
+        if (i > 90 && i < 270) {
+            left_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+        } else
+        if (i > 630 || i < 90) {
+            forward_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+        } else
+        if (i > 450 && i < 630) {
+            right_m += message->ranges[i] > 0 ? message->ranges[i] : 1;
+        }
+    }
+    backward_m /= 180;
+    left_m /= 180;
+    forward_m /= 180;
+    right_m /= 180;
 }
 
 void gpio_command(const uint8_t command) {
@@ -69,6 +89,7 @@ int main(int argc, char **argv) {
     gpio_client.call(service);
     while (ros::ok()) {
         //movement();
+        ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
     gpio_command(MoveCommands::FULL_STOP);
