@@ -14,7 +14,7 @@ bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 float x = 0, y = 0, r = 0;
 ros::ServiceClient gpio_client;
-tf::TransformListener transformListener;
+tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -105,7 +105,7 @@ void movement() {
 }
 
 void stuck_detect() {
-    transformListener.lookupTransform("base_link", "map", ros::Time(0), transform_bot);
+    transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
 
     double bot_x = transform_bot.getOrigin().x();
     double bot_y = transform_bot.getOrigin().y();
@@ -121,6 +121,7 @@ void stuck_detect() {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
     ros::NodeHandle nodeHandle;
+    transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
             nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
