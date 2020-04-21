@@ -107,11 +107,11 @@ void movement() {
 void stuck_detect() {
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
+        transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
     } catch (tf2::LookupException exception) {
         ROS_ERROR("error: %s", exception.what());
         return;
     }
-    transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
 
     double bot_x = transform_bot.getOrigin().x();
     double bot_y = transform_bot.getOrigin().y();
