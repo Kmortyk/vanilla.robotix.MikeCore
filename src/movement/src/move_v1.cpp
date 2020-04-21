@@ -130,14 +130,14 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.02 && dY < 0.02 && dR < 2.0) {
+    if (dX < 0.03 && dY < 0.03 && dR < 3.0) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::FULL_STOP);
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
         gpio_command(MoveCommands::FULL_STOP);
-        movement(true);
-        sleep(1);
+//        movement(true);
+//        sleep(1);
     }
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
