@@ -81,7 +81,7 @@ void movement() {
         int min = left_m >= right_m ? 0 : 1;
         switch (min) {
             case 0:
-                ROS_INFO("Going to the left side");
+                ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
@@ -89,7 +89,7 @@ void movement() {
                 gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
-                ROS_INFO("Going to the right side");
+                ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
@@ -121,7 +121,7 @@ void stuck_detect() {
 
     double bot_dir = yaw * 180.0 / M_PI;
 
-    ROS_INFO("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
+    ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
 }
 
 int main(int argc, char **argv) {
