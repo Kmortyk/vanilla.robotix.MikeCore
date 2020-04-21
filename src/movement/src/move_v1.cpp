@@ -122,6 +122,9 @@ void stuck_detect() {
     double bot_dir = yaw * 180.0 / M_PI;
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
+    x = bot_x;
+    y = bot_y;
+    r = bot_dir;
 }
 
 int main(int argc, char **argv) {
