@@ -76,8 +76,8 @@ void gpio_command(const uint8_t command) {
     gpio_client.call(service);
 }
 
-void movement() {
-    if (forward) {
+void movement(bool forceDetour = false) {
+    if (forward || forceDetour) {
         gpio_command(MoveCommands::FULL_STOP);
         int min = left_m >= right_m ? 0 : 1;
         switch (min) {
@@ -125,6 +125,20 @@ void stuck_detect() {
     transform_bot.getBasis().getRPY(roll, pitch, yaw);
 
     double bot_dir = yaw * 180.0 / M_PI;
+
+    double dX = std::abs(bot_x - x);
+    double dY = std::abs(bot_y - y);
+    double dR = std::abs(bot_dir - r);
+
+    if (dX < 0.02 && dY < 0.02 && dR < 2.0) {
+        ROS_WARN("Stuck detected!!!");
+        gpio_command(MoveCommands::FULL_STOP);
+        gpio_command(MoveCommands::BACKWARD_FAST);
+        sleep(1);
+        gpio_command(MoveCommands::FULL_STOP);
+        movement(true);
+        sleep(1);
+    }
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
 
