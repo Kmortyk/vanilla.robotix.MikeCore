@@ -13,6 +13,7 @@
 bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 float x = 0, y = 0, r = 0;
+ros::Time transform_time;
 ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
@@ -122,13 +123,17 @@ void stuck_detect() {
     double bot_dir = yaw * 180.0 / M_PI;
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
-    x = bot_x;
-    y = bot_y;
-    r = bot_dir;
+    ros::Time now = ros::Time::now();
+    if (now.toSec() - transform_time.toSec() > 1) {
+        x = bot_x;
+        y = bot_y;
+        r = bot_dir;
+    }
 }
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
+    transform_time = ros::Time::now();
     ros::NodeHandle nodeHandle;
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
