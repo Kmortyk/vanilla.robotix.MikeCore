@@ -34,4 +34,12 @@
       type="cartographer_node"
       args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar_2d.lua"
       output="screen">
+  </node>
+	  <node
+      name="rviz"
+      pkg="rviz"
+      type="rviz"
+      required="true"
+      args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz"
+  />
 </launch>

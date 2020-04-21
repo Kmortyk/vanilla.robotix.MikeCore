@@ -8,10 +8,14 @@
 #include "gpio_jetson_service/gpio_srv.h"
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
+#include "tf/transform_listener.h"
 
 bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
+float x = 0, y = 0, r = 0;
 ros::ServiceClient gpio_client;
+tf::TransformListener transformListener;
+tf::StampedTransform transform_bot;
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
@@ -42,22 +46,22 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         left = right = backward = forward = false;
         if (message->ranges[i] > 0 && message->ranges[i] < 0.3f) {
             if (i > 270 && i < 450) {
-                ROS_WARN("Backward!");
+                ROS_WARN("Backward obstacle");
                 backward = true;
                 return;
             } else
             if (i > 90 && i < 270) {
-                ROS_WARN("Left!");
+                ROS_WARN("Left obstacle");
                 left = true;
                 return;
             } else
             if (i > 630 || i < 90) {
-                ROS_WARN("Forward!");
+                ROS_WARN("Forward obstacle");
                 forward = true;
                 return;
             } else
             if (i > 450 && i < 630) {
-                ROS_WARN("Right!");
+                ROS_WARN("Right obstacle");
                 right = true;
                 return;
             }
@@ -77,7 +81,7 @@ void movement() {
         int min = left_m >= right_m ? 0 : 1;
         switch (min) {
             case 0:
-                ROS_INFO("left!!");
+                ROS_INFO("Going to the left side");
                 gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
@@ -85,7 +89,7 @@ void movement() {
                 gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
-                ROS_INFO("Right!!");
+                ROS_INFO("Going to the right side");
                 gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
@@ -100,6 +104,20 @@ void movement() {
     }
 }
 
+void stuck_detect() {
+    transformListener.lookupTransform("base_link", "map", ros::Time(0), transform_bot);
+
+    double bot_x = transform_bot.getOrigin().x();
+    double bot_y = transform_bot.getOrigin().y();
+
+    double roll, pitch, yaw;
+    transform_bot.getBasis().getRPY(roll, pitch, yaw);
+
+    double bot_dir = yaw * 180.0 / M_PI;
+
+    ROS_INFO("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
+}
+
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
     ros::NodeHandle nodeHandle;
@@ -111,7 +129,8 @@ int main(int argc, char **argv) {
     gpio_client.call(service);
     while (ros::ok()) {
         movement();
-        ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
+        stuck_detect();
+        //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
     gpio_command(MoveCommands::FULL_STOP);

@@ -1,5 +1,5 @@
 <launch>
-    <include file="$(find ydlidar_ros)/launch/X4.launch" />
-    <node name="node" pkg="movement" type="node" />
+    <include file="$(find cartographer_ydlidar)/launch/ydlidar_2d.launch" />
     <node name="gpio_jetson_service" pkg="gpio_jetson_service" type="gpio_jetson_service" />
+    <node name="node" pkg="movement" type="movement_move_v1" />
 </launch>
