@@ -106,6 +106,10 @@ void movement() {
 }
 
 void stuck_detect() {
+    ros::Time now = ros::Time::now();
+    if (now.toSec() - transform_time_sec < 1) {
+        return;
+    }
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
@@ -123,12 +127,10 @@ void stuck_detect() {
     double bot_dir = yaw * 180.0 / M_PI;
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
-    ros::Time now = ros::Time::now();
-    if (now.toSec() - transform_time_sec > 1) {
-        x = bot_x;
-        y = bot_y;
-        r = bot_dir;
-    }
+
+    x = bot_x;
+    y = bot_y;
+    r = bot_dir;
     transform_time_sec = ros::Time::now().toSec();
 }
 
