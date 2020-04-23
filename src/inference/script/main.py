@@ -72,6 +72,7 @@ def predict(msg):
             result = bbox_util.detection_out(preds)[0]
 
     if len(result) == 0:
+        rospy.loginfo("[INFO] nothing was found")
         return
 
     # parse the outputs.
@@ -102,7 +103,7 @@ def predict(msg):
         obj.score = top_conf[i]
         obj.label = CLASS_NAMES[int(top_label_indices[i])]
         objs.bboxes.append(obj)
-        rospy.loginfo(f"[INFO] publish predictions: {label}: ({x_min}, {y_min}, {x_max}, {y_max})")
+        rospy.loginfo(f"[INFO] publish predictions: {obj.label}: ({obj.x_min}, {obj.y_min}, {obj.x_max}, {obj.y_max})")
     obj_publisher.publish(objs)
 
 if __name__ == '__main__':
