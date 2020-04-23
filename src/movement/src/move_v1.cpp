@@ -9,7 +9,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
 #include "tf/transform_listener.h"
-#include "inference/Bboxes.h"
+//#include "inference/Bboxes.h"
 
 #define IMAGE_WIDTH 300
 #define IMAGE_HEIGHT 300
@@ -32,7 +32,7 @@ void gpio_command(const uint8_t command) {
     gpio_client.call(service2);
 }
 
-void inferenceCallback(const inference::BboxesConstPtr &objects) {
+/*void inferenceCallback(const inference::BboxesConstPtr &objects) {
     if(objects->objects.empty()) {
         return;
     }
@@ -63,7 +63,7 @@ void inferenceCallback(const inference::BboxesConstPtr &objects) {
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
         usleep(50000);
     }
-}
+}*/
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
@@ -190,9 +190,9 @@ int main(int argc, char **argv) {
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
             nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
-    ros::Subscriber inferenceSub =
+    /*ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1000, inferenceCallback);
-    gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
+    gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");*/
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);

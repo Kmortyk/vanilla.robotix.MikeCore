@@ -6,6 +6,9 @@ import os
 
 # ros
 import rospy
+import inference.msg._Bboxes as Bboxes
+import inference.msg._Bbox as Bbox
+
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
@@ -16,6 +19,8 @@ from src.inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
 from src.inference.script.ssd.utils import BBoxUtility
 
 # --- Config -----------------------------------------------------------------------------------------------------------
+
+obj_publisher = None
 
 CLASS_NAMES = [
     'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow',
@@ -68,17 +73,20 @@ def predict(msg):
     top_x_max = det_x_max[top_indices]
     top_y_max = det_y_max[top_indices]
 
+    objs = Bboxes.Bboxes()
     for i in range(top_conf.shape[0]):
-        x_min = int(round(top_x_min[i] * image.shape[1]))
-        y_min = int(round(top_y_min[i] * image.shape[0]))
-        x_max = int(round(top_x_max[i] * image.shape[1]))
-        y_max = int(round(top_y_max[i] * image.shape[0]))
-        score = top_conf[i]
-        label = CLASS_NAMES[int(top_label_indices[i])]
-
+        obj = Bbox.Bbox()
+        obj.x_min = int(round(top_x_min[i] * image.shape[1]))
+        obj.y_min = int(round(top_y_min[i] * image.shape[0]))
+        obj.x_max = int(round(top_x_max[i] * image.shape[1]))
+        obj.y_max = int(round(top_y_max[i] * image.shape[0]))
+        obj.score = top_conf[i]
+        obj.label = CLASS_NAMES[int(top_label_indices[i])]
+        objs.bboxes.append(obj)
+    obj_publisher.publish(objs)
 
 if __name__ == '__main__':
-    cv2.namedWindow('Image', cv2.WINDOW_AUTOSIZE)
     rospy.init_node('mike_inference', anonymous=True)
+    obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
     rospy.Subscriber('mike_camera/raw', Image, predict)
     rospy.spin()

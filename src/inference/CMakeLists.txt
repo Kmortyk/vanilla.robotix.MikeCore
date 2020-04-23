@@ -57,10 +57,8 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 add_message_files(
         FILES
-        Object.msg
         Bboxes.msg
-        Point2D.msg
-        Rectangle.msg
+        Bbox.msg
 )
 
 ## Generate services in the 'srv' folder
