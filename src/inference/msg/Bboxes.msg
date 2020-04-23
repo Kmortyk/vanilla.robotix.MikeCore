@@ -1,1 +1,1 @@
-Object[] objects
+Bbox[] bboxes
