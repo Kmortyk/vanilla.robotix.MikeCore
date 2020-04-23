@@ -9,7 +9,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
 #include "tf/transform_listener.h"
-//#include "inference/Bboxes.h"
+#include "inference/Bboxes.h"
 
 #define IMAGE_WIDTH 300
 #define IMAGE_HEIGHT 300
@@ -32,24 +32,24 @@ void gpio_command(const uint8_t command) {
     gpio_client.call(service2);
 }
 
-/*void inferenceCallback(const inference::BboxesConstPtr &objects) {
-    if(objects->objects.empty()) {
+void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
+    if(bboxes->bboxes.empty()) {
         return;
     }
-    if (objects->objects.size() > 1) {
+    if (bboxes->bboxes.size() > 1) {
         std::string labels;
-        for (const auto& object : objects->objects) {
-            labels += object.label;
+        for (const auto& bbox : bboxes->bboxes) {
+            labels += bbox.label;
             labels += " ";
         }
         ROS_ERROR("Too much objects on the screen! Objects detected: %s", labels.c_str());
         return;
     }
-    auto object = objects->objects[0];
-    float x1 = object.objectCoordinate.leftTop.x;
-    float y1 = object.objectCoordinate.leftTop.y;
-    float x2 = object.objectCoordinate.rightBottom.x;
-    float y2 = object.objectCoordinate.rightBottom.y;
+    auto bbox = bboxes->bboxes[0];
+    float x1 = bbox.x_min;
+    float y1 = bbox.y_min;
+    float x2 = bbox.x_max;
+    float y2 = bbox.y_max;
 
     float object_center_x = (x1 + x2) / 2;
     float object_center_y = (y1 + y2) / 2;
@@ -63,7 +63,7 @@ void gpio_command(const uint8_t command) {
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
         usleep(50000);
     }
-}*/
+}
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
@@ -190,9 +190,9 @@ int main(int argc, char **argv) {
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
             nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
-    /*ros::Subscriber inferenceSub =
+    ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1000, inferenceCallback);
-    gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");*/
+    gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
