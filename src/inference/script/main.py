@@ -68,7 +68,7 @@ def predict(msg):
     # predict inputs
     with conf.session.as_default():
         with conf.session.graph.as_default():
-            preds = model.predict(inputs, batch_size=1, verbose=1)
+            preds = model.predict(inputs, batch_size=1)
             result = bbox_util.detection_out(preds)[0]
 
     if len(result) == 0:
