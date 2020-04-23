@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # std
+import sys
+sys.path.append("./")
+
 import numpy as np
 import cv2
 import os
@@ -14,9 +17,9 @@ from cv_bridge import CvBridge
 
 # inference
 from keras.applications.imagenet_utils import preprocess_input
-from inference.script.model.ssd300MobileNet import SSD
-from inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
-from inference.script.ssd.utils import BBoxUtility
+from src.inference.script.model.ssd300MobileNet import SSD
+from src.inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
+from src.inference.script.ssd.utils import BBoxUtility
 
 # --- Config -----------------------------------------------------------------------------------------------------------
 
@@ -35,7 +38,7 @@ NUM_CLASSES = len(CLASS_NAMES)
 # --- Model ------------------------------------------------------------------------------------------------------------
 
 model = SSD(INPUT_SHAPE, num_classes=NUM_CLASSES)
-model.load_weights('weights' + os.sep + WEIGHTS)
+model.load_weights(WEIGHTS)
 bbox_util = BBoxUtility(NUM_CLASSES)
 
 proc = [
@@ -84,6 +87,7 @@ def predict(msg):
         obj.score = top_conf[i]
         obj.label = CLASS_NAMES[int(top_label_indices[i])]
         objs.bboxes.append(obj)
+        rospy.loginfo(f"[INFO] publish predictions: {label}: ({x_min}, {y_min}, {x_max}, {y_max})")
     obj_publisher.publish(objs)
 
 if __name__ == '__main__':

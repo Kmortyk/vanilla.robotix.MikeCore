@@ -10,7 +10,7 @@ from tensorflow.keras.layers import concatenate
 from tensorflow.keras.layers import Reshape
 from tensorflow.keras.models import Model
 from tensorflow.keras.applications import MobileNet
-from ssd_layers import PriorBox
+from src.inference.script.ssd.layers import PriorBox
 
 
 def SSD(input_shape, num_classes):
