@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # std
+import sys
+sys.path.append("./")
+
 import numpy as np
 import cv2
 import os
@@ -14,9 +17,14 @@ from cv_bridge import CvBridge
 
 # inference
 from keras.applications.imagenet_utils import preprocess_input
-from inference.script.model.ssd300MobileNet import SSD
-from inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
-from inference.script.ssd.utils import BBoxUtility
+from src.inference.script.model.ssd300MobileNet import SSD
+from src.inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
+from src.inference.script.preprocess.simpleproc import SimplePreprocessor
+from src.inference.script.preprocess.arrproc import ImageToArrayPreprocessor
+from src.inference.script.ssd.utils import BBoxUtility
+
+# config
+from src.inference.script.config.sessionconfig import SessionConfig
 
 # --- Config -----------------------------------------------------------------------------------------------------------
 
@@ -32,29 +40,40 @@ WEIGHTS = BASE_PATH + os.sep + 'weights' + os.sep + 'MobileNetSSD300weights_voc_
 INPUT_SHAPE = (300, 300, 3)
 NUM_CLASSES = len(CLASS_NAMES)
 
+conf = SessionConfig()
+conf.configure()
 # --- Model ------------------------------------------------------------------------------------------------------------
 
 model = SSD(INPUT_SHAPE, num_classes=NUM_CLASSES)
-model.load_weights('weights' + os.sep + WEIGHTS)
+model.load_weights(WEIGHTS)
+model._make_predict_function()
 bbox_util = BBoxUtility(NUM_CLASSES)
 
 proc = [
-    MaxSizePreprocessor(1000)
+    SimplePreprocessor(300, 300),
+    ImageToArrayPreprocessor(),
 ]
 
 
 def predict(msg):
     rospy.loginfo("get image")
     image = CvBridge().imgmsg_to_cv2(msg)
-    image = image.img_to_array(image)
+    for p in proc:
+        image = p.preprocess(image)
 
     rospy.loginfo("predicting...")
     # preprocess inputs
     inputs = [image]
     inputs = preprocess_input(np.array(inputs))
     # predict inputs
-    preds = model.predict(inputs, batch_size=1, verbose=1)
-    result = bbox_util.detection_out(preds)[0]
+    with conf.session.as_default():
+        with conf.session.graph.as_default():
+            preds = model.predict(inputs, batch_size=1)
+            result = bbox_util.detection_out(preds)[0]
+
+    if len(result) == 0:
+        rospy.loginfo("[INFO] nothing was found")
+        return
 
     # parse the outputs.
     det_label = result[:, 0]
@@ -84,6 +103,7 @@ def predict(msg):
         obj.score = top_conf[i]
         obj.label = CLASS_NAMES[int(top_label_indices[i])]
         objs.bboxes.append(obj)
+        rospy.loginfo(f"[INFO] publish predictions: {obj.label}: ({obj.x_min}, {obj.y_min}, {obj.x_max}, {obj.y_max})")
     obj_publisher.publish(objs)
 
 if __name__ == '__main__':
