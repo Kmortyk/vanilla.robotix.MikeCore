@@ -42,6 +42,7 @@ NUM_CLASSES = len(CLASS_NAMES)
 
 conf = SessionConfig()
 conf.configure()
+
 # --- Model ------------------------------------------------------------------------------------------------------------
 
 model = SSD(INPUT_SHAPE, num_classes=NUM_CLASSES)
@@ -56,15 +57,14 @@ proc = [
 
 
 def predict(msg):
-    rospy.loginfo("get image")
     image = CvBridge().imgmsg_to_cv2(msg)
     for p in proc:
         image = p.preprocess(image)
 
-    rospy.loginfo("predicting...")
     # preprocess inputs
     inputs = [image]
     inputs = preprocess_input(np.array(inputs))
+    
     # predict inputs
     with conf.session.as_default():
         with conf.session.graph.as_default():
@@ -72,7 +72,7 @@ def predict(msg):
             result = bbox_util.detection_out(preds)[0]
 
     if len(result) == 0:
-        rospy.loginfo("[INFO] nothing was found")
+        rospy.loginfo("nothing was found")
         return
 
     # parse the outputs.
@@ -83,7 +83,7 @@ def predict(msg):
     det_x_max = result[:, 4]
     det_y_max = result[:, 5]
 
-    # Get detections with confidence higher than 0.6.
+    # get detections with confidence higher than 0.6.
     top_indices = [i for i, conf in enumerate(det_conf) if conf >= 0.6]
 
     top_conf = det_conf[top_indices]
@@ -103,7 +103,7 @@ def predict(msg):
         obj.score = top_conf[i]
         obj.label = CLASS_NAMES[int(top_label_indices[i])]
         objs.bboxes.append(obj)
-        rospy.loginfo(f"[INFO] publish predictions: {obj.label}: ({obj.x_min}, {obj.y_min}, {obj.x_max}, {obj.y_max})")
+        rospy.loginfo(f"[INFO] publish predictions: {obj.label}[{obj.score}]: ({obj.x_min}, {obj.y_min}, {obj.x_max}, {obj.y_max})")
     obj_publisher.publish(objs)
 
 if __name__ == '__main__':
