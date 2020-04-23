@@ -9,6 +9,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
 #include "tf/transform_listener.h"
+#include "inference/Objects.h"
 
 bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
@@ -72,30 +73,28 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
 
 void gpio_command(const uint8_t command) {
     gpio_jetson_service::gpio_srv service;
-    service.request.command = command;
+    service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
+    gpio_jetson_service::gpio_srv service2;
+    service2.request.command = command;
+    gpio_client.call(service2);
 }
 
-void movement(bool forceDetour = false) {
-    if (forward || forceDetour) {
-        gpio_command(MoveCommands::FULL_STOP);
+void movement() {
+    if (forward) {
         int min = left_m >= right_m ? 0 : 1;
         switch (min) {
             case 0:
                 ROS_WARN("Going to the left side");
-                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
-                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
-                gpio_command(MoveCommands::FULL_STOP);
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
                 gpio_command(MoveCommands::FORWARD_LOW);
-                gpio_command(MoveCommands::FULL_STOP);
                 break;
             default:
                 ROS_ERROR("Case doesn't exist!");
@@ -132,12 +131,8 @@ void stuck_detect() {
 
     if (dX < 0.03 && dY < 0.03 && dR < 3.0) {
         ROS_WARN("Stuck detected!!!");
-        gpio_command(MoveCommands::FULL_STOP);
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
-        gpio_command(MoveCommands::FULL_STOP);
-//        movement(true);
-//        sleep(1);
     }
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
@@ -151,6 +146,7 @@ void stuck_detect() {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
     ros::NodeHandle nodeHandle;
+    sleep(5);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =

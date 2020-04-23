@@ -1,0 +1,2 @@
+Point2D leftTop
+Point2D rightBottom

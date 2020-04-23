@@ -1,0 +1,2 @@
+Rectangle objectCoordinate
+string label
