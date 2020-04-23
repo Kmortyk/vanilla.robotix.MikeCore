@@ -27,7 +27,8 @@ CLASS_NAMES = [
     'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor'
 ]
 
-WEIGHTS = 'weights' + os.sep + 'MobileNetSSD300weights_voc_2007_class20.hdf5'
+BASE_PATH = '/home/jetson/vanilla.robotix.MikeCore/src/inference/'
+WEIGHTS = BASE_PATH + os.sep + 'weights' + os.sep + 'MobileNetSSD300weights_voc_2007_class20.hdf5'
 INPUT_SHAPE = (300, 300, 3)
 NUM_CLASSES = len(CLASS_NAMES)
 
