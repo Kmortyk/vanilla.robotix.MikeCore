@@ -14,9 +14,9 @@ from cv_bridge import CvBridge
 
 # inference
 from keras.applications.imagenet_utils import preprocess_input
-from src.inference.script.model.ssd300MobileNet import SSD
-from src.inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
-from src.inference.script.ssd.utils import BBoxUtility
+from inference.script.model.ssd300MobileNet import SSD
+from inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
+from inference.script.ssd.utils import BBoxUtility
 
 # --- Config -----------------------------------------------------------------------------------------------------------
 
