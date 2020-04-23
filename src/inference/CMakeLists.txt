@@ -58,7 +58,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 add_message_files(
         FILES
         Object.msg
-        Objects.msg
+        Bboxes.msg
         Point2D.msg
         Rectangle.msg
 )

@@ -9,7 +9,7 @@
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
 #include "tf/transform_listener.h"
-#include "inference/Objects.h"
+#include "inference/Bboxes.h"
 
 bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
@@ -18,6 +18,10 @@ double transform_time_sec;
 ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
+
+void inferenceCallback(const inference::BboxesConstPtr &objects) {
+    
+}
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
