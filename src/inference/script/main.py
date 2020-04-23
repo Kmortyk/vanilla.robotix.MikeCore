@@ -71,13 +71,16 @@ def predict(msg):
             preds = model.predict(inputs, batch_size=1, verbose=1)
             result = bbox_util.detection_out(preds)[0]
 
+    if len(result) == 0:
+        return
+
     # parse the outputs.
-    det_label = result[0]
-    det_conf = result[1]
-    det_x_min = result[2]
-    det_y_min = result[3]
-    det_x_max = result[4]
-    det_y_max = result[5]
+    det_label = result[:, 0]
+    det_conf = result[:, 1]
+    det_x_min = result[:, 2]
+    det_y_min = result[:, 3]
+    det_x_max = result[:, 4]
+    det_y_max = result[:, 5]
 
     # Get detections with confidence higher than 0.6.
     top_indices = [i for i, conf in enumerate(det_conf) if conf >= 0.6]
