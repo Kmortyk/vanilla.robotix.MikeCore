@@ -11,6 +11,9 @@
 #include "tf/transform_listener.h"
 #include "inference/Bboxes.h"
 
+#define IMAGE_WIDTH 300
+#define IMAGE_HEIGHT 300
+
 bool backward, left, forward, right;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 double x = 0, y = 0, r = 0;
@@ -18,9 +21,48 @@ double transform_time_sec;
 ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
+float image_middle_x, image_middle_y;
+
+void gpio_command(const uint8_t command) {
+    gpio_jetson_service::gpio_srv service;
+    service.request.command = MoveCommands::FULL_STOP;
+    gpio_client.call(service);
+    gpio_jetson_service::gpio_srv service2;
+    service2.request.command = command;
+    gpio_client.call(service2);
+}
 
 void inferenceCallback(const inference::BboxesConstPtr &objects) {
-    
+    if(objects->objects.empty()) {
+        return;
+    }
+    if (objects->objects.size() > 1) {
+        std::string labels;
+        for (const auto& object : objects->objects) {
+            labels += object.label;
+            labels += " ";
+        }
+        ROS_ERROR("Too much objects on the screen! Objects detected: %s", labels.c_str());
+        return;
+    }
+    auto object = objects->objects[0];
+    float x1 = object.objectCoordinate.leftTop.x;
+    float y1 = object.objectCoordinate.leftTop.y;
+    float x2 = object.objectCoordinate.rightBottom.x;
+    float y2 = object.objectCoordinate.rightBottom.y;
+
+    float object_center_x = (x1 + x2) / 2;
+    float object_center_y = (y1 + y2) / 2;
+
+    if (object_center_x < image_middle_x - 10) {
+        gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
+        usleep(50000);
+    }
+
+    if (object_center_x > image_middle_x + 10) {
+        gpio_command(MoveCommands::LEFT_FORWARD_LOW);
+        usleep(50000);
+    }
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -73,15 +115,6 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
             }
         }
     }
-}
-
-void gpio_command(const uint8_t command) {
-    gpio_jetson_service::gpio_srv service;
-    service.request.command = MoveCommands::FULL_STOP;
-    gpio_client.call(service);
-    gpio_jetson_service::gpio_srv service2;
-    service2.request.command = command;
-    gpio_client.call(service2);
 }
 
 void movement() {
@@ -149,12 +182,16 @@ void stuck_detect() {
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
+    image_middle_x = IMAGE_WIDTH / 2.0;
+    image_middle_y = IMAGE_HEIGHT / 2.0;
     ros::NodeHandle nodeHandle;
     sleep(5);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
             nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
+    ros::Subscriber inferenceSub =
+            nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1000, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
