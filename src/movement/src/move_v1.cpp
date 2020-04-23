@@ -55,11 +55,13 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     float object_center_y = (y1 + y2) / 2;
 
     if (object_center_x < image_middle_x - 10) {
+        ROS_WARN("Follow left to the object...");
         gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
         usleep(50000);
     }
 
     if (object_center_x > image_middle_x + 10) {
+        ROS_WARN("Follow right to the object...");
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
         usleep(50000);
     }
