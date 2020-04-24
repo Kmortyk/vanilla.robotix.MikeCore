@@ -36,16 +36,17 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if(bboxes->bboxes.empty()) {
         return;
     }
+    inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
-        std::string labels;
-        for (const auto& bbox : bboxes->bboxes) {
-            labels += bbox.label;
-            labels += " ";
+        float max_score = 0;
+        float max_score_index = -1;
+        for (int i = 0; i < bboxes->bboxes.size(); i++) {
+            if (max_score < bboxes->bboxes[i].score) {
+                max_score_index = i;
+            }
         }
-        ROS_ERROR("Too much objects on the screen! Objects detected: %s", labels.c_str());
-        return;
-    }
-    auto bbox = bboxes->bboxes[0];
+        bbox = bboxes->bboxes[max_score_index];
+    } else bbox = bboxes->bboxes[0];
     float x1 = bbox.x_min;
     float y1 = bbox.y_min;
     float x2 = bbox.x_max;
@@ -54,16 +55,16 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     float object_center_x = (x1 + x2) / 2;
     float object_center_y = (y1 + y2) / 2;
 
-    if (object_center_x < image_middle_x - 10) {
+    if (object_center_x < image_middle_x - 50) {
         ROS_WARN("Follow left to the object...");
         gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
-        usleep(50000);
+        usleep(500000);
     }
 
-    if (object_center_x > image_middle_x + 10) {
+    if (object_center_x > image_middle_x + 50) {
         ROS_WARN("Follow right to the object...");
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
-        usleep(50000);
+        usleep(500000);
     }
 }
 
