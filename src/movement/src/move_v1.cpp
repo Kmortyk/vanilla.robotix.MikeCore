@@ -39,9 +39,10 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
         float max_score = 0;
-        float max_score_index = -1;
-        for (int i = 0; i < bboxes->bboxes.size(); i++) {
+        unsigned long max_score_index = 0;
+        for (unsigned long i = 0; i < bboxes->bboxes.size(); i++) {
             if (max_score < bboxes->bboxes[i].score) {
+                max_score = bboxes->bboxes[i].score;
                 max_score_index = i;
             }
         }
