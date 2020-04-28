@@ -44,12 +44,18 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         for (unsigned long i = 0; i < bboxes->bboxes.size(); i++) {
             ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
             if (max_score < bboxes->bboxes[i].score) {
+
+                if (bboxes->bboxes[i].label != "tvmonitor") continue;
+
                 max_score = bboxes->bboxes[i].score;
                 max_score_index = i;
             }
         }
         bbox = bboxes->bboxes[max_score_index];
     } else bbox = bboxes->bboxes[0];
+
+    if (bbox.label != "tvmonitor") return;
+
     ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
     float y1 = bbox.y_min;
