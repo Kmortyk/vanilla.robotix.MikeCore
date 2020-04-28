@@ -60,16 +60,16 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     float object_center_y = (y1 + y2) / 2;
     ROS_WARN("Object center (%f,%f).", object_center_x, object_center_y);
 
-    if (object_center_x < image_middle_x - 50) {
+    if (object_center_x < image_middle_x - 10) {
         ROS_WARN("Follow left to the object...");
         gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
-        usleep(500000);
+        usleep(100000);
     }
 
-    if (object_center_x > image_middle_x + 50) {
+    if (object_center_x > image_middle_x + 10) {
         ROS_WARN("Follow right to the object...");
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
-        usleep(500000);
+        usleep(100000);
     }
     gpio_command(MoveCommands::FULL_STOP);
 }
