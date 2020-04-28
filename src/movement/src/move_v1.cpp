@@ -36,11 +36,13 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if(bboxes->bboxes.empty()) {
         return;
     }
+    ROS_WARN("Bboxes got! Size: %lu", bboxes->bboxes.size());
     inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
         float max_score = 0;
         unsigned long max_score_index = 0;
         for (unsigned long i = 0; i < bboxes->bboxes.size(); i++) {
+            ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
             if (max_score < bboxes->bboxes[i].score) {
                 max_score = bboxes->bboxes[i].score;
                 max_score_index = i;
@@ -48,6 +50,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         }
         bbox = bboxes->bboxes[max_score_index];
     } else bbox = bboxes->bboxes[0];
+    ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
     float y1 = bbox.y_min;
     float x2 = bbox.x_max;
@@ -55,6 +58,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 
     float object_center_x = (x1 + x2) / 2;
     float object_center_y = (y1 + y2) / 2;
+    ROS_WARN("Object center (%f,%f).", object_center_x, object_center_y);
 
     if (object_center_x < image_middle_x - 50) {
         ROS_WARN("Follow left to the object...");
