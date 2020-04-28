@@ -71,6 +71,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
         usleep(500000);
     }
+    gpio_command(MoveCommands::FULL_STOP);
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
