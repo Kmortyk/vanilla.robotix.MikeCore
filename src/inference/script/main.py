@@ -21,6 +21,7 @@ from src.inference.script.model.ssd300MobileNet import SSD
 from src.inference.script.preprocess.maxsizeproc import MaxSizePreprocessor
 from src.inference.script.preprocess.simpleproc import SimplePreprocessor
 from src.inference.script.preprocess.arrproc import ImageToArrayPreprocessor
+from src.inference.script.preprocess.resizeproc import ResizePreprocessor
 from src.inference.script.ssd.utils import BBoxUtility
 
 # config
@@ -51,6 +52,7 @@ model._make_predict_function()
 bbox_util = BBoxUtility(NUM_CLASSES)
 
 proc = [
+    #ResizePreprocessor(300, 300),
     SimplePreprocessor(300, 300),
     ImageToArrayPreprocessor(),
 ]
