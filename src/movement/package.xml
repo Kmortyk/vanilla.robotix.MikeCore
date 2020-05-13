@@ -50,11 +50,13 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>cartographer_ydlidar</build_depend>
+  <build_depend>cartographer-ros-msgs</build_depend>
   <build_depend>gpio_jetson</build_depend>
   <build_depend>ros_cpp</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>ydlidar_ros</build_depend>
   <build_export_depend>cartographer_ydlidar</build_export_depend>
+  <build_export_depend>cartographer-ros-msgs</build_export_depend>
   <build_export_depend>gpio_jetson</build_export_depend>
   <build_export_depend>ros_cpp</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
@@ -64,6 +66,7 @@
   <exec_depend>ros_cpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>ydlidar_ros</exec_depend>
+  <exec_depend>cartographer-rviz</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
