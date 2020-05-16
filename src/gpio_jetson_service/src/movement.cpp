@@ -17,6 +17,7 @@ bool GPIO_Movement::init()
     int result = 0;
     //all_pins = {149, 200, 38, 76, 12, 51, 77, 78};
     all_pins = {22, 23, 24, 25};
+    putenv ("WIRINGPI_GPIOMEM=1") ;
     wiringPiSetup();
     result += pin_export(all_pins);
     if (!result)
