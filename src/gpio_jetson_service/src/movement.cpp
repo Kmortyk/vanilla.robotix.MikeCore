@@ -15,7 +15,7 @@ bool GPIO_Movement::init()
     }
     int result = 0;
     //all_pins = {149, 200, 38, 76, 12, 51, 77, 78};
-    all_pins = {107, 10, 9, 8};
+    all_pins = {20, 10, 9, 8};
     result += pin_export(all_pins);
     if (!result)
         result += pin_direction(all_pins);
@@ -51,7 +51,7 @@ bool GPIO_Movement::stop(Motor motor)
     {
         case LEFT:
             //stop_pins = {78, 76, 51, 200};
-            stop_pins = {107, 10};
+            stop_pins = {20, 10};
             result = pin_value(stop_pins, false);
             break;
         case RIGHT:
@@ -86,7 +86,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(51, true);
                             //result += pin_value(200, true);
-                            result += pin_value(107, true);
+                            result += pin_value(20, true);
                             break;
                         default:
                             return false;
