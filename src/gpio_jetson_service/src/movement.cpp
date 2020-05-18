@@ -86,7 +86,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(51, true);
                             //result += pin_value(200, true);
-                            result += pin_value(20, true);
+                            result += pin_value(10, true);
                             break;
                         default:
                             return false;
@@ -103,7 +103,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(76, true);
                             //result += pin_value(78, true);
-                            result += pin_value(10, true);
+                            result += pin_value(20, true);
                             break;
                         default:
                             return false;
@@ -126,7 +126,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(12, true);
                             //result += pin_value(149, true);
-                            result += pin_value(9, true);
+                            result += pin_value(8, true);
                             break;
                         default:
                             return false;
@@ -143,7 +143,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(77, true);
                             //result += pin_value(38, true);
-                            result += pin_value(8, true);
+                            result += pin_value(9, true);
                             break;
                         default:
                             return false;
