@@ -51,12 +51,12 @@ bool GPIO_Movement::stop(Motor motor)
     {
         case LEFT:
             //stop_pins = {78, 76, 51, 200};
-            stop_pins = {25, 24};
+            stop_pins = {107, 10};
             result = pin_value(stop_pins, false);
             break;
         case RIGHT:
             //stop_pins = {77, 38, 12, 149};
-            stop_pins = {23, 22};
+            stop_pins = {9, 8};
             result = pin_value(stop_pins, false);
             break;
         default:
