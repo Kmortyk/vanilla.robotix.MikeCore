@@ -3,7 +3,6 @@
 //
 
 #include "movement.hpp"
-#include <wiringPi.h>
 
 bool initialized = false;
 std::vector<int> all_pins;
@@ -16,9 +15,7 @@ bool GPIO_Movement::init()
     }
     int result = 0;
     //all_pins = {149, 200, 38, 76, 12, 51, 77, 78};
-    all_pins = {22, 23, 24, 25};
-    putenv ("WIRINGPI_GPIOMEM=1") ;
-    wiringPiSetup();
+    all_pins = {107, 10, 9, 8};
     result += pin_export(all_pins);
     if (!result)
         result += pin_direction(all_pins);
@@ -89,7 +86,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(51, true);
                             //result += pin_value(200, true);
-                            result += pin_value(25, true);
+                            result += pin_value(107, true);
                             break;
                         default:
                             return false;
@@ -106,7 +103,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(76, true);
                             //result += pin_value(78, true);
-                            result += pin_value(24, true);
+                            result += pin_value(10, true);
                             break;
                         default:
                             return false;
@@ -129,7 +126,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(12, true);
                             //result += pin_value(149, true);
-                            result += pin_value(23, true);
+                            result += pin_value(9, true);
                             break;
                         default:
                             return false;
@@ -146,7 +143,7 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                         case FAST:
                             //result += pin_value(77, true);
                             //result += pin_value(38, true);
-                            result += pin_value(22, true);
+                            result += pin_value(8, true);
                             break;
                         default:
                             return false;
@@ -170,13 +167,12 @@ int GPIO_Movement::pin_export(int pin)
 
 int GPIO_Movement::pin_export(std::vector<int> &pins)
 {
-    /*int result = 0;
+    int result = 0;
     for (int pin : pins) {
         std::string command = "echo " + std::to_string(pin) + " > /sys/class/gpio/export";
         result += system(command.c_str());
     }
-    return result;*/
-    return 0;
+    return result;
 }
 
 int GPIO_Movement::pin_unexport(int pin)
@@ -205,42 +201,32 @@ int GPIO_Movement::pin_direction(int pin, Pin_Direction pin_direction)
 
 int GPIO_Movement::pin_direction(std::vector<int> &pins, Pin_Direction pin_direction)
 {
-    /*int result = 0;
+    int result = 0;
     for (int pin : pins)
     {
         std::string direction = pin_direction == IN ? "in" : "out";
         std::string command = "echo " + direction + " > /sys/class/gpio/gpio" + std::to_string(pin) + "/direction";
         result += system(command.c_str());
     }
-    return result;*/
-    for (int pin : pins)
-    {
-        pinMode (pin, OUTPUT) ;
-    }
+    return result;
 }
 
 
 int GPIO_Movement::pin_value(int pin, bool value)
 {
-    /*int int_value = value ? 1 : 0;
+    int int_value = value ? 1 : 0;
     std::string command = "echo " + std::to_string(int_value) + " > /sys/class/gpio/gpio" + std::to_string(pin) + "/value";
-    return system(command.c_str());*/
-
-    digitalWrite (pin, value) ;
+    return system(command.c_str());
 }
 
 int GPIO_Movement::pin_value(std::vector<int> &pins, bool value)
 {
-    /*int result = 0;
+    int result = 0;
     int int_value = value ? 1 : 0;
     for (int pin : pins)
     {
         std::string command = "echo " + std::to_string(int_value) + " > /sys/class/gpio/gpio" + std::to_string(pin) + "/value";
         result += system(command.c_str());
     }
-    return result;*/
-    for (int pin : pins)
-    {
-        digitalWrite(pin, value);
-    }
+    return result;
 }

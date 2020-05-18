@@ -18,7 +18,6 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
-find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -155,15 +154,15 @@ add_dependencies(${PROJECT_NAME}_manual_full ${${PROJECT_NAME}_EXPORTED_TARGETS}
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES} ${WIRINGPI_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_manual
-        ${catkin_LIBRARIES} ${WIRINGPI_LIBRARIES}
+        ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_manual_full
-        ${catkin_LIBRARIES} ${WIRINGPI_LIBRARIES}
+        ${catkin_LIBRARIES}
 )
 
 #############
