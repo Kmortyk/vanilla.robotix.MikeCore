@@ -20,6 +20,7 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
         unityPointCloud[i] = x4Cloud.ranges[i];
         //std::cout << unityPointCloud[i] << " ";
     }
+    lastX4Message = x4Cloud;
     //std::cout << std::endl;
 }
 
