@@ -13,15 +13,15 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
-        //std::cout << unityPointCloud[i] << " ";
+        std::cout << unityPointCloud[i] << " ";
     }
     for (int i = 0; i < 180; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
-        //std::cout << unityPointCloud[i] << " ";
+        std::cout << unityPointCloud[i] << " ";
     }
     lastX4Message = x4Cloud;
-    //std::cout << std::endl;
+    std::cout << std::endl;
 }
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
@@ -54,11 +54,10 @@ int main(int argc, char **argv)
             lastX4Message.ranges.push_back(unityPointCloud[i]);
             //std::cout << unityPointCloud[i] << " ";
         }
-        for (auto i: lastX4Message.ranges)
+        /*for (auto i: lastX4Message.ranges)
             std::cout << i << ' ';
-        std::cout << std::endl;
+        std::cout << std::endl;*/
         unityPublisher.publish(lastX4Message);
-        std::cout << std::endl;
         ros::spinOnce();
     }
     return EXIT_SUCCESS;
