@@ -32,7 +32,7 @@ std::vector<float> split(const std::string &s, char delim) {
 
 
 int main(int argc, char * argv[]) {
-    ros::init(argc, argv, "ydlidar_node"); 
+    ros::init(argc, argv, "ydlidar_ros_node");
     printf("__   ______  _     ___ ____    _    ____  \n");
     printf("\\ \\ / /  _ \\| |   |_ _|  _ \\  / \\  |  _ \\ \n");
     printf(" \\ V /| | | | |    | || | | |/ _ \\ | |_) | \n");
