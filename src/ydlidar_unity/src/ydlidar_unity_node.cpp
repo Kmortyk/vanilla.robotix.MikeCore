@@ -8,17 +8,17 @@
 std::vector<float> unityPointCloud;
 sensor_msgs::LaserScan lastX4Message;
 
-void x4Callback(const sensor_msgs::LaserScan x4Cloud)
+void x4Callback(const sensor_msgs::LaserScan::ConstPtr x4Cloud)
 {
     for (int i = 540; i < 720; i++)
     {
-        unityPointCloud[i] = x4Cloud.ranges[i];
+        unityPointCloud[i] = x4Cloud->ranges[i];
     }
     for (int i = 0; i < 180; i++)
     {
-        unityPointCloud[i] = x4Cloud.ranges[i];
+        unityPointCloud[i] = x4Cloud->ranges[i];
     }
-    lastX4Message = x4Cloud;
+//    lastX4Message = x4Cloud;
     ROS_INFO("X4");
 }
 
