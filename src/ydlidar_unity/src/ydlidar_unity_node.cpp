@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     {
         lastX4Message.ranges = unityPointCloud;
         unityPublisher.publish(lastX4Message);
-        for (int i = 0; i < 180; ++i) {
+        for (int i = 1; i < 180; ++i) {
             std::cout << lastX4Message.ranges[i] << " ";
         }
         std::cout << std::endl;
