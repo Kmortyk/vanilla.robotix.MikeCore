@@ -48,6 +48,7 @@ int main(int argc, char **argv)
         if (lastX4Message == nullptr)
         {
             ros::spinOnce();
+            continue;
         }
         lastX4Message->ranges = unityPointCloud;
         unityPublisher.publish(lastX4Message);
