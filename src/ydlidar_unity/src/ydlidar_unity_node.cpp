@@ -6,17 +6,17 @@
 #include "sensor_msgs/LaserScan.h"
 
 sensor_msgs::LaserScan::_ranges_type unityPointCloud;
-sensor_msgs::LaserScan::Ptr lastX4Message;
+sensor_msgs::LaserScan lastX4Message;
 
-void x4Callback(const sensor_msgs::LaserScan::Ptr x4Cloud)
+void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 {
     for (int i = 540; i < 720; i++)
     {
-        unityPointCloud[i] = x4Cloud->ranges[i];
+        unityPointCloud[i] = x4Cloud.ranges[i];
     }
     for (int i = 0; i < 180; i++)
     {
-        unityPointCloud[i] = x4Cloud->ranges[i];
+        unityPointCloud[i] = x4Cloud.ranges[i];
     }
     lastX4Message = x4Cloud;
 }
@@ -45,12 +45,7 @@ int main(int argc, char **argv)
     const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
     while (ros::ok())
     {
-        if (lastX4Message == nullptr)
-        {
-            ros::spinOnce();
-            continue;
-        }
-        lastX4Message->ranges = unityPointCloud;
+        lastX4Message.ranges = unityPointCloud;
         unityPublisher.publish(lastX4Message);
         for (int i = 0; i < 720; ++i) {
             std::cout << i << " ";
