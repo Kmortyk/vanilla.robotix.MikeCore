@@ -28,17 +28,17 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/sdk/src
 )
 
-add_executable(ydlidar_node src/ydlidar_node.cpp  ${SDK_SRC})
-add_executable(ydlidar_client src/ydlidar_client.cpp)
+add_executable(ydlidar_ros_node src/ydlidar_node.cpp  ${SDK_SRC})
+add_executable(ydlidar_ros_client src/ydlidar_client.cpp)
 
-target_link_libraries(ydlidar_node
+target_link_libraries(ydlidar_ros_node
    ${catkin_LIBRARIES} 
  )
-target_link_libraries(ydlidar_client
+target_link_libraries(ydlidar_ros_client
    ${catkin_LIBRARIES} 
  )
 
-install(TARGETS ydlidar_node ydlidar_client
+install(TARGETS ydlidar_ros_node ydlidar_ros_client
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
