@@ -50,7 +50,7 @@ int main(int argc, char **argv)
         lastX4Message.ranges = unityPointCloud;
         unityPublisher.publish(lastX4Message);
         for (int i = 0; i < 720; ++i) {
-            std::cout << i << " ";
+            std::cout << lastX4Message.ranges[i] << " ";
         }
         std::cout << std::endl;
         ros::spinOnce();
