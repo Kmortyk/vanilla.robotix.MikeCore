@@ -5,12 +5,11 @@
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 
-std::vector<float> unityPointCloud;
+float unityPointCloud[720];
 sensor_msgs::LaserScan lastX4Message;
 
 void x4Callback(const sensor_msgs::LaserScan::ConstPtr x4Cloud)
 {
-    ROS_INFO("X4 Here");
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[i] = x4Cloud->ranges[i];
