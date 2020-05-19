@@ -46,7 +46,8 @@ int main(int argc, char **argv)
     {
         for (int i = 0; i < 720; i++)
         {
-            lastX4Message.ranges[i] = unityPointCloud[i];
+            lastX4Message.ranges.clear();
+            lastX4Message.ranges.push_back(unityPointCloud[i]);
             std::cout << lastX4Message.ranges[i] << " ";
         }
         unityPublisher.publish(lastX4Message);
