@@ -5,7 +5,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
 
-sensor_msgs::LaserScan::_ranges_type unityPointCloud;
+std::vector<float> unityPointCloud;
 sensor_msgs::LaserScan lastX4Message;
 
 void x4Callback(const sensor_msgs::LaserScan x4Cloud)
@@ -45,7 +45,6 @@ int main(int argc, char **argv)
     const ros::Subscriber f4Subscriber = nodeHandle.subscribe("scanF4", 1000, f4Callback);
     const ros::Subscriber x4Subscriber = nodeHandle.subscribe("scanX4", 1000, x4Callback);
     const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
-    unityPointCloud = std::vector<float>();
     while (ros::ok())
     {
         /*lastX4Message.ranges = unityPointCloud;
