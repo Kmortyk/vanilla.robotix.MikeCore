@@ -10,6 +10,7 @@ sensor_msgs::LaserScan lastX4Message;
 
 void x4Callback(const sensor_msgs::LaserScan::ConstPtr x4Cloud)
 {
+    ROS_INFO("X4 Here");
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[i] = x4Cloud->ranges[i];
@@ -24,6 +25,7 @@ void x4Callback(const sensor_msgs::LaserScan::ConstPtr x4Cloud)
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
+    ROS_INFO("F4 here");
     int j = 180;
     for (int i = 540; i < 720; i++)
     {
