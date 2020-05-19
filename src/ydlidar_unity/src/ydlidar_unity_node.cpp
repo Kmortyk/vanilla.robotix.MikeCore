@@ -47,13 +47,13 @@ int main(int argc, char **argv)
     const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
     while (ros::ok())
     {
-        ros::spinOnce();
         lastX4Message.ranges = unityPointCloud;
         unityPublisher.publish(lastX4Message);
-        for (int i = 0; i < 720; ++i) {
+        /*for (int i = 0; i < 720; ++i) {
             std::cout << lastX4Message.ranges[i] << " ";
-        }
+        }*/
         std::cout << std::endl;
+        ros::spinOnce();
     }
     return EXIT_SUCCESS;
 }
