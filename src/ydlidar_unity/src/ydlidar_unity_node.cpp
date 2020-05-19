@@ -8,23 +8,20 @@
 float unityPointCloud[720];
 sensor_msgs::LaserScan lastX4Message;
 
-void x4Callback(const sensor_msgs::LaserScan::ConstPtr x4Cloud)
+void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 {
     for (int i = 540; i < 720; i++)
     {
-        unityPointCloud[i] = x4Cloud->ranges[i];
+        unityPointCloud[i] = x4Cloud.ranges[i];
     }
     for (int i = 0; i < 180; i++)
     {
-        unityPointCloud[i] = x4Cloud->ranges[i];
+        unityPointCloud[i] = x4Cloud.ranges[i];
     }
-//    lastX4Message = x4Cloud;
-    ROS_INFO("X4");
 }
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
-    ROS_INFO("F4 here");
     int j = 180;
     for (int i = 540; i < 720; i++)
     {
@@ -36,7 +33,6 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
     }
-    ROS_INFO("F4 j = %d", j);
 }
 
 int main(int argc, char **argv)
@@ -48,12 +44,13 @@ int main(int argc, char **argv)
     const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
     while (ros::ok())
     {
-        /*lastX4Message.ranges = unityPointCloud;
-        unityPublisher.publish(lastX4Message);
-        for (int i = 0; i < 180; ++i) {
+        for (int i = 0; i < 720; i++)
+        {
+            lastX4Message.ranges[i] = unityPointCloud[i];
             std::cout << lastX4Message.ranges[i] << " ";
         }
-        std::cout << std::endl;*/
+        unityPublisher.publish(lastX4Message);
+        std::cout << std::endl;
         ros::spinOnce();
     }
     return EXIT_SUCCESS;
