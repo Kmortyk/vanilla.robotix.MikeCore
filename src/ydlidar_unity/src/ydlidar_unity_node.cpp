@@ -6,6 +6,7 @@
 #include "sensor_msgs/LaserScan.h"
 
 float unityPointCloud[720];
+float unityIntensities[720];
 sensor_msgs::LaserScan message;
 
 void x4Callback(const sensor_msgs::LaserScan x4Cloud)
@@ -13,16 +14,18 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
+        unityIntensities[i] = x4Cloud.intensities[i];
     }
     for (int i = 0; i < 180; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
+        unityIntensities[i] = x4Cloud.intensities[i];
     }
     message.angle_increment = x4Cloud.angle_increment;
     message.angle_max = x4Cloud.angle_max;
     message.angle_min = x4Cloud.angle_min;
     message.header = x4Cloud.header;
-    message.intensities = x4Cloud.intensities;
+//    message.intensities = x4Cloud.intensities;
     message.range_max = x4Cloud.range_max;
     message.range_min = x4Cloud.range_min;
     message.scan_time = x4Cloud.scan_time;
@@ -36,11 +39,12 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
+        unityIntensities[j] = f4Cloud->intensities[i];
         j++;
     }
     for (int i = 0; i < 180; i++)
     {
-        unityPointCloud[j] = f4Cloud->ranges[i];
+        unityIntensities[j] = f4Cloud->intensities[i];
         j++;
     }
 }
@@ -55,12 +59,14 @@ int main(int argc, char **argv)
     while (ros::ok())
     {
         message.ranges.clear();
+        message.intensities.clear();
         for (int i = 0; i < 719; i++)
         {
             if (i < 0.1 && i > 0) {
                 ROS_WARN("Fault detected at %d", i);
             }
             message.ranges.push_back(unityPointCloud[i]);
+            message.intensities.push_back(unityIntensities[i]);
         }
         for (auto i: message.ranges)
             std::cout << i << ' ';
