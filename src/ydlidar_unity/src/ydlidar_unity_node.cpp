@@ -61,7 +61,7 @@ int main(int argc, char **argv)
             if (i < 0.1 && i > 0) {
                 ROS_WARN("Fault detected at %d", j);
             }
-            message.ranges.push_back(i);
+            message.ranges.push_back(unityPointCloud[i]);
             j++;
         }
         for (auto i: message.ranges)
