@@ -60,11 +60,11 @@ int main(int argc, char **argv)
         {
             message.ranges.clear();
             message.ranges.push_back(unityPointCloud[i]);
-            std::cout << unityPointCloud[i] << " ";
+            //std::cout << unityPointCloud[i] << " ";
         }
-        /*for (auto i: message.ranges)
+        for (auto i: message.ranges)
             std::cout << i << ' ';
-        std::cout << std::endl << std::endl;*/
+        std::cout << std::endl << std::endl;
         unityPublisher.publish(message);
         ros::spinOnce();
     }
