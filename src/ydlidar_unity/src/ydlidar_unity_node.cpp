@@ -33,7 +33,7 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
     int j = 180;
-    for (int i = 540; i < 720; i++)
+    for (int i = 540; i < 719; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
