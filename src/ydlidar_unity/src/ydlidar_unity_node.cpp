@@ -56,9 +56,9 @@ int main(int argc, char **argv)
     const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
     while (ros::ok())
     {
+        message.ranges.clear();
         for (int i = 0; i < 720; i++)
         {
-            message.ranges.clear();
             message.ranges.push_back(unityPointCloud[i]);
             //std::cout << unityPointCloud[i] << " ";
         }
