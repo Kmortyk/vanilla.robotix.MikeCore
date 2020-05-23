@@ -33,7 +33,7 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
     int j = 180;
-    for (int i = 540; i < 719; i++)
+    for (int i = 540; i < 720; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     {
         message.ranges.clear();
         int j = 0;
-        for (float & i : unityPointCloud)
+        for (int i = 0; i < 719; i++)
         {
             if (i < 0.1 && i > 0) {
                 ROS_WARN("Fault detected at %d", j);
