@@ -58,7 +58,7 @@ int main(int argc, char * argv[]) {
     bool isTOFLidar = false;
 
     ros::NodeHandle nh;
-    ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scanX4", 1000);
+    ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scan_1", 1000);
     ros::NodeHandle nh_private("~");
     nh_private.param<std::string>("port", port, "/dev/ydlidar"); 
     nh_private.param<int>("baudrate", baudrate, 230400); 
