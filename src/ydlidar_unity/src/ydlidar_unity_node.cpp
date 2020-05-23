@@ -14,7 +14,7 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
     }
-    for (int i = 0; i < 181; i++)
+    for (int i = 0; i < 180; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
     }
@@ -32,13 +32,14 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
-    int j = 181;
-    for (int i = 541; i < 720; i++)
+    int j = 180;
+    for (int i = 540; i < 720; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
     }
-    for (int i = 0; i < 180; i++)
+    unityPointCloud[j++] = 0;
+    for (int i = 1; i < 180; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
