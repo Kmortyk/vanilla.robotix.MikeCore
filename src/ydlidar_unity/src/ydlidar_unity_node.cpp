@@ -38,8 +38,7 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
     }
-    unityPointCloud[j++] = 0;
-    for (int i = 1; i < 180; i++)
+    for (int i = 0; i < 180; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
@@ -56,9 +55,14 @@ int main(int argc, char **argv)
     while (ros::ok())
     {
         message.ranges.clear();
+        int j = 0;
         for (float & i : unityPointCloud)
         {
+            if (i < 0.1 && i > 0) {
+                ROS_WARN("Fault detected at %d", j);
+            }
             message.ranges.push_back(i);
+            j++;
         }
         for (auto i: message.ranges)
             std::cout << i << ' ';
