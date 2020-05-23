@@ -55,14 +55,12 @@ int main(int argc, char **argv)
     while (ros::ok())
     {
         message.ranges.clear();
-        int j = 0;
         for (int i = 0; i < 719; i++)
         {
             if (i < 0.1 && i > 0) {
-                ROS_WARN("Fault detected at %d", j);
+                ROS_WARN("Fault detected at %d", i);
             }
             message.ranges.push_back(unityPointCloud[i]);
-            j++;
         }
         for (auto i: message.ranges)
             std::cout << i << ' ';
