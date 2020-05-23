@@ -13,12 +13,10 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
     for (int i = 540; i < 720; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
-        //std::cout << unityPointCloud[i] << " ";
     }
-    for (int i = 0; i < 180; i++)
+    for (int i = 0; i < 181; i++)
     {
         unityPointCloud[i] = x4Cloud.ranges[i];
-        //std::cout << unityPointCloud[i] << " ";
     }
     message.angle_increment = x4Cloud.angle_increment;
     message.angle_max = x4Cloud.angle_max;
@@ -34,8 +32,8 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
-    int j = 180;
-    for (int i = 540; i < 720; i++)
+    int j = 181;
+    for (int i = 541; i < 720; i++)
     {
         unityPointCloud[j] = f4Cloud->ranges[i];
         j++;
@@ -57,10 +55,9 @@ int main(int argc, char **argv)
     while (ros::ok())
     {
         message.ranges.clear();
-        for (int i = 0; i < 720; i++)
+        for (float & i : unityPointCloud)
         {
-            message.ranges.push_back(unityPointCloud[i]);
-            //std::cout << unityPointCloud[i] << " ";
+            message.ranges.push_back(i);
         }
         for (auto i: message.ranges)
             std::cout << i << ' ';
