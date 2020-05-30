@@ -110,25 +110,25 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         if (message->ranges[i] > 0 && message->ranges[i] < 0.3f) {
             if (i > 270 && i < 450) {
                 ROS_WARN("Backward obstacle");
-                ROS_INFO("Range %f", message->ranges[i]);
+                //ROS_INFO("Range %f", message->ranges[i]);
                 backward = true;
                 return;
             } else
             if (i > 90 && i < 270) {
                 ROS_WARN("Left obstacle");
-                ROS_INFO("Range %f", message->ranges[i]);
+                //ROS_INFO("Range %f", message->ranges[i]);
                 left = true;
                 return;
             } else
             if (i > 630 || i < 90) {
                 ROS_WARN("Forward obstacle");
-                ROS_INFO("Range %f", message->ranges[i]);
+                //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
                 return;
             } else
             if (i > 450 && i < 630) {
                 ROS_WARN("Right obstacle");
-                ROS_INFO("Range %f", message->ranges[i]);
+                //ROS_INFO("Range %f", message->ranges[i]);
                 right = true;
                 return;
             }
@@ -165,7 +165,7 @@ void stuck_detect() {
     if (now.toSec() - transform_time_sec < 1) {
         return;
     }
-    ROS_WARN("Time passed!");
+    //ROS_WARN("Time passed!");
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
@@ -173,7 +173,7 @@ void stuck_detect() {
         ROS_ERROR("error: %s", exception.what());
         return;
     }
-    ROS_WARN("Wait for transform passed");
+    //ROS_WARN("Wait for transform passed");
 
     double bot_x = transform_bot.getOrigin().x();
     double bot_y = transform_bot.getOrigin().y();
@@ -187,10 +187,10 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.03 && dY < 0.03 && dR < 3.0) {
+    if (dX < 0.3 && dY < 0.3 && dR < 3.0) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
-        sleep(1);
+        sleep(3);
     }
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
