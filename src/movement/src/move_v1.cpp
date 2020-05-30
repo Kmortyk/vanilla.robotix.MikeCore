@@ -107,7 +107,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     }*/
     for (int i = 0; i < 720; i++) {
         left = right = backward = forward = false;
-        if (message->ranges[i] > 0 && message->ranges[i] < 0.3f) {
+        if (message->ranges[i] > 0 && message->ranges[i] < 0.5f) {
             if (i > 270 && i < 450) {
                 ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
