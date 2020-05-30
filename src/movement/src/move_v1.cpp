@@ -165,6 +165,7 @@ void stuck_detect() {
     if (now.toSec() - transform_time_sec < 1) {
         return;
     }
+    ROS_WARN("Time passed!");
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
@@ -172,6 +173,7 @@ void stuck_detect() {
         ROS_ERROR("error: %s", exception.what());
         return;
     }
+    ROS_WARN("Wait for transform passed");
 
     double bot_x = transform_bot.getOrigin().x();
     double bot_y = transform_bot.getOrigin().y();
