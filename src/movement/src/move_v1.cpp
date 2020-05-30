@@ -187,10 +187,10 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.3 && dY < 0.3 && dR < 3.0) {
+    if (dX < 0.1 && dY < 0.1 && dR < 3.0) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
-        sleep(3);
+        sleep(1);
     }
 
     ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
     image_middle_x = IMAGE_WIDTH / 2.0;
     image_middle_y = IMAGE_HEIGHT / 2.0;
     ros::NodeHandle nodeHandle;
-    sleep(5);
+    //sleep(5);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
