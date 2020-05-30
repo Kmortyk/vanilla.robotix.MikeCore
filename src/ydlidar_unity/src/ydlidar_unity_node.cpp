@@ -54,8 +54,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "ydlidar_unity_node");
     ros::NodeHandle nodeHandle;
     const ros::Subscriber f4Subscriber = nodeHandle.subscribe("scanF4", 1000, f4Callback);
-    const ros::Subscriber x4Subscriber = nodeHandle.subscribe("scanX4", 1000, x4Callback);
-    const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scan", 1000);
+    const ros::Subscriber x4Subscriber = nodeHandle.subscribe("scan", 1000, x4Callback);
+    const ros::Publisher unityPublisher = nodeHandle.advertise<sensor_msgs::LaserScan>("scanUnity", 1000);
     while (ros::ok())
     {
         message.ranges.clear();

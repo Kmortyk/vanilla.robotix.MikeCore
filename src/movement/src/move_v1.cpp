@@ -204,7 +204,7 @@ int main(int argc, char **argv) {
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
-            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
+            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scanUnity", 1000, ydLidarPointsCallback);
     ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
