@@ -35,6 +35,8 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
+    ROS_INFO("F4 cloud: %lu", f4Cloud->ranges.size());
+
     double a = 0, b = 0, c = 0, d = 0;
     for (int i = 0; i < 151; ++i) {
         a += f4Cloud->ranges[i];
