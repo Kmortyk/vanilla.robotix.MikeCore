@@ -61,7 +61,7 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
     ROS_INFO("A= %f; B= %f; C= %f; D= %f.", a, b, c, d);*/
 
     for (int i = 0; i < 789; i++) {
-        if (!(i % 5))
+        if (!(i % 7))
             std::cout << std::setfill('0') << std::setw(2) << std::floor(f4Cloud->ranges[i] * 10)/10 << " ";
     }
     std::cout << std::endl;
