@@ -109,25 +109,25 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         left = right = backward = forward = false;
         if (message->ranges[i] > 0 && message->ranges[i] < 0.5f) {
             if (i > 270 && i < 450) {
-                ROS_WARN("Backward obstacle");
+                //ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 backward = true;
                 return;
             } else
             if (i > 90 && i < 270) {
-                ROS_WARN("Left obstacle");
+                //ROS_WARN("Left obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 left = true;
                 return;
             } else
             if (i > 630 || i < 90) {
-                ROS_WARN("Forward obstacle");
+                //ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
                 return;
             } else
             if (i > 450 && i < 630) {
-                ROS_WARN("Right obstacle");
+                //ROS_WARN("Right obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 right = true;
                 return;
@@ -218,9 +218,9 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        movement();
-        stuck_detect();
-        //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
+        //movement();
+        //stuck_detect();
+        ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
     gpio_command(MoveCommands::FULL_STOP);
