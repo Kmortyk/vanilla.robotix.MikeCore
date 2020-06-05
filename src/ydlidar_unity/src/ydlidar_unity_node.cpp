@@ -38,22 +38,25 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
     ROS_INFO("F4 cloud: %lu", f4Cloud->ranges.size());
 
     double a = 0, b = 0, c = 0, d = 0;
-    for (int i = 0; i < 151; ++i) {
+    for (int i = 270; i < 450; ++i) {
         a += f4Cloud->ranges[i];
     }
-    a /= 151;
-    for (int i = 151; i < 302; ++i) {
+    a /= 180;
+    for (int i = 90; i < 270; ++i) {
         b += f4Cloud->ranges[i];
     }
-    b /= 151;
-    for (int i = 302; i < 454; ++i) {
+    b /= 180;
+    for (int i = 450; i < 630; ++i) {
         c += f4Cloud->ranges[i];
     }
-    c /= 152;
-    for (int i = 454; i < 606; ++i) {
+    c /= 180;
+    for (int i = 630; i < 720; ++i) {
         d += f4Cloud->ranges[i];
     }
-    d /= 152;
+    for (int i = 0; i < 90; ++i) {
+        d += f4Cloud->ranges[i];
+    }
+    d /= 180;
 
     ROS_INFO("A= %f; B= %f; C= %f; D= %f.", a, b, c, d);
 
