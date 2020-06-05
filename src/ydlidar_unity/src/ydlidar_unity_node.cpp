@@ -62,7 +62,7 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 
     for (int i = 0; i < 789; i++) {
         if (!(i % 5))
-            std::cout << std::floor((f4Cloud->ranges[i] + 0.1) * 10)/10 << " ";
+            std::cout << std::setfill('0') << std::setw(2) << std::floor(f4Cloud->ranges[i] * 10)/10 << " ";
     }
     std::cout << std::endl;
 
