@@ -35,7 +35,27 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 
 void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
 {
-    ROS_INFO("Ranges size: %lu", f4Cloud->ranges.size());
+    double a = 0, b = 0, c = 0, d = 0;
+    for (int i = 0; i < 151; ++i) {
+        a += f4Cloud->ranges[i];
+    }
+    a /= 151;
+    for (int i = 151; i < 302; ++i) {
+        b += f4Cloud->ranges[i];
+    }
+    b /= 151;
+    for (int i = 302; i < 454; ++i) {
+        c += f4Cloud->ranges[i];
+    }
+    c /= 152;
+    for (int i = 454; i < 606; ++i) {
+        d += f4Cloud->ranges[i];
+    }
+    d /= 152;
+
+    ROS_INFO("A= %f; B= %f; C= %f; D= %f.", a, b, c, d);
+
+    /*
     int j = 180;
     for (int i = 540; i < 720; i++)
     {
@@ -47,7 +67,7 @@ void f4Callback(const sensor_msgs::LaserScan::ConstPtr f4Cloud)
     {
         unityIntensities[j] = f4Cloud->intensities[i];
         j++;
-    }
+    }*/
 }
 
 int main(int argc, char **argv)
