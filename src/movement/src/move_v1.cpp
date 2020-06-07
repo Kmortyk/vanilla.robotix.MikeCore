@@ -89,25 +89,29 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        if (i > 90 && i < 270) {
+        //if (i > 90 && i < 270) {
+        if (i > 90 && i < 180) {
             left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 630 || i < 90) {
             forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        if (i > 450 && i < 630) {
+        //if (i > 450 && i < 630) {
+        if (i > 540 && i < 630) {
             right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         }
     }
     backward_m = backward_lm / 180;
-    left_m = left_lm / 180;
+//    left_m = left_lm / 180;
+    left_m = left_lm / 90;
     forward_m = forward_lm / 180;
-    right_m = right_lm / 180;
+//    right_m = right_lm / 180;
+    right_m = right_lm / 90;
     /*if (message->ranges[360] > 0 && message->ranges[360] < 0.2f) {
     }*/
     for (int i = 0; i < 720; i++) {
         left = right = backward = forward = false;
-        if (message->ranges[i] > 0 && message->ranges[i] < 0.5f) {
+        if (message->ranges[i] >= 0.1f && message->ranges[i] <= 0.4f) {
             if (i > 270 && i < 450) {
                 //ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);

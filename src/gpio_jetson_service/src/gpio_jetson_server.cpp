@@ -49,39 +49,51 @@ bool serviceHandler(gpio_jetson_service::gpio_srv::Request &request, gpio_jetson
             break;
         case MoveCommands::LEFT_FORWARD_LOW:
             GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::LOW);
+            GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::LOW);
             break;
         case MoveCommands::LEFT_FORWARD_MIDDLE:
             GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::MIDDLE);
             break;
         case MoveCommands::LEFT_FORWARD_FAST:
             GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::FAST);
+            GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::FAST);
             break;
         case MoveCommands::LEFT_BACKWARD_LOW:
             GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::LOW);
+            GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::LOW);
             break;
         case MoveCommands::LEFT_BACKWARD_MIDDLE:
             GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::MIDDLE);
             break;
         case MoveCommands::LEFT_BACKWARD_FAST:
             GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::FAST);
+            GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::FAST);
             break;
         case MoveCommands::RIGHT_FORWARD_LOW:
             GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::LOW);
+            GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::LOW);
             break;
         case MoveCommands::RIGHT_FORWARD_MIDDLE:
             GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::MIDDLE);
             break;
         case MoveCommands::RIGHT_FORWARD_FAST:
             GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::FAST);
+            GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::FAST);
             break;
         case MoveCommands::RIGHT_BACKWARD_LOW:
             GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::LOW);
+            GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::LOW);
             break;
         case MoveCommands::RIGHT_BACKWARD_MIDDLE:
             GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::MIDDLE);
             break;
         case MoveCommands::RIGHT_BACKWARD_FAST:
             GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::FAST);
+            GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::FAST);
             break;
         default:
             return false;
