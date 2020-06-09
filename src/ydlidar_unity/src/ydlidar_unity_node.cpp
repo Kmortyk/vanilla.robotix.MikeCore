@@ -13,11 +13,11 @@ void x4Callback(const sensor_msgs::LaserScan x4Cloud)
 {
 
     //POINT CLOUD VIEWER
-    for (int i = 0; i < 720; i++) {
+    /*for (int i = 0; i < 720; i++) {
         if (!(i % 8))
             std::cout << std::setfill('0') << std::setw(3) << std::floor(x4Cloud.ranges[i] * 10)/10 << " ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     /*
      * на этом лидаре всего 720 точек.
