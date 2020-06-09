@@ -22,6 +22,8 @@ ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
 float image_middle_x, image_middle_y;
+int min_left_right;
+bool can_switch_side = true;
 
 void gpio_command(const uint8_t command) {
     gpio_jetson_service::gpio_srv service;
@@ -142,25 +144,28 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
 
 void movement() {
     if (forward) {
-        int min = left_m >= right_m ? 0 : 1;
-        switch (min) {
+        if (can_switch_side)
+            min_left_right = left_m >= right_m ? 0 : 1;
+        switch (min_left_right) {
             case 0:
                 ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+                can_switch_side = false;
                 sleep(1);
-                gpio_command(MoveCommands::FORWARD_LOW);
+//                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
-                gpio_command(MoveCommands::FORWARD_LOW);
+//                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             default:
                 ROS_ERROR("Case doesn't exist!");
         }
     } else {
         gpio_command(MoveCommands::FORWARD_LOW);
+        can_switch_side = true;
     }
 }
 
