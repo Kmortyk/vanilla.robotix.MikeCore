@@ -22,7 +22,7 @@ ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
 float image_middle_x, image_middle_y;
-int min_left_right;
+int min_left_right = 0;
 bool can_switch_side = true;
 
 void gpio_command(const uint8_t command) {
@@ -111,8 +111,8 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     right_m = right_lm / 90;
     /*if (message->ranges[360] > 0 && message->ranges[360] < 0.2f) {
     }*/
+    left = right = backward = forward = false;
     for (int i = 0; i < 720; i++) {
-        left = right = backward = forward = false;
         if (message->ranges[i] >= 0.1f && message->ranges[i] <= 0.4f) {
             if (i > 270 && i < 450) {
                 //ROS_WARN("Backward obstacle");
@@ -145,7 +145,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
 void movement() {
     if (forward) {
         if (can_switch_side)
-            min_left_right = left_m >= right_m ? 0 : 1;
+            min_left_right = left_m <= right_m ? 0 : 1;
         switch (min_left_right) {
             case 0:
                 ROS_WARN("Going to the left side");
