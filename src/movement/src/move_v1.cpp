@@ -202,6 +202,7 @@ void stuck_detect() {
         sleep(1);
         ros::spinOnce();
         forward = true;
+        movement();
     }
 
     ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
