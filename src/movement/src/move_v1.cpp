@@ -200,6 +200,7 @@ void stuck_detect() {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
+        ros::spinOnce();
         forward = true;
     }
 
