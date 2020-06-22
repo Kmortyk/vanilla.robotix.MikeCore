@@ -48,10 +48,10 @@
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
   <!-- PS4 joypad -->
-  <include file="$(find ds4_driver)/launch/ds4_twist.launch">
-    <arg name="dof" value="2"/>
-    <remap from="cmd_vel" to="joypad_teleop/cmd_vel"/>
-  </include>
+<!--  <include file="$(find ds4_driver)/launch/ds4_twist.launch">-->
+<!--    <arg name="dof" value="2"/>-->
+<!--    <remap from="cmd_vel" to="joypad_teleop/cmd_vel"/>-->
+<!--  </include>-->
 
   <!-- Twist MUX -->
   <node pkg="twist_mux" type="twist_mux" name="twist_mux">
@@ -71,6 +71,6 @@
 -->
   
   <!-- ROS control -->
-  <include file="$(find hoverboard_driver)/launch/hoverboard.launch" />
+<!--  <include file="$(find hoverboard_driver)/launch/hoverboard.launch" />-->
   
 </launch>
