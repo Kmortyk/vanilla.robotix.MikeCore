@@ -3,7 +3,7 @@
     <node name="ydlidar_ros_node" pkg="ydlidar_ros" type="ydlidar_ros_node" output="screen" respawn="false" >
         <param name="port" type="string" value="/dev/ydlidar"/>
         <param name="baudrate" type="int" value="128000"/>
-        <param name="frame_id" type="string" value="laser_frame"/>
+        <param name="frame_id" type="string" value="base_frame"/>
         <param name="low_exposure" type="bool" value="false"/>
         <param name="resolution_fixed" type="bool" value="true"/>
         <param name="auto_reconnect" type="bool" value="true"/>
@@ -19,14 +19,26 @@
 
 <!--    <node pkg ="tf" type="static_transform_publisher" name="map_to_odom" args="0.0 0.0 0.0 0.0 0.0 0.0 /map /nav 40"/>-->
 
-    <node pkg ="tf" type="static_transform_publisher" name="odom_to_base_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /nav /base_footprint 40"/>
+<!--    <node pkg ="tf" type="static_transform_publisher" name="odom_to_base_link" args="0.0 0.0 0.0 0.0 0.0 0.0 /nav /base_footprint 40"/>-->
 
-    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0.2245 0.0 0.2 0.0 0.0 0.0 /base_footprint /laser_frame 40" />
+<!--    <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0.2245 0.0 0.2 0.0 0.0 0.0 /base_footprint /laser_frame 40" />-->
 
-    <arg name="tf_map_scanmatch_transform_frame_name" default="scanmatcher_frame"/>
+<!--    <arg name="tf_map_scanmatch_transform_frame_name" default="scanmatcher_frame"/>-->
+
+    <node pkg="tf" type="static_transform_publisher" name="map_nav_broadcaster" args="0 0 0 0 0 0 /map /nav 40"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="map_scanmatcher_broadcaster" args="0 0 0 0 0 0 /map /scanmatcher_frame 40"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="nav_baselink_broadcaster" args="0 0 0 0 0 0 /nav /base_link 40"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="nav_baseframe_broadcaster" args="0 0 0 0 0 0 /nav /base_frame 40"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="nav_basefootprint_broadcaster" args="0 0 0 0 0 0 /nav /base_footprint 40"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="baselink_laser_broadcaster" args="0 0 0 0 0 0 /base_frame /laser 40"/>
 <!--    <arg name="base_frame" default="base_footprint"/>-->
-    <arg name="base_frame" default="laser_frame"/>
-    <arg name="odom_frame" default="laser_frame"/>
+    <arg name="base_frame" default="base_frame"/>
+    <arg name="odom_frame" default="base_frame"/>
 
 <!--    <arg name="odom_frame" default="nav"/>-->
     <arg name="pub_map_odom_transform" default="true"/>
