@@ -73,6 +73,10 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 
     chasis_correction = false;
 
+    if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
+        return;
+    }
+
     if (object_center_x < image_middle_x - FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow left to the object...");
@@ -91,13 +95,16 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         usleep(50000);
     }
 
-    if (!chasis_correction) {
-        if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
-            gpio_command(MoveCommands::FULL_STOP);
-        } else {
-            gpio_command(MoveCommands::FORWARD_LOW);
-        }
-    }
+//    if (!chasis_correction) {
+//        if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
+//            gpio_command(MoveCommands::FULL_STOP);
+//        } else {
+//            gpio_command(MoveCommands::FORWARD_LOW);
+//        }
+//    }
+
+    if (!chasis_correction)
+        gpio_command(MoveCommands::FORWARD_LOW);
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
