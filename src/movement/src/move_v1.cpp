@@ -85,7 +85,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         gpio_command(MoveCommands::LEFT_FORWARD_LOW);
         usleep(50000);
         gpio_command(MoveCommands::LEFT_STOP);
-        usleep(50000);
+        usleep(100000);
     }
 
     if (object_center_x > image_middle_x + FAULT) {
@@ -94,7 +94,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
         usleep(50000);
         gpio_command(MoveCommands::RIGHT_STOP);
-        usleep(50000);
+        usleep(100000);
     }
 
 //    if (!chasis_correction) {
