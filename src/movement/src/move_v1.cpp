@@ -77,6 +77,8 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         return;
     }
 
+    gpio_command(MoveCommands::FULL_STOP);
+
     if (object_center_x < image_middle_x - FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow left to the object...");
