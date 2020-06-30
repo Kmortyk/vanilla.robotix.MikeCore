@@ -12,8 +12,8 @@
 #include "inference/Bboxes.h"
 
 #define IMAGE_WIDTH 300
-#define IMAGE_HEIGHT 300
-#define FAULT 10
+#define IMAGE_HEIGHT 225
+#define FAULT 20
 
 bool backward, left, forward, right, object_detected, chasis_correction;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
@@ -76,15 +76,19 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if (object_center_x < image_middle_x - FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow left to the object...");
-        gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
-        usleep(100000);
+        gpio_command(MoveCommands::LEFT_FORWARD_LOW);
+        usleep(50000);
+        gpio_command(MoveCommands::LEFT_STOP);
+        usleep(50000);
     }
 
     if (object_center_x > image_middle_x + FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow right to the object...");
-        gpio_command(MoveCommands::LEFT_FORWARD_LOW);
-        usleep(100000);
+        gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
+        usleep(50000);
+        gpio_command(MoveCommands::RIGHT_STOP);
+        usleep(50000);
     }
 
     if (!chasis_correction) {
