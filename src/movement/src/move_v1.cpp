@@ -78,6 +78,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     }
 
     gpio_command(MoveCommands::FULL_STOP);
+    usleep(100000);
 
     if (object_center_x < image_middle_x - FAULT) {
         chasis_correction = true;
