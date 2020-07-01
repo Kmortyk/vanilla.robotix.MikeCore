@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   ydlidar_ros
   pcl_ros
+  inference
 )
 
 ## System dependencies are found with CMake's conventions
