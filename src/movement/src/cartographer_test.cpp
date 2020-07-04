@@ -10,6 +10,8 @@
 #include "cartographer_ros_msgs/SubmapQuery.h"
 
 ros::ServiceClient submapQueryClient;
+tf::TransformListener* transformListener;
+tf::StampedTransform transform_bot;
 
 void submapCallback(const cartographer_ros_msgs::SubmapList::ConstPtr& list)
 {
@@ -51,7 +53,7 @@ void submapCallback(const cartographer_ros_msgs::SubmapList::ConstPtr& list)
 
 void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 {
-    /*int width = grid->info.width;
+    int width = grid->info.width;
     int i = 0;
     auto position = grid->info.origin.position;
     auto orientation = grid->info.origin.orientation;
@@ -67,7 +69,24 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     ROS_INFO("X = %f OX = %f", position.x, orientation.x);
     ROS_INFO("Y = %f OY = %f", position.y, orientation.y);
     ROS_INFO("Z = %f OZ = %f", position.z, orientation.z);
-    ROS_INFO("OW = %f", orientation.w);*/
+    ROS_INFO("OW = %f", orientation.w);
+
+    try {
+        transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
+        transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
+    } catch (tf2::LookupException exception) {
+        ROS_ERROR("error: %s", exception.what());
+        return;
+    }
+    //ROS_WARN("Wait for transform passed");
+
+    double bot_x = transform_bot.getOrigin().x();
+    double bot_y = transform_bot.getOrigin().y();
+
+    double roll, pitch, yaw;
+    transform_bot.getBasis().getRPY(roll, pitch, yaw);
+
+    double bot_dir = yaw * 180.0 / M_PI;
 }
 
 void transformPoint(const tf::TransformListener& listener) {
@@ -97,31 +116,17 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "cartographer_test");
     ros::NodeHandle nodeHandle;
-    ros::Subscriber subscriber = nodeHandle.subscribe("submap_list", 1000, submapCallback);
+    //ros::Subscriber subscriber = nodeHandle.subscribe("submap_list", 1000, submapCallback);
     ros::Subscriber subscriber1 = nodeHandle.subscribe("map", 1000, occupancyGridCallback);
-    tf::TransformListener listener(nodeHandle);
+    //tf::TransformListener listener(nodeHandle);
     //ros::Timer timer = nodeHandle.createTimer(ros::Duration(1.0), boost::bind(&transformPoint, boost::ref(listener)));
     tf::StampedTransform transform_bot;
+    transformListener = new tf::TransformListener(nodeHandle);
 
-    submapQueryClient = nodeHandle.serviceClient<cartographer_ros_msgs::SubmapQuery>("submap_query");
+    //submapQueryClient = nodeHandle.serviceClient<cartographer_ros_msgs::SubmapQuery>("submap_query");
 
     while (ros::ok())
     {
-        listener.waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
-        listener.lookupTransform("base_link", "map", ros::Time(0), transform_bot);
-
-        double bot_x = transform_bot.getOrigin().x();
-        double bot_y = transform_bot.getOrigin().y();
-
-        double roll, pitch, yaw;
-        transform_bot.getBasis().getRPY(roll, pitch, yaw);
-
-        double bot_dir = yaw * 180.0 / M_PI;
-
-        /*ROS_INFO("Bot X: %f", bot_x);
-        ROS_INFO("Bot Y: %f", bot_y);
-        ROS_INFO("Bot Z: %f", bot_dir);*/
-        sleep(1);
         ros::spinOnce();
     }
     return EXIT_SUCCESS;
