@@ -87,6 +87,7 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     transform_bot.getBasis().getRPY(roll, pitch, yaw);
 
     double bot_dir = yaw * 180.0 / M_PI;
+    ROS_INFO("bot_x: %f;\nbot_y: %f; bot_dir: %f;", bot_x, bot_y, bot_dir);
 }
 
 void transformPoint(const tf::TransformListener& listener) {
