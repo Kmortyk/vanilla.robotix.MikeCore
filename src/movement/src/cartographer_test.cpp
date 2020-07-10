@@ -51,7 +51,7 @@ void submapCallback(const cartographer_ros_msgs::SubmapList::ConstPtr& list)
     }
 }
 
-void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
+/*void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 {
     int width = grid->info.width;
     int i = 0;
@@ -88,6 +88,30 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 
     double bot_dir = yaw * 180.0 / M_PI;
     ROS_INFO("bot_x: %f;\nbot_y: %f; bot_dir: %f;", bot_x, bot_y, bot_dir);
+}*/
+
+void mapToWorld(double map_x, double map_y, double& pos_x, double& pos_y, const nav_msgs::OccupancyGrid& map)
+{
+    pos_x = map.info.origin.position.x + (map_x + 0.5) * map.info.resolution;
+    pos_y = map.info.origin.position.y + (map_y + 0.5) * map.info.resolution;
+}
+
+void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
+{
+    try {
+        transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
+        transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
+    } catch (tf2::LookupException exception) {
+        ROS_ERROR("error: %s", exception.what());
+        return;
+    }
+    double bot_x = transform_bot.getOrigin().x();
+    double bot_y = transform_bot.getOrigin().y();
+    double roll, pitch, yaw;
+    transform_bot.getBasis().getRPY(roll, pitch, yaw);
+    double bot_dir = yaw * 180.0 / M_PI;
+    double x, y;
+    mapToWorld(bot_x, bot_y, x, y, *grid);
 }
 
 void transformPoint(const tf::TransformListener& listener) {
