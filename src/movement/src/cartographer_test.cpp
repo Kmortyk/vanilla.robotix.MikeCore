@@ -112,6 +112,17 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     double bot_dir = yaw * 180.0 / M_PI;
     double x, y;
     mapToWorld(bot_x, bot_y, x, y, *grid);
+    int i = 0;
+    for (auto &p : grid->data)
+    {
+        printf("%d ", p);
+        i++;
+        if (i >= grid->info.width) {
+            putchar('\n');
+            i = 0;
+        }
+    }
+    ROS_INFO("bot_x: %f;\nbot_y: %f; bot_dir: %f;", x, y, bot_dir);
 }
 
 void transformPoint(const tf::TransformListener& listener) {
