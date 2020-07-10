@@ -124,7 +124,7 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     }
     double origin_x = grid->info.origin.position.x;
     double origin_y = grid->info.origin.position.y;
-    ROS_INFO("origin_x: %f; origin_y: %f; bot_x: %f; bot_y: %f; bot_dir: %f;", origin_x, origin_y, x, y, bot_dir);
+    ROS_INFO("origin_x: %f; origin_y: %f; bot_x: %f; bot_y: %f; bot_dir: %f;", origin_x, origin_y, bot_x, bot_y, bot_dir);
 }
 
 void transformPoint(const tf::TransformListener& listener) {
