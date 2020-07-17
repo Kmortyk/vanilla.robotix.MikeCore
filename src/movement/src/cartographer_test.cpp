@@ -132,13 +132,12 @@ void mapToWorld(double map_x, double map_y, double& pos_x, double& pos_y, const 
 
 tf2_ros::Buffer tfBuffer;
 std::string globalFrame, robotBaseFrame;
-double transformTolerance;
 geometry_msgs::PoseStamped oldPose;
 
 void init(ros::NodeHandle& nodeHandle)
 {
     tf2::toMsg(tf2::Transform::getIdentity(), oldPose.pose);
-    nodeHandle.param("global_frame", globalFrame, std::string("odom"));
+    nodeHandle.param("global_frame", globalFrame, std::string("map"));
     nodeHandle.param("robot_base_frame", robotBaseFrame, std::string("base_link"));
 }
 
@@ -149,8 +148,6 @@ bool getRobotPose(geometry_msgs::PoseStamped& globalPose)
     tf2::toMsg(tf2::Transform::getIdentity(), robotPose.pose);
     robotPose.header.frame_id = robotBaseFrame;
     robotPose.header.stamp = ros::Time();
-
-
     try
     {
         tfBuffer.transform(robotPose, globalPose, globalFrame);
