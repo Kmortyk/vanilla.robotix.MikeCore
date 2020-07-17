@@ -15,7 +15,6 @@
 ros::ServiceClient submapQueryClient;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
-ros::NodeHandle nodeHandle;
 
 void submapCallback(const cartographer_ros_msgs::SubmapList::ConstPtr& list)
 {
@@ -136,7 +135,7 @@ std::string globalFrame, robotBaseFrame;
 double transformTolerance;
 geometry_msgs::PoseStamped oldPose;
 
-void init()
+void init(ros::NodeHandle& nodeHandle)
 {
     tf2::toMsg(tf2::Transform::getIdentity(), oldPose.pose);
     nodeHandle.param("global_frame", globalFrame, std::string("map"));
@@ -221,12 +220,14 @@ void transformPoint(const tf::TransformListener& listener) {
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "cartographer_test");
+    ros::NodeHandle nodeHandle;
     //ros::Subscriber subscriber = nodeHandle.subscribe("submap_list", 1000, submapCallback);
     ros::Subscriber subscriber1 = nodeHandle.subscribe("map", 1000, occupancyGridCallback);
     //tf::TransformListener listener(nodeHandle);
     //ros::Timer timer = nodeHandle.createTimer(ros::Duration(1.0), boost::bind(&transformPoint, boost::ref(listener)));
     tf::StampedTransform transform_bot;
     transformListener = new tf::TransformListener(nodeHandle);
+    init(nodeHandle);
 
     //submapQueryClient = nodeHandle.serviceClient<cartographer_ros_msgs::SubmapQuery>("submap_query");
 
