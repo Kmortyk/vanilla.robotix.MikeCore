@@ -138,7 +138,7 @@ geometry_msgs::PoseStamped oldPose;
 void init(ros::NodeHandle& nodeHandle)
 {
     tf2::toMsg(tf2::Transform::getIdentity(), oldPose.pose);
-    nodeHandle.param("global_frame", globalFrame, std::string("map"));
+    nodeHandle.param("global_frame", globalFrame, std::string("/map"));
     nodeHandle.param("robot_base_frame", robotBaseFrame, std::string("base_link"));
 }
 
