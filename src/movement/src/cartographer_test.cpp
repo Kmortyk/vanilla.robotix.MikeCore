@@ -176,7 +176,7 @@ bool getRobotPose(geometry_msgs::PoseStamped& globalPose)
 void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 {
     int i = 0;
-    for (auto &p : grid->data)
+    /*for (auto &p : grid->data)
     {
         printf("%d ", p);
         i++;
@@ -184,7 +184,7 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
             putchar('\n');
             i = 0;
         }
-    }
+    }*/
     geometry_msgs::PoseStamped pose;
     if (getRobotPose(pose))
     {
