@@ -8,10 +8,14 @@
 #include "nav_msgs/OccupancyGrid.h"
 #include <cmath>
 #include "cartographer_ros_msgs/SubmapQuery.h"
+#include <tf2/LinearMath/Transform.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2/utils.h>
 
 ros::ServiceClient submapQueryClient;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
+ros::NodeHandle nodeHandle;
 
 void submapCallback(const cartographer_ros_msgs::SubmapList::ConstPtr& list)
 {
@@ -96,7 +100,7 @@ void mapToWorld(double map_x, double map_y, double& pos_x, double& pos_y, const 
     pos_y = map.info.origin.position.y + (map_y + 0.5) * map.info.resolution;
 }
 
-void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
+/*void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 {
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
@@ -125,6 +129,70 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     double origin_x = grid->info.origin.position.x;
     double origin_y = grid->info.origin.position.y;
     ROS_INFO("origin_x: %f; origin_y: %f; bot_x: %f; bot_y: %f; bot_dir: %f;", origin_x, origin_y, bot_x, bot_y, bot_dir);
+}*/
+
+tf2_ros::Buffer tfBuffer;
+std::string globalFrame, robotBaseFrame;
+double transformTolerance;
+geometry_msgs::PoseStamped oldPose;
+
+void init()
+{
+    tf2::toMsg(tf2::Transform::getIdentity(), oldPose.pose);
+    nodeHandle.param("global_frame", globalFrame, std::string("map"));
+    nodeHandle.param("robot_base_frame", robotBaseFrame, std::string("base_link"));
+}
+
+bool getRobotPose(geometry_msgs::PoseStamped& globalPose)
+{
+    tf2::toMsg(tf2::Transform::getIdentity(), globalPose.pose);
+    geometry_msgs::PoseStamped robotPose;
+    tf2::toMsg(tf2::Transform::getIdentity(), robotPose.pose);
+    robotPose.header.frame_id = robotBaseFrame;
+    robotPose.header.stamp = ros::Time();
+
+    try
+    {
+        tfBuffer.transform(robotPose, globalPose, globalFrame);
+    }
+    catch (tf2::LookupException& ex)
+    {
+        ROS_ERROR_THROTTLE(1.0, "No Transform available Error looking up robot pose: %s\n", ex.what());
+        return false;
+    }
+    catch (tf2::ConnectivityException& ex)
+    {
+        ROS_ERROR_THROTTLE(1.0, "Connectivity Error looking up robot pose: %s\n", ex.what());
+        return false;
+    }
+    catch (tf2::ExtrapolationException& ex)
+    {
+        ROS_ERROR_THROTTLE(1.0, "Extrapolation Error looking up robot pose: %s\n", ex.what());
+        return false;
+    }
+    return true;
+}
+
+void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
+{
+    int i = 0;
+    for (auto &p : grid->data)
+    {
+        printf("%d ", p);
+        i++;
+        if (i >= grid->info.width) {
+            putchar('\n');
+            i = 0;
+        }
+    }
+    geometry_msgs::PoseStamped pose;
+    if (getRobotPose(pose))
+    {
+        double x = pose.pose.position.x,
+        y = pose.pose.position.y,
+        yaw = tf2::getYaw(pose.pose.orientation);
+        ROS_INFO("X = %f; Y= %f; YAW = %f.", x, y, yaw);
+    }
 }
 
 void transformPoint(const tf::TransformListener& listener) {
@@ -153,7 +221,6 @@ void transformPoint(const tf::TransformListener& listener) {
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "cartographer_test");
-    ros::NodeHandle nodeHandle;
     //ros::Subscriber subscriber = nodeHandle.subscribe("submap_list", 1000, submapCallback);
     ros::Subscriber subscriber1 = nodeHandle.subscribe("map", 1000, occupancyGridCallback);
     //tf::TransformListener listener(nodeHandle);
