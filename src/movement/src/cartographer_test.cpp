@@ -221,6 +221,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "cartographer_test");
     ros::NodeHandle nodeHandle;
+    tfBuffer.setUsingDedicatedThread(true);
     //ros::Subscriber subscriber = nodeHandle.subscribe("submap_list", 1000, submapCallback);
     ros::Subscriber subscriber1 = nodeHandle.subscribe("map", 1000, occupancyGridCallback);
     //tf::TransformListener listener(nodeHandle);
