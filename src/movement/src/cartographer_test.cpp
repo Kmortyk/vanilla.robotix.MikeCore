@@ -217,7 +217,7 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
     int c = 0;
     for (auto &p : grid->data)
     {
-        if (c == i_int && k == j_int) {
+        if (k == i_int && c == j_int) {
             printf("\033[0;31mH\033[0m ");
         } else {
             printf("%d ", p);
