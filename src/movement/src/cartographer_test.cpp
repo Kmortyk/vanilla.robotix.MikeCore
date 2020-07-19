@@ -191,6 +191,17 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
         ROS_INFO("X = %f; Y= %f; YAW = %f.", x, y, yaw);
     }*/
 
+    int i = 0;
+    for (auto &p : grid->data)
+    {
+        printf("%d ", p);
+        i++;
+        if (i >= grid->info.width) {
+            putchar('\n');
+            i = 0;
+        }
+    }
+
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
