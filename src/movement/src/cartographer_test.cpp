@@ -246,7 +246,7 @@ int main(int argc, char **argv)
     //tf::TransformListener listener(nodeHandle);
     //ros::Timer timer = nodeHandle.createTimer(ros::Duration(1.0), boost::bind(&transformPoint, boost::ref(listener)));
     //tf::StampedTransform transform_bot;
-    //transformListener = new tf::TransformListener(nodeHandle);
+    transformListener = new tf::TransformListener(nodeHandle);
     init(nodeHandle);
 
     //submapQueryClient = nodeHandle.serviceClient<cartographer_ros_msgs::SubmapQuery>("submap_query");
