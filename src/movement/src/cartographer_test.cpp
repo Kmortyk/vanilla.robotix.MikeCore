@@ -172,7 +172,7 @@ bool getRobotPose(geometry_msgs::PoseStamped& globalPose)
 
 void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
 {
-    int i = 0;
+    //int i = 0;
     /*for (auto &p : grid->data)
     {
         printf("%d ", p);
@@ -182,14 +182,35 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid)
             i = 0;
         }
     }*/
-    geometry_msgs::PoseStamped pose;
+    /*geometry_msgs::PoseStamped pose;
     if (getRobotPose(pose))
     {
         double x = pose.pose.position.x,
         y = pose.pose.position.y,
         yaw = tf2::getYaw(pose.pose.orientation);
         ROS_INFO("X = %f; Y= %f; YAW = %f.", x, y, yaw);
+    }*/
+
+    try {
+        transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
+        transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
+    } catch (tf2::LookupException exception) {
+        ROS_ERROR("error: %s", exception.what());
+        return;
     }
+
+    double bot_x = transform_bot.getOrigin().x();
+    double bot_y = transform_bot.getOrigin().y();
+
+    double roll, pitch, yaw;
+    transform_bot.getBasis().getRPY(roll, pitch, yaw);
+
+    double bot_dir = yaw * 180.0 / M_PI;
+
+    double i = (bot_y - grid->info.origin.position.y) / grid->info.resolution;
+    double j = (bot_x - grid->info.origin.position.x) / grid->info.resolution;
+
+    ROS_INFO("i = %f; j = %f; dir = %f", i, j, bot_dir);
 }
 
 void transformPoint(const tf::TransformListener& listener) {
