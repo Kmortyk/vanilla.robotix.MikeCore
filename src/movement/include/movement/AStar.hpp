@@ -33,7 +33,7 @@ private:
     bool ijIsUnblocked(int i, int j) const;
     static bool ijIsDestination(int i, int j, int iDestination, int jDestination);
     static double calculateHeuristicValue(int i, int j, int iDestination, int jDestination);
-    static void tracePath(std::vector<std::vector<cell>> cells, int iDestination, int jDestination);
+    static void tracePath(std::map<int, std::map<int, cell>> cells, int iDestination, int jDestination);
     void search(int iFrom, int jFrom, int iDestination, int jDestination);
 
 public:

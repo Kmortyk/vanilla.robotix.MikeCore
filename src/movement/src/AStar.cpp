@@ -20,15 +20,17 @@ double AStar::calculateHeuristicValue(int i, int j, int iDestination, int jDesti
     return std::sqrt((i - iDestination) * (i - iDestination) + (j - jDestination) * (j - jDestination));
 }
 
-void AStar::tracePath(std::vector<std::vector<cell>> cells, int iDestination, int jDestination) {
+void AStar::tracePath(std::map<int, std::map<int, cell>> cells, int iDestination, int jDestination) {
     std::cout << std::endl << "The path is ";
     int i = iDestination;
     int j = jDestination;
     std::stack<std::pair<int, int>> path;
     while (!(cells[i][j].iParent == i && cells[i][j].jParent == j)) {
         path.push(std::make_pair(i, j));
-        i = cells[i][j].iParent;
-        j = cells[i][j].jParent;
+        int iTemp = cells[i][j].iParent;
+        int jTemp = cells[i][j].jParent;
+        i = iTemp;
+        j = jTemp;
     }
     path.push(std::make_pair(i, j));
     while (!path.empty()) {
@@ -36,6 +38,7 @@ void AStar::tracePath(std::vector<std::vector<cell>> cells, int iDestination, in
         path.pop();
         std::cout << "-> (" << p.first << ',' << p.second << ") ";
     }
+    std::cout << std::endl;
 }
 
 void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
@@ -47,12 +50,15 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
         std::cerr << "Destination i, j is invalid!" << std::endl;
         return;
     }
+    if (!(ijIsUnblocked(iFrom, jFrom)) || !(ijIsUnblocked(iDestination, jDestination))) {
+        std::cerr << "Source or the destination is blocked" << std::endl;
+    }
     if (ijIsDestination(iFrom, jFrom, iDestination, jDestination)) {
         std::cerr << "We are already at the destination!" << std::endl;
         return;
     }
-    std::vector<std::vector<bool>> closedList;
-    std::vector<std::vector<cell>> cells;
+    std::map<int, std::map<int, bool>> closedList;
+    std::map<int, std::map<int, cell>> cells;
     for (int i = 0; i < iMax; ++i) {
         for (int j = 0; j < jMax; ++j) {
             cells[i][j].f = FLT_MAX;
@@ -70,6 +76,7 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
 
     std::set<std::pair<double, std::pair<int, int>>> openList;
     openList.insert(std::make_pair(0, std::make_pair(iFrom, jFrom)));
+    bool foundDestination = false;
 
     while (!openList.empty()) {
         std::pair<double, std::pair<int, int>> p = *openList.begin();
@@ -94,19 +101,20 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
                 {i + 1, j - 1, 1.414}, // South-West
         };
         double gNew, hNew, fNew;
-        int counter = 0;
+        int counter = -1;
 
         calculateSuccessor:
+        counter++;
         int iCurrent = allVarious[counter].i;
         int jCurrent = allVarious[counter].j;
         double additionalFactor = allVarious[counter].additionalFactor;
-        counter++;
         if (ijIsValid(iCurrent, jCurrent)) {
             if (ijIsDestination(iCurrent, jCurrent, iDestination, jDestination)) {
                 cells[iCurrent][jCurrent].iParent = i;
                 cells[iCurrent][jCurrent].jParent = j;
                 std::cout << "The destination cell is found" << std::endl;
                 tracePath(cells, iDestination, jDestination);
+                foundDestination = true;
                 return;
             } else if (!(closedList[iCurrent][jCurrent]) && ijIsUnblocked(iCurrent, jCurrent)) {
                 gNew = cells[i][j].g + additionalFactor;
@@ -124,9 +132,9 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
         }
         if (counter < 7)
             goto calculateSuccessor;
-        else
-            std::cerr << "Failed to find the destination!" << std::endl;
     }
+    if (!foundDestination)
+        std::cerr << "Failed to find the destination!" << std::endl;
 }
 
 void AStar::test() {
