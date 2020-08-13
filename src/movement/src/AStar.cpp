@@ -9,7 +9,7 @@ bool AStar::ijIsValid(int i, int j) const {
 }
 
 bool AStar::ijIsUnblocked(int i, int j) const {
-    return map[i][j] == 1;
+    return map.at(i).at(j) == 1;
 }
 
 bool AStar::ijIsDestination(int i, int j, int iDestination, int jDestination) {
@@ -41,21 +41,36 @@ void AStar::tracePath(std::map<int, std::map<int, cell>> cells, int iDestination
     std::cout << std::endl;
 }
 
-void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
+std::stack<AStar::Point2DInt> AStar::getPath(std::map<int, std::map<int, cell>> cells, int iDestination, int jDestination) {
+    int i = iDestination;
+    int j = jDestination;
+    std::stack<AStar::Point2DInt> path;
+    while (!(cells[i][j].iParent == i && cells[i][j].jParent == j)) {
+        path.push(AStar::Point2DInt{i, j});
+        int iTemp = cells[i][j].iParent;
+        int jTemp = cells[i][j].jParent;
+        i = iTemp;
+        j = jTemp;
+    }
+    path.push(AStar::Point2DInt{i, j});
+    return path;
+}
+
+std::stack<AStar::Point2DInt> AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
     if (!ijIsValid(iFrom, jFrom)) {
         std::cerr << "Source i, j is invalid!" << std::endl;
-        return;
+        return nullStack;
     }
     if (!ijIsValid(iDestination, jDestination)) {
         std::cerr << "Destination i, j is invalid!" << std::endl;
-        return;
+        return nullStack;
     }
     if (!(ijIsUnblocked(iFrom, jFrom)) || !(ijIsUnblocked(iDestination, jDestination))) {
         std::cerr << "Source or the destination is blocked" << std::endl;
     }
     if (ijIsDestination(iFrom, jFrom, iDestination, jDestination)) {
         std::cerr << "We are already at the destination!" << std::endl;
-        return;
+        return nullStack;
     }
     std::map<int, std::map<int, bool>> closedList;
     std::map<int, std::map<int, cell>> cells;
@@ -76,7 +91,7 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
 
     std::set<std::pair<double, std::pair<int, int>>> openList;
     openList.insert(std::make_pair(0, std::make_pair(iFrom, jFrom)));
-    bool foundDestination = false;
+    //bool foundDestination = false;
 
     while (!openList.empty()) {
         std::pair<double, std::pair<int, int>> p = *openList.begin();
@@ -112,10 +127,11 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
             if (ijIsDestination(iCurrent, jCurrent, iDestination, jDestination)) {
                 cells[iCurrent][jCurrent].iParent = i;
                 cells[iCurrent][jCurrent].jParent = j;
-                std::cout << "The destination cell is found" << std::endl;
+                /*std::cout << "The destination cell is found" << std::endl;
                 tracePath(cells, iDestination, jDestination);
                 foundDestination = true;
-                return;
+                return;*/
+                return getPath(cells, iDestination, jDestination);
             } else if (!(closedList[iCurrent][jCurrent]) && ijIsUnblocked(iCurrent, jCurrent)) {
                 gNew = cells[i][j].g + additionalFactor;
                 hNew = calculateHeuristicValue(iCurrent, jCurrent, iDestination, jDestination);
@@ -133,14 +149,14 @@ void AStar::search(int iFrom, int jFrom, int iDestination, int jDestination) {
         if (counter < 7)
             goto calculateSuccessor;
     }
-    if (!foundDestination)
-        std::cerr << "Failed to find the destination!" << std::endl;
+    std::cerr << "Failed to find the destination!" << std::endl;
+    return nullStack;
 }
 
 void AStar::test() {
     iMax = 9;
     jMax = 10;
-    map = {
+    /*map = {
             { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
             { 1, 1, 1, 0, 1, 1, 1, 0, 1, 1 },
             { 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
@@ -150,6 +166,6 @@ void AStar::test() {
             { 1, 0, 0, 0, 0, 1, 0, 0, 0, 1 },
             { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
             { 1, 1, 1, 0, 0, 0, 1, 0, 0, 1 }
-    };
+    };*/
     search(8, 0, 0, 0);
 }
