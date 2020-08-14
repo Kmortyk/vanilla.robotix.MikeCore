@@ -124,6 +124,8 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid) {
             }
             i++;
         }
+        aStar->iMax = grid->info.height;
+        aStar->jMax = grid->info.width;
         if (i != grid->info.height) {
             ROS_WARN("Map array height != map height");
         }

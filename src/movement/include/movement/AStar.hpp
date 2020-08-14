@@ -30,10 +30,10 @@ public:
 
     std::map<int, std::map<int, int8_t>> map;
 
-private:
-    // should be const
     int iMax;
     int jMax;
+
+private:
 
     //std::vector<std::vector<double>> map;
 
