@@ -8,6 +8,7 @@ project(gpio_jetson_service)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  geometry_msgs
   actionlib
   actionlib_msgs
   message_generation
@@ -69,7 +70,7 @@ add_service_files(
 
 ## Generate added messages and services with any dependencies listed here
  generate_messages(
-   DEPENDENCIES
+   DEPENDENCIES geometry_msgs
    actionlib_msgs
    std_msgs
  )
