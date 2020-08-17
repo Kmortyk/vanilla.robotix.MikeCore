@@ -5,7 +5,6 @@
 #include <ros/ros.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include <tf2_ros/buffer.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_datatypes.h>
 
@@ -150,6 +149,9 @@ int main(int argc, char **argv) {
     while (ros::ok()) {
         ros::spinOnce();
         ROS_INFO("Target x: %d; Target y: %d", targetPoint.x, targetPoint.y);
+        ROS_INFO("Last map resolution: %f", lastMapResolution);
+        ROS_INFO("Robot position x = %d y = %d", robotPosition.position.x, robotPosition.position.y);
+        ROS_INFO("Size of the way: %lu", wayToTargetPoint.size());
     }
     return EXIT_SUCCESS;
 }
