@@ -26,7 +26,7 @@ AStar* aStar;
 
 void findTheTargetPointAndWay() {
     for (int radius = minimalRadius; radius < 50; ++radius) {
-        int iMin, jMin, minCost;
+        int iMin = -1, jMin, minCost;
         std::stack<AStar::Point2DInt> minCostWayToPoint;
         int robotX = robotPosition.position.x;
         int robotY = robotPosition.position.y;
@@ -83,9 +83,12 @@ void findTheTargetPointAndWay() {
             }
         }
 
-        targetPoint.x = jMin;
-        targetPoint.y = iMin;
-        wayToTargetPoint = minCostWayToPoint;
+        if (iMin > -1) {
+            targetPoint.x = jMin;
+            targetPoint.y = iMin;
+            wayToTargetPoint = minCostWayToPoint;
+            return;
+        }
     }
 }
 
