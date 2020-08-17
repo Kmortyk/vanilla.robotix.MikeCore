@@ -15,7 +15,7 @@ struct RobotPosition {
     float rotation;
 };
 
-float lastMapResolution;
+float lastMapResolution, lastWidth, lastHeight;
 std::map<int, std::map<int, int8_t>> map;
 AStar::Point2DInt targetPoint;
 std::stack<AStar::Point2DInt> wayToTargetPoint;
@@ -112,8 +112,10 @@ void calculateRobotPositionOnMap() {
 }
 
 void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid) {
-    if (grid->info.resolution != lastMapResolution) {
+    if (grid->info.resolution != lastMapResolution || grid->info.width != lastWidth || grid->info.height != lastHeight) {
         lastMapResolution = grid->info.resolution;
+        lastWidth = grid->info.width;
+        lastHeight = grid->info.height;
         int i = 0;
         for (int8_t number : grid->data) {
             for (int j = 0; j < grid->info.width; ++j) {
