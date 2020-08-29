@@ -8,8 +8,6 @@
 #include <tf/transform_listener.h>
 #include <tf/transform_datatypes.h>
 
-const int minimalRadius = 3;
-
 struct RobotPosition {
     AStar::Point2DInt position;
     float rotation;
@@ -22,74 +20,6 @@ std::stack<AStar::Point2DInt> wayToTargetPoint;
 RobotPosition robotPosition;
 tf::TransformListener* transformListener;
 AStar* aStar;
-
-void findTheTargetPointAndWay() {
-    for (int radius = minimalRadius; radius < 50; ++radius) {
-        int iMin = -1, jMin, minCost;
-        std::stack<AStar::Point2DInt> minCostWayToPoint;
-        int robotX = robotPosition.position.x;
-        int robotY = robotPosition.position.y;
-        // Left side
-        int i = robotY - radius;
-        int j = robotX - radius;
-        for (; i < robotY + radius; ++i) {
-            if (aStar->map[i][j] == 1) {
-                minCostWayToPoint = aStar->search(robotY, robotX, i, j);
-                if (minCost > minCostWayToPoint.size()) {
-                    minCost = minCostWayToPoint.size();
-                    iMin = i;
-                    jMin = j;
-                }
-            }
-        }
-        // Right side
-        i = robotY - radius;
-        j = robotX + radius;
-        for (; i < robotY + radius; ++i) {
-            if (aStar->map[i][j] == 1) {
-                minCostWayToPoint = aStar->search(robotY, robotX, i, j);
-                if (minCost > minCostWayToPoint.size()) {
-                    minCost = minCostWayToPoint.size();
-                    iMin = i;
-                    jMin = j;
-                }
-            }
-        }
-        // Top side
-        i = robotY - radius;
-        j = robotX - radius;
-        for (; j < robotX + radius; ++j) {
-            if (aStar->map[i][j] == 1) {
-                minCostWayToPoint = aStar->search(robotY, robotX, i, j);
-                if (minCost > minCostWayToPoint.size()) {
-                    minCost = minCostWayToPoint.size();
-                    iMin = i;
-                    jMin = j;
-                }
-            }
-        }
-        // Bottom side
-        i = robotY + radius;
-        j = robotX - radius;
-        for (; j < robotX + radius; ++j) {
-            if (aStar->map[i][j] == 1) {
-                minCostWayToPoint = aStar->search(robotY, robotX, i, j);
-                if (minCost > minCostWayToPoint.size()) {
-                    minCost = minCostWayToPoint.size();
-                    iMin = i;
-                    jMin = j;
-                }
-            }
-        }
-
-        if (iMin > -1) {
-            targetPoint.x = jMin;
-            targetPoint.y = iMin;
-            wayToTargetPoint = minCostWayToPoint;
-            return;
-        }
-    }
-}
 
 void calculateRobotPositionOnMap() {
     tf::StampedTransform transformBot;
@@ -133,7 +63,6 @@ void occupancyGridCallback(const nav_msgs::OccupancyGrid::ConstPtr& grid) {
         if (i != grid->info.height - 1) {
             ROS_WARN("Map array height != map height");
         }
-        findTheTargetPointAndWay();
     }
     calculateRobotPositionOnMap();
 }
