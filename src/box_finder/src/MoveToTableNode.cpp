@@ -25,7 +25,7 @@ MoveToTableNode::~MoveToTableNode(){
 
 geometry_msgs::PoseStamped MoveToTableNode::findTable(nav_msgs::OccupancyGrid& map){
 
-    cv::Mat mat_edges;
+    /*cv::Mat mat_edges;
     cv::Mat map_mat = cv::Mat(map.data).reshape(0, map.info.height);
     map_mat.convertTo(mat_edges, CV_8U);
 
@@ -60,7 +60,7 @@ geometry_msgs::PoseStamped MoveToTableNode::findTable(nav_msgs::OccupancyGrid& m
 
     }
 
-    return goal;
+    return goal;*/
 }
 
 
