@@ -44,6 +44,7 @@ add_executable(
     src/RobotClass.cpp
     src/TrueAngle.cpp
 )
+add_dependencies(move_to_table ${move_to_table_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(
     move_to_table
     ${catkin_LIBRARIES}
@@ -58,6 +59,7 @@ add_executable(
     src/RobotClass.cpp
     src/TrueAngle.cpp
 )
+add_dependencies(automapping ${automapping_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(
     automapping
     ${catkin_LIBRARIES}
@@ -69,6 +71,7 @@ add_executable(
     src/exploration.cpp
     src/Explorer.cpp
 )
+add_dependencies(exploration_server ${exploration_server_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(
     exploration_server
     ${catkin_LIBRARIES}
