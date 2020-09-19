@@ -3,6 +3,7 @@ project(box_finder)
 
 find_package(catkin REQUIRED
     COMPONENTS
+        actionlib
         geometry_msgs
         roscpp
         nav_msgs
@@ -23,6 +24,7 @@ add_service_files(
 
 generate_messages(
     DEPENDENCIES
+    actionlib_msgs
     geometry_msgs
     std_msgs
 )
