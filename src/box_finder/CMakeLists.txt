@@ -9,6 +9,7 @@ find_package(catkin REQUIRED
         tf
         actionlib
         move_base_msgs
+        std_msgs
         message_generation
 )
 
@@ -23,9 +24,10 @@ add_service_files(
 generate_messages(
     DEPENDENCIES
     geometry_msgs
+    std_msgs
 )
 
-catkin_package(CATKIN_DEPENDS message_generation roscpp std_msgs)
+catkin_package(CATKIN_DEPENDS message_generation message_runtime roscpp std_msgs)
 
 include_directories(
     include
