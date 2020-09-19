@@ -14,6 +14,9 @@ find_package(catkin REQUIRED
         message_generation
 )
 
+## System dependencies are found with CMake's conventions
+find_package(Boost REQUIRED COMPONENTS system)
+
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -33,6 +36,7 @@ catkin_package(CATKIN_DEPENDS message_generation message_runtime roscpp std_msgs
 
 include_directories(
     include
+    ${Boost_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
 )
 
