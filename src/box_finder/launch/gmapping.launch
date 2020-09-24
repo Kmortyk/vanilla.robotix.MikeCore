@@ -55,4 +55,11 @@
         <param name="samp_rate"    type="int"    value="5"/>
     </node>
 
+    <node
+            pkg="tf"
+            type="static_transform_publisher"
+            name="base_link_connect"
+            args="0 0 0 0 0 0 /base_link /laser_frame 100"
+    />
+
 </launch>
