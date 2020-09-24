@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist
 import OPi.GPIO as GPIO
 
 
+GPIO.setboard(GPIO.PC)
 # Set the GPIO modes
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
