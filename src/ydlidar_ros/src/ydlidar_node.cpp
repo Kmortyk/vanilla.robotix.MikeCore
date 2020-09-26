@@ -42,6 +42,7 @@ int main(int argc, char * argv[]) {
     fflush(stdout);
   
     std::string port;
+    std::string topic;
     int baudrate=230400;
     std::string frame_id;
     bool reversion, resolution_fixed;
@@ -58,8 +59,9 @@ int main(int argc, char * argv[]) {
     bool isTOFLidar = false;
 
     ros::NodeHandle nh;
-    ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scan", 1000);
     ros::NodeHandle nh_private("~");
+    nh_private.param<std::string>("topic", topic, "scan");
+    ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>(topic, 1000);
     nh_private.param<std::string>("port", port, "/dev/ydlidar"); 
     nh_private.param<int>("baudrate", baudrate, 230400); 
     nh_private.param<std::string>("frame_id", frame_id, "laser_frame");
