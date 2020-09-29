@@ -69,6 +69,7 @@ class Driver:
             'cmd_vel', Twist, self.velocity_received_callback)
 
     def velocity_received_callback(self, message):
+        print(message)
         """Handle new velocity command message."""
 
         self._last_received = rospy.get_time()
