@@ -26,4 +26,4 @@ TrajectoryPlannerROS:
 
     oscillation_reset_dist: 0.01
     
-    observation_sources: scan
+#    observation_sources: scan

@@ -9,8 +9,8 @@ footprint_clearing_enabled: true
 observation_sources: scan
 
 base_scan: {sensor_frame: base_laser_link,
-            data_type: LaserScan,
-            topic: /scan,
+            data_type: LaserScan2,
+            topic: /base_scan,
             expected_update_rate: 0.2,
             observation_persistence: 0.0,
             marking: true,
