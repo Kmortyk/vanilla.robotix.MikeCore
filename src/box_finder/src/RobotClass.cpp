@@ -41,7 +41,7 @@ void RobotClass::rotateInPlace(double angle, double abs_speed){
         }
     }
     catch(tf::TransformException ex){
-        throw ;
+        throw ex.what();
     }
 
     stop();
