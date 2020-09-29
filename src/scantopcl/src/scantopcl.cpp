@@ -12,7 +12,7 @@ My_Filter::My_Filter(){
 
 void My_Filter::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     sensor_msgs::PointCloud2 cloud;
-    projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
+    projector_.transformLaserScanToPointCloud("odom/base_link", *scan, cloud, tfListener_);
     point_cloud_publisher_.publish(cloud);
 }
 
