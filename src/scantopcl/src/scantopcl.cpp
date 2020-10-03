@@ -14,13 +14,15 @@ void My_Filter::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     sensor_msgs::PointCloud2 cloud;
     if(!tfListener_.waitForTransform(
             scan->header.frame_id,
-            "/base_link",
+            //"/base_link",
+            "laser_frame",
             ros::Time(),
             ros::Duration(5.0))){
         return;
     }
     try {
-        projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
+        //projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
+        projector_.transformLaserScanToPointCloud("laser_frame", *scan, cloud, tfListener_);
     } catch(tf2::ExtrapolationException &e) {
         std::cout << e.what() << std::endl;
     }
