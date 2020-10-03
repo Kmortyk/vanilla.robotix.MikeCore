@@ -16,7 +16,7 @@ void My_Filter::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
             scan->header.frame_id,
             "/base_link",
             ros::Time(),
-            ros::Duration(1.0))){
+            ros::Duration(5.0))){
         return;
     }
     try {
