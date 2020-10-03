@@ -12,13 +12,13 @@ My_Filter::My_Filter(){
 
 void My_Filter::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
     sensor_msgs::PointCloud2 cloud;
-    if(!tfListener_.waitForTransform(
+    /*if(!tfListener_.waitForTransform(
             scan->header.frame_id,
             "/base_link",
             scan->header.stamp + ros::Duration().fromSec(scan->ranges.size()*scan->time_increment),
             ros::Duration(1.0))){
         return;
-    }
+    }*/
     projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
     point_cloud_publisher_.publish(cloud);
 }
