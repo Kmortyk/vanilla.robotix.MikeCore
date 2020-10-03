@@ -19,7 +19,11 @@ void My_Filter::scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan){
             ros::Duration(1.0))){
         return;
     }
-    projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
+    try {
+        projector_.transformLaserScanToPointCloud("base_link", *scan, cloud, tfListener_);
+    } catch(tf2::ExtrapolationException &e) {
+        std::cout << e.what() << std::endl;
+    }
     point_cloud_publisher_.publish(cloud);
 }
 
