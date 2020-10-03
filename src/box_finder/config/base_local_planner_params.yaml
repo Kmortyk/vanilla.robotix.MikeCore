@@ -25,5 +25,3 @@ TrajectoryPlannerROS:
     dwa: false
 
     oscillation_reset_dist: 0.01
-    
-#    observation_sources: scan
