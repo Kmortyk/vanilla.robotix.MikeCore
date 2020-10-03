@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">
-        <remap from="scan" to="base_scan"/>
+<!--        <remap from="scan" to="base_scan"/>-->
         <param name="minimumScore" value="50"/>
         <param name="base_frame" value="base_link"/>
         <param name="map_frame" value="map"/>
