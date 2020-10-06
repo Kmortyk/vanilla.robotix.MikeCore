@@ -6,7 +6,7 @@ inflation_radius: 0.4
 track_unknown_space: true
 footprint_clearing_enabled: true
 
-observation_sources: base_scan
+observation_sources: base_scan, point_cloud_sensor
 
 base_scan: {sensor_frame: base_laser_link,
             data_type: LaserScan,
@@ -18,4 +18,4 @@ base_scan: {sensor_frame: base_laser_link,
             min_obstacle_height: -0.10,
             max_obstacle_height: 2.0}
 
-#point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: scan, marking: true, clearing: true}
+point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: base_scan, marking: true, clearing: true}
