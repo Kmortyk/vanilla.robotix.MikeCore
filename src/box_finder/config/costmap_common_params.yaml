@@ -6,9 +6,9 @@ inflation_radius: 0.4
 track_unknown_space: true
 footprint_clearing_enabled: true
 
-observation_sources: base_scan
+observation_sources: scan
 
-base_scan: {sensor_frame: base_laser_link,
+scan: {sensor_frame: base_laser_link,
             data_type: LaserScan,
             topic: /scan,
             expected_update_rate: 0.2,
