@@ -9,7 +9,7 @@ import OPi.GPIO as GPIO
 GPIO.setboard(GPIO.PCPCPLUS)
 # Set the GPIO modes
 GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+#GPIO.setwarnings(False)
 
 _FREQUENCY = 20
 
