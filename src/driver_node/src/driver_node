@@ -107,6 +107,7 @@ class Driver:
             # may have lost contact with the commander-- stop
             # moving
             delay = rospy.get_time() - self._last_received
+            print("here")
             if delay < self._timeout:
                 self._left_motor.move(self._left_speed_percent)
                 self._right_motor.move(self._right_speed_percent)
