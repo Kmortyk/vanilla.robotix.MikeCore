@@ -42,11 +42,11 @@ class Motor:
         # move wheels backward
         if speed_percent < 0:
             # self._backward_pwm.start(speed)
-            self._backward_pwm.start(1000)
+            self._backward_pwm.start(100)
             self._forward_pwm.start(0)
         else:
             # self._forward_pwm.start(speed)
-            self._forward_pwm.start(1000)
+            self._forward_pwm.start(100)
             self._backward_pwm.start(0)
 
 class Driver:
