@@ -40,7 +40,6 @@ class Motor:
 
         # Positive speeds move wheels forward, negative speeds
         # move wheels backward
-        print("here")
         if speed_percent < 0:
             # self._backward_pwm.start(speed)
             self._backward_pwm.start(100)
