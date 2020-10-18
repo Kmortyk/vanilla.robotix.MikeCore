@@ -1,4 +1,4 @@
-TrajectoryPlannerROS:
+TrajectoryPlannerROS:base_local_planner_params
     acc_lim_x: 1.0
     acc_lim_y: 1.0
     acc_lim_theta: 1.2
