@@ -1,5 +1,6 @@
 map_type: costmap
-transform_tolerance: 0.3
+#transform_tolerance: 0.3
+transform_tolerance: 1
 obstacle_range: 5.0
 raytrace_range: 5.0
 inflation_radius: 0.4
