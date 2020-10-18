@@ -17,7 +17,7 @@ _FREQUENCY = 20
 # 13 - left backward
 #
 
-all_pins = [12, 11, 6, 1, 0, 3, 19, 7, 8, 9, 10, 20, 13, 14, 67, 21, 18, 200, 201, 198, 199]
+all_pins = [12, 11, 6, 1, 0, 3, 64, 65, 66, 19, 7, 8, 9, 10, 20, 13, 14, 110, 68, 71, 2, 67, 21, 18, 200, 201, 198, 199]
 
 
 def main():
@@ -26,10 +26,13 @@ def main():
         while i < len(all_pins):
             print(all_pins[i])
             print("\n")
-            GPIO.setup(all_pins[i], GPIO.OUT)
-            GPIO.output(all_pins[i], GPIO.HIGH)
-            time.sleep(2)
-            GPIO.output(all_pins[i], GPIO.LOW)
+            try:
+                GPIO.setup(all_pins[i], GPIO.OUT)
+                GPIO.output(all_pins[i], GPIO.HIGH)
+                time.sleep(2)
+                GPIO.output(all_pins[i], GPIO.LOW)
+            except ValueError:
+                time.sleep(2)
             i += 1
 
 
