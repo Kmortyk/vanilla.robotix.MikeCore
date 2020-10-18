@@ -22,8 +22,9 @@ def main():
             print(i)
             print("\n")
             GPIO.setup(all_pins[i], GPIO.OUT)
-            GPIO.output(all_pins[i], 1)
+            GPIO.output(all_pins[i], GPIO.HIGH)
             time.sleep(0.5)
+            GPIO.output(all_pins[i], GPIO.LOW)
             i += 1
 
 
