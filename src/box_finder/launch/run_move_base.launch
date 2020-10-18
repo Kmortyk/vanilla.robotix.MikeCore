@@ -8,5 +8,6 @@
     <rosparam file="$(find box_finder)/param/base_local_planner_params.yaml" command="load"/>
     <rosparam file="$(find box_finder)/param/dwa_local_planner_params.yaml" command="load"/>
     <rosparam file="$(find box_finder)/param/base_global_planner_params.yaml" command="load"/>
+    <rosparam file="$(find box_finder)/param/navfn_global_planner_params.yaml" command="load"/>
   </node>
 </launch>
