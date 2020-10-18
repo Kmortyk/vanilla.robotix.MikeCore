@@ -1,6 +1,6 @@
 <launch>
 
-    <include file="$(find box_finder)/launch/gmapping.launch" />
+<!--    <include file="$(find box_finder)/launch/gmapping.launch" />-->
 
     <include file="$(find box_finder)/launch/move_base.launch"/>
     <rosparam file="$(find box_finder)/config/base_local_planner_params.yaml" command="load" ns="move_base_node"/>
