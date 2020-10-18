@@ -30,7 +30,9 @@ class Motor:
         self._backward_pin = backward_pin
 
         GPIO.setup(forward_pin, GPIO.OUT)
+        GPIO.setmode(forward_pin, GPIO.LOW)
         GPIO.setup(backward_pin, GPIO.OUT)
+        GPIO.setmode(backward_pin, GPIO.LOW)
 
         self._forward_pwm = GPIO.PWM(forward_pin, _FREQUENCY)
         self._backward_pwm = GPIO.PWM(backward_pin, _FREQUENCY)
