@@ -34,5 +34,7 @@
       pkg="cartographer_ros"
       type="cartographer_node"
       args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar_2d.lua"
-      output="screen"/>
+      output="screen">
+    <remap from="scan" to="base_scan"/>
+  </node>
 </launch>
