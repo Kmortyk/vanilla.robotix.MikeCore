@@ -5,7 +5,7 @@
 import OPi.GPIO as GPIO
 import time
 
-GPIO.setboard(GPIO.PC)
+GPIO.setboard(GPIO.PCPCPLUS)
 # Set the GPIO modes
 GPIO.setmode(GPIO.BCM)
 # GPIO.setwarnings(False)
