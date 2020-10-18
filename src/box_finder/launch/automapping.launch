@@ -9,7 +9,7 @@
 
     <node name="automapping" pkg="box_finder" type="automapping" output="screen" required="true">
         <param name="safe_distance" value="0.5"/>
-        <param name="tolerance" value="0.1"/>
+        <param name="tolerance" value="1"/>
         <param name="map_name" value="$(find box_finder)/map/auto_result"/>
         <param name="pose_params_file_name" value="$(find box_finder)/config/init_pose.yaml"/>
         <param name="rotational_speed" value="10"/>
