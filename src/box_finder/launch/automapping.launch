@@ -2,8 +2,8 @@
 
     <include file="$(find box_finder)/launch/gmapping.launch" />
 
-    <include file="$(find box_finder)/launch/run_move_base.launch"/>
-    <rosparam file="$(find box_finder)/param/base_local_planner_params.yaml" command="load" ns="move_base_node"/>
+    <include file="$(find box_finder)/launch/move_base.launch"/>
+    <rosparam file="$(find box_finder)/config/base_local_planner_params.yaml" command="load" ns="move_base_node"/>
 
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find box_finder)/rviz/first_stage.rviz" />
 

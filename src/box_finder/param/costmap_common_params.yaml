@@ -1,5 +1,3 @@
-map_type: costmap
-
 robot_radius: 0.14
 # obstacle_range: 1.0
 # raytrace_range: 2.0
