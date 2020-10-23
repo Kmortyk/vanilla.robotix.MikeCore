@@ -2,3 +2,4 @@ build
 devel
 src/.idea
 .idea/
+.catkin_tools
