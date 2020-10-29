@@ -8,7 +8,7 @@ import Jetson.GPIO as GPIO
 
 #GPIO.setboard(GPIO.PCPCPLUS)
 # Set the GPIO modes
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 #GPIO.setwarnings(False)
 
 _FREQUENCY = 20
@@ -63,8 +63,8 @@ class Driver:
 
         # Assign pins to motors. These may be distributed
         # differently depending on how you've built your robot
-        self._left_motor = Motor(422, 446)
-        self._right_motor = Motor(421, 393)
+        self._left_motor = Motor(31, 40)
+        self._right_motor = Motor(29, 33)
         # self._left_motor = Motor(24, 25)
         # self._right_motor = Motor(22, 23)
         self._left_speed_percent = 0
