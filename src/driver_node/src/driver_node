@@ -32,9 +32,9 @@ class Motor:
         GPIO.setup(forward_pin, GPIO.OUT)
         GPIO.setup(backward_pin, GPIO.OUT)
 
-        self._forward_pwm = GPIO.PWM(forward_pin, _FREQUENCY)
+        # self._forward_pwm = GPIO.PWM(forward_pin, _FREQUENCY)
         # self._forward_pwm.start(0)
-        self._backward_pwm = GPIO.PWM(backward_pin, _FREQUENCY)
+        # self._backward_pwm = GPIO.PWM(backward_pin, _FREQUENCY)
         # self._backward_pwm.start(0)
 
     def move(self, speed_percent):
@@ -43,13 +43,17 @@ class Motor:
         # Positive speeds move wheels forward, negative speeds
         # move wheels backward
         if speed_percent < 0:
-            self._backward_pwm.start(speed)
+            GPIO.output(self._backward_pin, GPIO.HIGH)
+            # self._backward_pin.output()
             #self._backward_pwm.start(100)
-            self._forward_pwm.start(0)
+            # self._forward_pwm.start(0)
+            GPIO.output(self._forward_pin, GPIO.LOW)
         else:
-            self._forward_pwm.start(speed)
+            GPIO.output(self._forward_pin, GPIO.HIGH)
+            # self._forward_pwm.start(speed)
             #self._forward_pwm.start(100)
-            self._backward_pwm.start(0)
+            # self._backward_pwm.start(0)
+            GPIO.output(self._backward_pin, GPIO.LOW)
 
 class Driver:
     def __init__(self):
