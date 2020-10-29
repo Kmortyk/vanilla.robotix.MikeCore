@@ -22,14 +22,18 @@ ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
 float image_middle_x, image_middle_y;
+uint8_t currentCommand;
 
 void gpio_command(const uint8_t command) {
+    if (currentCommand == command)
+         return;
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     gpio_jetson_service::gpio_srv service2;
     service2.request.command = command;
     gpio_client.call(service2);
+    currentCommand = command;
 }
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
@@ -107,7 +111,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     }*/
     for (int i = 0; i < 720; i++) {
         left = right = backward = forward = false;
-        if (message->ranges[i] > 0 && message->ranges[i] < 0.3f) {
+        if (message->ranges[i] > 0 && message->ranges[i] < 0.5f) {
             if (i > 270 && i < 450) {
                 ROS_WARN("Backward obstacle");
                 backward = true;
@@ -152,7 +156,7 @@ void movement() {
                 ROS_ERROR("Case doesn't exist!");
         }
     } else {
-        gpio_command(MoveCommands::FORWARD_LOW);
+        gpio_command(MoveCommands::FORWARD_FAST);
     }
 }
 
@@ -200,7 +204,7 @@ int main(int argc, char **argv) {
     image_middle_x = IMAGE_WIDTH / 2.0;
     image_middle_y = IMAGE_HEIGHT / 2.0;
     ros::NodeHandle nodeHandle;
-    sleep(5);
+    //sleep(5);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
@@ -212,8 +216,8 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        //movement();
-        //stuck_detect();
+        movement();
+        stuck_detect();
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }

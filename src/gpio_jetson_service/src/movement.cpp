@@ -2,6 +2,11 @@
 // Created by eldar on 09.03.2020.
 //
 
+// Jetson Nano
+// 149, 200,  38,  76,  12,  51,  77,  78
+// 421, 422, 393, 448, 482, 429, 447, 446
+// Jetson Xavier NX
+
 #include "movement.hpp"
 
 bool initialized = false;
@@ -14,7 +19,7 @@ bool GPIO_Movement::init()
         return false;
     }
     int result = 0;
-    all_pins = {149, 200, 38, 76, 12, 51, 77, 78};
+    all_pins = {421, 422, 393, 448, 482, 429, 447, 446};
     result += pin_export(all_pins);
     if (!result)
         result += pin_direction(all_pins);
@@ -49,11 +54,11 @@ bool GPIO_Movement::stop(Motor motor)
     switch (motor)
     {
         case LEFT:
-            stop_pins = {78, 76, 51, 200};
+            stop_pins = {446, 448, 429, 422};
             result = pin_value(stop_pins, false);
             break;
         case RIGHT:
-            stop_pins = {77, 38, 12, 149};
+            stop_pins = {447, 393, 482, 421};
             result = pin_value(stop_pins, false);
             break;
         default:
@@ -75,14 +80,14 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                 case FORWARD:
                     switch (speed) {
                         case LOW:
-                            result = pin_value(51, true);
+                            result = pin_value(429, true);
                             break;
                         case MIDDLE:
-                            result = pin_value(200, true);
+                            result = pin_value(422, true);
                             break;
                         case FAST:
-                            result += pin_value(51, true);
-                            result += pin_value(200, true);
+                            result += pin_value(429, true);
+                            result += pin_value(422, true);
                             break;
                         default:
                             return false;
@@ -91,14 +96,14 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                 case BACKWARD:
                     switch (speed) {
                         case LOW:
-                            result = pin_value(76, true);
+                            result = pin_value(448, true);
                             break;
                         case MIDDLE:
-                            result = pin_value(78, true);
+                            result = pin_value(446, true);
                             break;
                         case FAST:
-                            result += pin_value(76, true);
-                            result += pin_value(78, true);
+                            result += pin_value(448, true);
+                            result += pin_value(446, true);
                             break;
                         default:
                             return false;
@@ -113,14 +118,14 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                 case FORWARD:
                     switch (speed) {
                         case LOW:
-                            result = pin_value(12, true);
+                            result = pin_value(482, true);
                             break;
                         case MIDDLE:
-                            result = pin_value(149, true);
+                            result = pin_value(421, true);
                             break;
                         case FAST:
-                            result += pin_value(12, true);
-                            result += pin_value(149, true);
+                            result += pin_value(482, true);
+                            result += pin_value(421, true);
                             break;
                         default:
                             return false;
@@ -129,14 +134,14 @@ bool GPIO_Movement::move(Motor motor, Direction direction, Speed speed)
                 case BACKWARD:
                     switch (speed) {
                         case LOW:
-                            result = pin_value(77, true);
+                            result = pin_value(447, true);
                             break;
                         case MIDDLE:
-                            result = pin_value(38, true);
+                            result = pin_value(393, true);
                             break;
                         case FAST:
-                            result += pin_value(77, true);
-                            result += pin_value(38, true);
+                            result += pin_value(447, true);
+                            result += pin_value(393, true);
                             break;
                         default:
                             return false;
