@@ -39,12 +39,12 @@
         <param name="maxRange" type="double" value="inf"/>
     </node>
 
-        <include file="$(find ydlidar_ros)/launch/F4Pro.launch" />
+<!--        <include file="$(find ydlidar_ros)/launch/F4Pro.launch" />-->
 
-        <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node">
-                <!--        <remap from="scan" to="base_scan"/>-->
-                <param name="fixedFrame" value="odom"/>
-        </node>
+<!--        <node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher_node">-->
+<!--                &lt;!&ndash;        <remap from="scan" to="base_scan"/>&ndash;&gt;-->
+<!--                <param name="fixedFrame" value="odom"/>-->
+<!--        </node>-->
 
 <!--    <node name="ydlidar_ros_node"  pkg="ydlidar_ros"  type="ydlidar_ros_node" output="screen" respawn="false" >-->
 <!--        <param name="port"         type="string" value="/dev/ttyUSB0"/>-->
