@@ -61,11 +61,13 @@ class Driver:
         self._max_speed = rospy.get_param('~max_speed', 0.5)
         self._wheel_base = rospy.get_param('~wheel_base', 0.091)
 
+        #31 33 35 37
+
         # Assign pins to motors. These may be distributed
         # differently depending on how you've built your robot
         # self._left_motor = Motor(31, 33)
-        self._left_motor = Motor(35, 37)
-        self._right_motor = Motor(31, 33)
+        self._left_motor = Motor(31, 33)
+        self._right_motor = Motor(35, 37)
         # self._right_motor = Motor(35, 37)
         # self._left_motor = Motor(24, 25)
         # self._right_motor = Motor(22, 23)
