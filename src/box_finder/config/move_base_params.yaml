@@ -1,7 +1,7 @@
-footprint: [[-0.2, -0.15],
-            [0.2, -0.15],
+footprint: [[0.2, -0.15],
             [0.2, 0.55],
-            [-0.2, 0.55]]
+            [-0.2, 0.55],
+            [-0.2, -0.15]]
 
 controller_frequency: 2.0
 controller_patience: 5.0
