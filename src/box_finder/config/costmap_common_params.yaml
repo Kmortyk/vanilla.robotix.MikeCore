@@ -12,7 +12,7 @@ observation_sources: scan
 scan: {sensor_frame: laser_frame,
             data_type: LaserScan,
             topic: scan,
-            expected_update_rate: 0.5,
+            expected_update_rate: 2.0,
             observation_persistence: 0.0,
             marking: true,
             clearing: true,
