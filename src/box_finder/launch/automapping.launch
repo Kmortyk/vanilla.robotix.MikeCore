@@ -12,7 +12,7 @@
         <param name="tolerance" value="1"/>
         <param name="map_name" value="$(find box_finder)/map/auto_result"/>
         <param name="pose_params_file_name" value="$(find box_finder)/config/init_pose.yaml"/>
-        <param name="rotational_speed" value="10"/>
+        <param name="rotational_speed" value="3"/>
     </node>
 
     <node name="exploration_server" pkg="box_finder" type="exploration_server" output="screen">
