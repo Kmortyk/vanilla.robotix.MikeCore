@@ -44,6 +44,9 @@ class Motor:
             GPIO.output(self._backward_pin, GPIO.LOW)
             GPIO.output(self._forward_pin, GPIO.LOW)
 
+        if speed < 1:
+            return
+
         # Positive speeds move wheels forward, negative speeds
         # move wheels backward
         if speed_percent < 0:
