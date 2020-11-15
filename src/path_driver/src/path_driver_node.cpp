@@ -93,24 +93,32 @@ int main(int argc, char **argv) {
         if (robotPathUpdated) {
             pathIterator = 0;
             robotPathUpdated = false;
+            ROS_INFO("Robot path updated");
         }
         if (robotPath == nullptr) {
-            ROS_INFO("Null");
+//            ROS_INFO("Null");
+            continue;
+        }
+        if (robotPath->poses.empty()) {
+            ROS_INFO("Empty path!");
+            gpio_command(MoveCommands::FULL_STOP);
             continue;
         }
         if (pathIterator >= robotPath->poses.size()) {
-            ROS_INFO("Path end!");
+            ROS_INFO("Path end! %lu", robotPath->poses.size());
+            gpio_command(MoveCommands::FULL_STOP);
             continue;
         }
         geometry_msgs::Point robotPose = getRobotPose();
         geometry_msgs::Pose targetPose = robotPath->poses[pathIterator].pose;
         double targetRotation = poseToDegrees(targetPose);
+        targetRotation += 90;
         if(robotPose.z - targetRotation < MEASUREMENT_ROTATION || robotPose.z + targetRotation < MEASUREMENT_ROTATION) {
             if (robotPose.x - targetPose.position.x < MEASUREMENT_LOCATION
             || robotPose.x + targetPose.position.x < MEASUREMENT_LOCATION
             || robotPose.y - targetPose.position.y < MEASUREMENT_LOCATION
             || robotPose.y + targetPose.position.y < MEASUREMENT_LOCATION) {
-                gpio_command(MoveCommands::FORWARD_MIDDLE);
+                gpio_command(MoveCommands::FORWARD_LOW);
             } else {
                 pathIterator++;
             }
@@ -119,11 +127,12 @@ int main(int argc, char **argv) {
             //ROS_INFO("Move left or right");
 //            gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
             if (targetRotation > robotPose.z) {
-                gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+                gpio_command(MoveCommands::LEFT_FORWARD_LOW);
             } else {
-                gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+                gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
             }
         }
     } while (ros::ok());
+    gpio_command(MoveCommands::FULL_STOP);
     return EXIT_SUCCESS;
 }
