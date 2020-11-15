@@ -113,11 +113,9 @@ int main(int argc, char **argv) {
         geometry_msgs::Pose targetPose = robotPath->poses[pathIterator].pose;
         double targetRotation = poseToDegrees(targetPose);
         targetRotation += 90;
-        if(robotPose.z - targetRotation < MEASUREMENT_ROTATION || robotPose.z + targetRotation < MEASUREMENT_ROTATION) {
-            if (robotPose.x - targetPose.position.x < MEASUREMENT_LOCATION
-            || robotPose.x + targetPose.position.x < MEASUREMENT_LOCATION
-            || robotPose.y - targetPose.position.y < MEASUREMENT_LOCATION
-            || robotPose.y + targetPose.position.y < MEASUREMENT_LOCATION) {
+        if(std::abs(robotPose.z - targetRotation) < MEASUREMENT_ROTATION) {
+            if (std::abs(robotPose.x - targetPose.position.x) < MEASUREMENT_LOCATION
+            || std::abs(robotPose.y - targetPose.position.y) < MEASUREMENT_LOCATION) {
                 gpio_command(MoveCommands::FORWARD_LOW);
             } else {
                 pathIterator++;
