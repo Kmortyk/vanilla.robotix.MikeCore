@@ -40,6 +40,10 @@ class Motor:
     def move(self, speed_percent):
         speed = _clip(abs(speed_percent), 0, 100)
 
+        if speed == 0:
+            GPIO.output(self._backward_pin, GPIO.LOW)
+            GPIO.output(self._forward_pin, GPIO.LOW)
+
         if speed < 10:
             return
 
