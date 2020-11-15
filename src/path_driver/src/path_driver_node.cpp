@@ -89,6 +89,10 @@ int main(int argc, char **argv) {
             pathIterator = 0;
             robotPathUpdated = false;
         }
+        if (pathIterator >= robotPath->poses.size()) {
+            ROS_INFO("Path end!");
+            continue;
+        }
         geometry_msgs::Point robotPose = getRobotPose();
         geometry_msgs::Pose targetPose = robotPath->poses[pathIterator].pose;
         double targetRotation = poseToDegrees(targetPose);
@@ -100,7 +104,6 @@ int main(int argc, char **argv) {
                 gpio_command(MoveCommands::FORWARD_MIDDLE);
             } else {
                 pathIterator++;
-                continue;
             }
         } else {
             // move left of right
