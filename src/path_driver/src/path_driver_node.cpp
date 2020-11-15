@@ -33,6 +33,9 @@ void gpio_command(const uint8_t command) {
 }
 
 void pathCallback(const nav_msgs::PathConstPtr& path) {
+    if (path == nullptr) {
+        return;
+    }
     robotPath = path;
     robotPathUpdated = true;
 }
@@ -79,6 +82,8 @@ double poseToDegrees(geometry_msgs::Pose &pose) {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "path_driver");
     ros::NodeHandle nodeHandle;
+    ros::Subscriber pathSubscriber =
+            nodeHandle.subscribe<nav_msgs::Path>("/move_base_node/NavfnROS/plan", 1, pathCallback);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
@@ -88,6 +93,10 @@ int main(int argc, char **argv) {
         if (robotPathUpdated) {
             pathIterator = 0;
             robotPathUpdated = false;
+        }
+        if (robotPath == nullptr) {
+            ROS_INFO("Null");
+            continue;
         }
         if (pathIterator >= robotPath->poses.size()) {
             ROS_INFO("Path end!");
