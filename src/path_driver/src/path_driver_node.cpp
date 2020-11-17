@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
         if(std::abs(robotPose.z - targetRotation) < MEASUREMENT_ROTATION) {
             if (std::abs(robotPose.x - targetPose.position.x) < MEASUREMENT_LOCATION
             || std::abs(robotPose.y - targetPose.position.y) < MEASUREMENT_LOCATION) {
-                gpio_command(MoveCommands::FORWARD_LOW);
+                gpio_command(MoveCommands::FORWARD_FAST);
             } else {
                 pathIterator++;
             }
@@ -125,9 +125,9 @@ int main(int argc, char **argv) {
             //ROS_INFO("Move left or right");
 //            gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
             if (targetRotation > robotPose.z) {
-                gpio_command(MoveCommands::LEFT_FORWARD_LOW);
+                gpio_command(MoveCommands::LEFT_FORWARD_FAST);
             } else {
-                gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
+                gpio_command(MoveCommands::RIGHT_FORWARD_FAST);
             }
         }
     } while (ros::ok());
