@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
         geometry_msgs::Point robotPose = getRobotPose();
         geometry_msgs::Pose targetPose = robotPath->poses[pathIterator].pose;
         double targetRotation = poseToDegrees(targetPose);
-        targetRotation += 90;
+        //targetRotation += 90;
         if(std::abs(robotPose.z - targetRotation) < MEASUREMENT_ROTATION) {
             if (std::abs(robotPose.x - targetPose.position.x) < MEASUREMENT_LOCATION
             || std::abs(robotPose.y - targetPose.position.y) < MEASUREMENT_LOCATION) {
