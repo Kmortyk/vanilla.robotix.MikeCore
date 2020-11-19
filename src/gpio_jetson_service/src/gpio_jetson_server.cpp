@@ -52,6 +52,7 @@ bool serviceHandler(gpio_jetson_service::gpio_srv::Request &request, gpio_jetson
             break;
         case MoveCommands::LEFT_FORWARD_MIDDLE:
             GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::RIGHT, Direction::BACKWARD, Speed::MIDDLE);
             break;
         case MoveCommands::LEFT_FORWARD_FAST:
             GPIO_Movement::move(Motor::LEFT, Direction::FORWARD, Speed::FAST);
@@ -70,6 +71,7 @@ bool serviceHandler(gpio_jetson_service::gpio_srv::Request &request, gpio_jetson
             break;
         case MoveCommands::RIGHT_FORWARD_MIDDLE:
             GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::MIDDLE);
+            GPIO_Movement::move(Motor::LEFT, Direction::BACKWARD, Speed::MIDDLE);
             break;
         case MoveCommands::RIGHT_FORWARD_FAST:
             GPIO_Movement::move(Motor::RIGHT, Direction::FORWARD, Speed::FAST);
