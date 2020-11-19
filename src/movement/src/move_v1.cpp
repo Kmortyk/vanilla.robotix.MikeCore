@@ -49,7 +49,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
             ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
             if (max_score < bboxes->bboxes[i].score) {
 
-                if (bboxes->bboxes[i].label != "tvmonitor") continue;
+                if (bboxes->bboxes[i].label != "bottle") continue;
 
                 max_score = bboxes->bboxes[i].score;
                 max_score_index = i;
@@ -72,13 +72,13 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 
     if (object_center_x < image_middle_x - 10) {
         ROS_WARN("Follow left to the object...");
-        gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
+        gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
         usleep(100000);
     }
 
     if (object_center_x > image_middle_x + 10) {
         ROS_WARN("Follow right to the object...");
-        gpio_command(MoveCommands::LEFT_FORWARD_LOW);
+        gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
         usleep(100000);
     }
     gpio_command(MoveCommands::FULL_STOP);
@@ -131,6 +131,8 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
                 ROS_WARN("Right obstacle");
                 right = true;
                 return;
+            } else {
+                ROS_WARN("Impossible situation");
             }
         }
     }
@@ -144,13 +146,13 @@ void movement() {
                 ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 sleep(1);
-                gpio_command(MoveCommands::FORWARD_LOW);
+                gpio_command(MoveCommands::FORWARD_MIDDLE);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
                 sleep(1);
-                gpio_command(MoveCommands::FORWARD_LOW);
+                gpio_command(MoveCommands::FORWARD_MIDDLE);
                 break;
             default:
                 ROS_ERROR("Case doesn't exist!");
