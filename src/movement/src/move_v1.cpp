@@ -145,13 +145,15 @@ void movement() {
             case 0:
                 ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
-                sleep(1);
+                usleep(200000);
+//                sleep(1);
                 gpio_command(MoveCommands::FORWARD_MIDDLE);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-                sleep(1);
+//                sleep(1);
+                usleep(200000);
                 gpio_command(MoveCommands::FORWARD_MIDDLE);
                 break;
             default:
