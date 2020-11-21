@@ -13,7 +13,7 @@
         <param name="range_max"    type="double" value="12.0" />
         <param name="ignore_array" type="string" value="" />
         <param name="samp_rate"    type="int"    value="6"/>
-        <param name="frequency"    type="double" value="12"/>
+        <param name="frequency"    type="double" value="10"/>
     </node>
     <node
             pkg="tf"
