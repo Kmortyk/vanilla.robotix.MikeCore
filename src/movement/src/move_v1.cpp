@@ -270,8 +270,6 @@ int main(int argc, char **argv) {
         }
         if (!object_detected) {
             movement();
-        } else {
-            time_last_object = ros::Time::now();
         }
         stuck_detect();
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
