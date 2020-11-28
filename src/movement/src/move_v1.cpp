@@ -38,7 +38,7 @@ void gpio_command(const uint8_t command) {
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if(bboxes->bboxes.empty()) {
-        object_detected = false;
+//        object_detected = false;
         return;
     }
 //    object_detected = true;
@@ -87,7 +87,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         chasis_correction = true;
         ROS_WARN("Follow left to the object...");
         gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
-        usleep(100000);
+        usleep(50000);
         gpio_command(MoveCommands::FULL_STOP);
         usleep(100000);
     }
@@ -96,7 +96,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         chasis_correction = true;
         ROS_WARN("Follow right to the object...");
         gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-        usleep(100000);
+        usleep(50000);
         gpio_command(MoveCommands::FULL_STOP);
         usleep(100000);
     }
@@ -207,7 +207,7 @@ void stuck_detect() {
     if (now.toSec() - transform_time_sec < 1) {
         return;
     }
-    if (object_detected) return;
+//    if (object_detected) return;
     //ROS_WARN("Time passed!");
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
@@ -264,7 +264,7 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        if (ros::Time::now().toSec() - time_last_object.toSec() < 2) {
+        if (ros::Time::now().toSec() - time_last_object.toSec() > 2) {
             object_detected = false;
         }
         if (!object_detected) {
