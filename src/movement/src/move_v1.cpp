@@ -230,7 +230,7 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.06 && dY < 0.06 && dR < 8.0) {
+    if (dX < 0.06 && dY < 0.06 && dR < 8.0 && !object_detected) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
@@ -256,7 +256,7 @@ int main(int argc, char **argv) {
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
-            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scanUnity", 1000, ydLidarPointsCallback);
+            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1, ydLidarPointsCallback);
     ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
@@ -269,10 +269,10 @@ int main(int argc, char **argv) {
         }
         if (!object_detected) {
             movement();
-            stuck_detect();
         } else {
             time_last_object = ros::Time::now();
         }
+        stuck_detect();
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
