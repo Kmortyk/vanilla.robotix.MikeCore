@@ -89,7 +89,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
         usleep(50000);
         gpio_command(MoveCommands::FULL_STOP);
-        usleep(100000);
+        usleep(50000);
     }
 
     if (object_center_x > image_middle_x + FAULT) {
@@ -98,7 +98,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
         usleep(50000);
         gpio_command(MoveCommands::FULL_STOP);
-        usleep(100000);
+        usleep(50000);
     }
 
 //    if (!chasis_correction) {
@@ -110,8 +110,11 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 //    }
 
     time_last_object = ros::Time::now();
-    if (!chasis_correction)
+    if (!chasis_correction) {
         gpio_command(MoveCommands::FORWARD_MIDDLE);
+        usleep(100000);
+    }
+
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -158,7 +161,8 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
                 left = true;
                 return;
             } else
-            if (i > 630 || i < 90) {
+//            if (i > 630 || i < 90) {
+            if (i > 675 || i < 45) {
                 //ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
@@ -184,13 +188,15 @@ void movement() {
                 ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
                 can_switch_side = false;
-                sleep(1);
+                usleep(300000);
+//                sleep(1);
 //                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-                sleep(1);
+                usleep(300000);
+//                sleep(1);
 //                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             default:
@@ -230,7 +236,7 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.06 && dY < 0.06 && dR < 8.0 && !object_detected) {
+    if (dX < 0.03 && dY < 0.03 && dR < 3.0 && !object_detected) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
