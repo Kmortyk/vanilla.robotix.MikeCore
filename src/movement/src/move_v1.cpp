@@ -264,6 +264,7 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
+        ROS_WARN("%d", ros::Time::now().toSec() - time_last_object.toSec() > 2);
         if (ros::Time::now().toSec() - time_last_object.toSec() > 2) {
             object_detected = false;
         }
