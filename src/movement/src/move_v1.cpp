@@ -13,8 +13,9 @@
 
 #define IMAGE_WIDTH 300
 #define IMAGE_HEIGHT 300
+#define FAULT 20
 
-bool backward, left, forward, right;
+bool backward, left, forward, right, object_detected, chasis_correction;
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 double x = 0, y = 0, r = 0;
 double transform_time_sec;
@@ -22,24 +23,25 @@ ros::ServiceClient gpio_client;
 tf::TransformListener* transformListener;
 tf::StampedTransform transform_bot;
 float image_middle_x, image_middle_y;
-uint8_t currentCommand;
+int min_left_right = 0;
+bool can_switch_side = true;
+ros::Time time_last_object;
 
 void gpio_command(const uint8_t command) {
-    if (currentCommand == command)
-         return;
     gpio_jetson_service::gpio_srv service;
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     gpio_jetson_service::gpio_srv service2;
     service2.request.command = command;
     gpio_client.call(service2);
-    currentCommand = command;
 }
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if(bboxes->bboxes.empty()) {
+        object_detected = false;
         return;
     }
+//    object_detected = true;
     ROS_WARN("Bboxes got! Size: %lu", bboxes->bboxes.size());
     inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
@@ -58,7 +60,9 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         bbox = bboxes->bboxes[max_score_index];
     } else bbox = bboxes->bboxes[0];
 
-    if (bbox.label != "tvmonitor") return;
+    if (bbox.label != "bottle") return;
+
+    object_detected = true;
 
     ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
@@ -70,18 +74,44 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     float object_center_y = (y1 + y2) / 2;
     ROS_WARN("Object center (%f,%f).", object_center_x, object_center_y);
 
-    if (object_center_x < image_middle_x - 10) {
+    chasis_correction = false;
+
+    gpio_command(MoveCommands::FULL_STOP);
+    usleep(100000);
+
+    /*if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
+        return;
+    }*/
+
+    if (object_center_x < image_middle_x - FAULT) {
+        chasis_correction = true;
         ROS_WARN("Follow left to the object...");
         gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
         usleep(100000);
+        gpio_command(MoveCommands::FULL_STOP);
+        usleep(100000);
     }
 
-    if (object_center_x > image_middle_x + 10) {
+    if (object_center_x > image_middle_x + FAULT) {
+        chasis_correction = true;
         ROS_WARN("Follow right to the object...");
         gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
         usleep(100000);
+        gpio_command(MoveCommands::FULL_STOP);
+        usleep(100000);
     }
-    gpio_command(MoveCommands::FULL_STOP);
+
+//    if (!chasis_correction) {
+//        if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
+//            gpio_command(MoveCommands::FULL_STOP);
+//        } else {
+//            gpio_command(MoveCommands::FORWARD_LOW);
+//        }
+//    }
+
+    time_last_object = ros::Time::now();
+    if (!chasis_correction)
+        gpio_command(MoveCommands::FORWARD_MIDDLE);
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -93,75 +123,82 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        if (i > 90 && i < 270) {
+            //if (i > 90 && i < 270) {
+        if (i > 90 && i < 180) {
             left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 630 || i < 90) {
             forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        if (i > 450 && i < 630) {
+            //if (i > 450 && i < 630) {
+        if (i > 540 && i < 630) {
             right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         }
     }
     backward_m = backward_lm / 180;
-    left_m = left_lm / 180;
+//    left_m = left_lm / 180;
+    left_m = left_lm / 90;
     forward_m = forward_lm / 180;
-    right_m = right_lm / 180;
+//    right_m = right_lm / 180;
+    right_m = right_lm / 90;
     /*if (message->ranges[360] > 0 && message->ranges[360] < 0.2f) {
     }*/
+    left = right = backward = forward = false;
     for (int i = 0; i < 720; i++) {
-        left = right = backward = forward = false;
-        if (message->ranges[i] > 0 && message->ranges[i] < 0.5f) {
+        if (message->ranges[i] >= 0.1f && message->ranges[i] <= 0.4f) {
             if (i > 270 && i < 450) {
-                ROS_WARN("Backward obstacle");
+                //ROS_WARN("Backward obstacle");
+                //ROS_INFO("Range %f", message->ranges[i]);
                 backward = true;
                 return;
             } else
             if (i > 90 && i < 270) {
-                ROS_WARN("Left obstacle");
+                //ROS_WARN("Left obstacle");
+                //ROS_INFO("Range %f", message->ranges[i]);
                 left = true;
                 return;
             } else
-//            if (i > 630 || i < 90) {
-            if (i > 675 || i < 45) {
-                ROS_WARN("Forward obstacle");
+            if (i > 630 || i < 90) {
+                //ROS_WARN("Forward obstacle");
+                //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
                 return;
             } else
             if (i > 450 && i < 630) {
-                ROS_WARN("Right obstacle");
+                //ROS_WARN("Right obstacle");
+                //ROS_INFO("Range %f", message->ranges[i]);
                 right = true;
                 return;
-            } else {
-                ROS_WARN("Impossible situation");
             }
         }
     }
 }
 
 void movement() {
+    if (object_detected) return;
     if (forward) {
-        int min = left_m >= right_m ? 0 : 1;
-        switch (min) {
+        if (can_switch_side)
+            min_left_right = left_m <= right_m ? 0 : 1;
+        switch (min_left_right) {
             case 0:
                 ROS_WARN("Going to the left side");
                 gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
-                usleep(200000);
-//                sleep(1);
-                gpio_command(MoveCommands::FORWARD_MIDDLE);
+                can_switch_side = false;
+                sleep(1);
+//                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             case 1:
                 ROS_WARN("Going to the right side");
                 gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-//                sleep(1);
-                usleep(200000);
-                gpio_command(MoveCommands::FORWARD_MIDDLE);
+                sleep(1);
+//                gpio_command(MoveCommands::FORWARD_LOW);
                 break;
             default:
                 ROS_ERROR("Case doesn't exist!");
         }
     } else {
-        gpio_command(MoveCommands::FORWARD_FAST);
+        gpio_command(MoveCommands::FORWARD_LOW);
+        can_switch_side = true;
     }
 }
 
@@ -170,6 +207,8 @@ void stuck_detect() {
     if (now.toSec() - transform_time_sec < 1) {
         return;
     }
+    if (object_detected) return;
+    //ROS_WARN("Time passed!");
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
@@ -177,6 +216,7 @@ void stuck_detect() {
         ROS_ERROR("error: %s", exception.what());
         return;
     }
+    //ROS_WARN("Wait for transform passed");
 
     double bot_x = transform_bot.getOrigin().x();
     double bot_y = transform_bot.getOrigin().y();
@@ -190,13 +230,16 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.03 && dY < 0.03 && dR < 3.0) {
+    if (dX < 0.06 && dY < 0.06 && dR < 8.0) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
+        ros::spinOnce();
+        forward = true;
+        movement();
     }
 
-    ROS_WARN("dX = %f dY = %f dR = %f", bot_x - x, bot_y - y, bot_dir - r);
+    ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
 
     x = bot_x;
     y = bot_y;
@@ -213,7 +256,7 @@ int main(int argc, char **argv) {
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
     ros::Subscriber ydlidarPointsSub =
-            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scan", 1000, ydLidarPointsCallback);
+            nodeHandle.subscribe<sensor_msgs::LaserScan>("/scanUnity", 1000, ydLidarPointsCallback);
     ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
@@ -221,8 +264,15 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        movement();
-        stuck_detect();
+        if (ros::Time::now().toSec() - time_last_object.toSec() < 2) {
+            object_detected = false;
+        }
+        if (!object_detected) {
+            movement();
+            stuck_detect();
+        } else {
+            time_last_object = ros::Time::now();
+        }
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
