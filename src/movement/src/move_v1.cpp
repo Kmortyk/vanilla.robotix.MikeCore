@@ -12,7 +12,7 @@
 #include "inference/Bboxes.h"
 
 #define IMAGE_WIDTH 300
-#define IMAGE_HEIGHT 225
+#define IMAGE_HEIGHT 300
 #define FAULT 20
 
 bool backward, left, forward, right, object_detected, chasis_correction;
@@ -25,6 +25,7 @@ tf::StampedTransform transform_bot;
 float image_middle_x, image_middle_y;
 int min_left_right = 0;
 bool can_switch_side = true;
+ros::Time time_last_object;
 
 void gpio_command(const uint8_t command) {
     gpio_jetson_service::gpio_srv service;
@@ -40,7 +41,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         object_detected = false;
         return;
     }
-    object_detected = true;
+//    object_detected = true;
     ROS_WARN("Bboxes got! Size: %lu", bboxes->bboxes.size());
     inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
@@ -50,7 +51,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
             ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
             if (max_score < bboxes->bboxes[i].score) {
 
-                //if (bboxes->bboxes[i].label != "tvmonitor") continue;
+                if (bboxes->bboxes[i].label != "bottle") continue;
 
                 max_score = bboxes->bboxes[i].score;
                 max_score_index = i;
@@ -59,7 +60,9 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         bbox = bboxes->bboxes[max_score_index];
     } else bbox = bboxes->bboxes[0];
 
-    //if (bbox.label != "tvmonitor") return;
+    if (bbox.label != "bottle") return;
+
+    object_detected = true;
 
     ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
@@ -76,25 +79,25 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     gpio_command(MoveCommands::FULL_STOP);
     usleep(100000);
 
-    if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
+    /*if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
         return;
-    }
+    }*/
 
     if (object_center_x < image_middle_x - FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow left to the object...");
-        gpio_command(MoveCommands::LEFT_FORWARD_LOW);
-        usleep(50000);
-        gpio_command(MoveCommands::LEFT_STOP);
+        gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+        usleep(100000);
+        gpio_command(MoveCommands::FULL_STOP);
         usleep(100000);
     }
 
     if (object_center_x > image_middle_x + FAULT) {
         chasis_correction = true;
         ROS_WARN("Follow right to the object...");
-        gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
-        usleep(50000);
-        gpio_command(MoveCommands::RIGHT_STOP);
+        gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+        usleep(100000);
+        gpio_command(MoveCommands::FULL_STOP);
         usleep(100000);
     }
 
@@ -106,8 +109,9 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 //        }
 //    }
 
+    time_last_object = ros::Time::now();
     if (!chasis_correction)
-        gpio_command(MoveCommands::FORWARD_LOW);
+        gpio_command(MoveCommands::FORWARD_MIDDLE);
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
@@ -119,14 +123,14 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        //if (i > 90 && i < 270) {
+            //if (i > 90 && i < 270) {
         if (i > 90 && i < 180) {
             left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 630 || i < 90) {
             forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-        //if (i > 450 && i < 630) {
+            //if (i > 450 && i < 630) {
         if (i > 540 && i < 630) {
             right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         }
@@ -260,8 +264,15 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        movement();
-        stuck_detect();
+        if (ros::Time::now().toSec() - time_last_object.toSec() < 2) {
+            object_detected = false;
+        }
+        if (!object_detected) {
+            movement();
+            stuck_detect();
+        } else {
+            time_last_object = ros::Time::now();
+        }
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
         ros::spinOnce();
     }
