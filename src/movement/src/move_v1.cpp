@@ -26,6 +26,7 @@ float image_middle_x, image_middle_y;
 int min_left_right = 0;
 bool can_switch_side = true;
 ros::Time time_last_object;
+int object_detected_count = 0;
 
 void gpio_command(const uint8_t command) {
     gpio_jetson_service::gpio_srv service;
@@ -61,8 +62,12 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     } else bbox = bboxes->bboxes[0];
 
     if (bbox.label != "bottle") return;
-
+    object_detected_count++;
     object_detected = true;
+
+    if (object_detected_count < 5) {
+        return;
+    }
 
     ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
@@ -126,15 +131,15 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-            //if (i > 90 && i < 270) {
-        if (i > 90 && i < 180) {
+            if (i > 90 && i < 270) {
+//        if (i > 90 && i < 180) {
             left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
         if (i > 630 || i < 90) {
             forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         } else
-            //if (i > 450 && i < 630) {
-        if (i > 540 && i < 630) {
+            if (i > 450 && i < 630) {
+//        if (i > 540 && i < 630) {
             right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
         }
     }
@@ -148,7 +153,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     }*/
     left = right = backward = forward = false;
     for (int i = 0; i < 720; i++) {
-        if (message->ranges[i] >= 0.1f && message->ranges[i] <= 0.4f) {
+        if (message->ranges[i] > 0 && message->ranges[i] <= 0.2f) {
             if (i > 270 && i < 450) {
                 //ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
@@ -163,7 +168,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
             } else
 //            if (i > 630 || i < 90) {
             if (i > 675 || i < 45) {
-                //ROS_WARN("Forward obstacle");
+                ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
                 return;
@@ -218,7 +223,7 @@ void stuck_detect() {
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
-    } catch (tf2::LookupException exception) {
+    } catch (tf2::LookupException &exception) {
         ROS_ERROR("error: %s", exception.what());
         return;
     }
@@ -236,7 +241,7 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.03 && dY < 0.03 && dR < 3.0 && !object_detected) {
+    if (dX < 0.05 && dY < 0.05 && dR < 3.0 && !object_detected) {
         ROS_WARN("Stuck detected!!!");
         gpio_command(MoveCommands::BACKWARD_FAST);
         sleep(1);
@@ -270,15 +275,16 @@ int main(int argc, char **argv) {
     service.request.command = MoveCommands::FULL_STOP;
     gpio_client.call(service);
     while (ros::ok()) {
-        ROS_WARN("%f", ros::Time::now().toSec() - time_last_object.toSec());
-        if (ros::Time::now().toSec() - time_last_object.toSec() > 2) {
+        //ROS_WARN("%f", ros::Time::now().toSec() - time_last_object.toSec());
+        /*if (ros::Time::now().toSec() - time_last_object.toSec() > 1) {
             object_detected = false;
-        }
+        }*/
         if (!object_detected) {
             movement();
         }
         stuck_detect();
         //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
+        object_detected = false;
         ros::spinOnce();
     }
     gpio_command(MoveCommands::FULL_STOP);
