@@ -141,6 +141,7 @@ add_executable(${PROJECT_NAME}_node src/movement_node.cpp)
 add_executable(${PROJECT_NAME}_handler src/pcl_handler.cpp)
 add_executable(${PROJECT_NAME}_cartographer src/cartographer_test.cpp)
 add_executable(${PROJECT_NAME}_move_v1 src/move_v1.cpp)
+add_executable(${PROJECT_NAME}_move_v1.1 src/move_v1.1.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,6 +155,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 add_dependencies(${PROJECT_NAME}_handler ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_cartographer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(${PROJECT_NAME}_move_v1 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_move_v1.1 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
@@ -167,6 +169,10 @@ target_link_libraries(${PROJECT_NAME}_cartographer
 )
 
 target_link_libraries(${PROJECT_NAME}_move_v1
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_move_v1.1
         ${catkin_LIBRARIES}
 )
 
