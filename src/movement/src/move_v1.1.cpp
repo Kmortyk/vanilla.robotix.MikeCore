@@ -16,7 +16,7 @@
 #define FAULT 20
 
 enum ROBOT_STATES {
-    FREE_RIDE, AVOID_OBSTACLE, TARGETING_OBJECT, MOVE_TO_OBJECT, STUCK, STOP
+    FREE_RIDE, AVOID_OBSTACLE, TARGETING_OBJECT, MOVE_TO_OBJECT, STUCK, STOP, DETECTING_OBJECT
 } robot_state;
 
 // Free check
@@ -54,6 +54,9 @@ int object_detected_count = 0;
 // Time when the last chage was applied
 ros::Time last_change_state;
 
+// Counter of spins from last change state
+unsigned int spins_last_change_state;
+
 uint8_t last_move_command;
 
 void gpio_command(const uint8_t command) {
@@ -70,17 +73,15 @@ void gpio_command(const uint8_t command) {
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     if(bboxes->bboxes.empty()) {
-//        object_detected = false;
         return;
     }
-//    object_detected = true;
-    ROS_WARN("Bboxes got! Size: %lu", bboxes->bboxes.size());
+//    ROS_WARN("Bboxes got! Size: %lu", bboxes->bboxes.size());
     inference::Bbox bbox;
     if (bboxes->bboxes.size() > 1) {
         float max_score = 0;
         unsigned long max_score_index = 0;
         for (unsigned long i = 0; i < bboxes->bboxes.size(); i++) {
-            ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
+//            ROS_WARN("Object %s with score %f.", bboxes->bboxes[i].label.c_str(), bboxes->bboxes[i].score);
             if (max_score < bboxes->bboxes[i].score) {
 
                 if (bboxes->bboxes[i].label != "bottle") continue;
