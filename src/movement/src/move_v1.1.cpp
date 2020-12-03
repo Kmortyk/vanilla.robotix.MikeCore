@@ -54,13 +54,18 @@ int object_detected_count = 0;
 // Time when the last chage was applied
 ros::Time last_change_state;
 
+uint8_t last_move_command;
+
 void gpio_command(const uint8_t command) {
-    gpio_jetson_service::gpio_srv service;
-    service.request.command = MoveCommands::FULL_STOP;
-    gpio_client.call(service);
+    if (command != last_move_command) {
+        gpio_jetson_service::gpio_srv service;
+        service.request.command = MoveCommands::FULL_STOP;
+        gpio_client.call(service);
+    }
     gpio_jetson_service::gpio_srv service2;
     service2.request.command = command;
     gpio_client.call(service2);
+    last_move_command = command;
 }
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
