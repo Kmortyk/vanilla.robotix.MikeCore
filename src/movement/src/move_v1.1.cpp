@@ -157,6 +157,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         }
         if (last_change_state.toSec() + 0.3 < time_now.toSec()) {
             change_robot_state(TARGETING_OBJECT_WAIT_RESULTS);
+            return;
         }
         //It is targeting object state
         switch (need_to_correction) {
