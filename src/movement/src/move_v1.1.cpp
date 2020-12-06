@@ -16,20 +16,19 @@
 #define FAULT 20
 
 enum ROBOT_STATES {
-    FREE_RIDE, AVOID_OBSTACLE, TARGETING_OBJECT, MOVE_TO_OBJECT, STUCK, STOP, DETECTING_OBJECT
+    FREE_RIDE, AVOID_OBSTACLE, STUCK, DETECTING_OBJECT, TARGETING_OBJECT, TARGETING_OBJECT_WAIT_RESULTS, MOVE_TO_OBJECT, STOP
 } robot_state;
 
 // Free check
-bool backward, left, forward, right;
-
-// TODO REMOVE
-bool object_detected, chasis_correction;
+bool backward, left, forward, right, forward_ride;
+bool inference_at_this_spin, robot_stuck;
 
 // Average on sides of robot
 float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 
 // Last position and angle of robot
 double x = 0, y = 0, r = 0;
+double stuck_x, stuck_y, stuck_r;
 
 double transform_time_sec;
 ros::ServiceClient gpio_client;
@@ -39,17 +38,8 @@ tf::StampedTransform transform_bot;
 // TODO remove it
 float image_middle_x, image_middle_y;
 
-// State where to go TODO may be delete it
+// State where to go
 int min_left_right = 0;
-
-// Full turn on the right direction
-bool can_switch_side = true;
-
-// When we last time see the target object
-ros::Time time_last_object;
-
-// Counter of frames when we see the object
-int object_detected_count = 0;
 
 // Time when the last chage was applied
 ros::Time last_change_state;
@@ -60,7 +50,7 @@ unsigned int spins_last_change_state;
 uint8_t last_move_command;
 
 void gpio_command(const uint8_t command) {
-    if (command != last_move_command) {
+    if (command != last_move_command && command != MoveCommands::FULL_STOP) {
         gpio_jetson_service::gpio_srv service;
         service.request.command = MoveCommands::FULL_STOP;
         gpio_client.call(service);
@@ -69,6 +59,14 @@ void gpio_command(const uint8_t command) {
     service2.request.command = command;
     gpio_client.call(service2);
     last_move_command = command;
+}
+
+void change_robot_state(ROBOT_STATES state) {
+    ROS_INFO("Robot state changed to %i", state);
+    gpio_command(MoveCommands::FULL_STOP);
+    robot_state = state;
+    last_change_state = ros::Time::now();
+    spins_last_change_state = 0;
 }
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
@@ -94,14 +92,31 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
     } else bbox = bboxes->bboxes[0];
 
     if (bbox.label != "bottle") return;
-    object_detected_count++;
-    object_detected = true;
 
-    if (object_detected_count < 5) {
-        return;
+    // it sets to false in main after every spin
+    inference_at_this_spin = true;
+
+    ros::Time time_now = ros::Time::now();
+
+    if (robot_state == FREE_RIDE) {
+        change_robot_state(DETECTING_OBJECT);
     }
 
-    ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
+    if (robot_state == DETECTING_OBJECT && last_change_state.toSec() + 1 < time_now.toSec()) {
+        change_robot_state(TARGETING_OBJECT);
+    }
+
+    if (robot_state == TARGETING_OBJECT_WAIT_RESULTS) {
+        if (last_change_state.toSec() + 0.3 < time_now.toSec())
+            change_robot_state(TARGETING_OBJECT);
+        else
+            gpio_command(MoveCommands::FULL_STOP);
+    }
+
+    if (!(robot_state == TARGETING_OBJECT || robot_state == MOVE_TO_OBJECT))
+        return;
+
+//    ROS_WARN("Selected object %s with score %f and (%f,%f,%f,%f).", bbox.label.c_str(), bbox.score, bbox.x_min, bbox.y_min, bbox.x_max, bbox.y_max);
     float x1 = bbox.x_min;
     float y1 = bbox.y_min;
     float x2 = bbox.x_max;
@@ -109,103 +124,102 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
 
     float object_center_x = (x1 + x2) / 2;
     float object_center_y = (y1 + y2) / 2;
-    ROS_WARN("Object center (%f,%f).", object_center_x, object_center_y);
+//    ROS_WARN("Object center (%f,%f).", object_center_x, object_center_y);
 
-    chasis_correction = false;
-
-    gpio_command(MoveCommands::FULL_STOP);
-    usleep(100000);
-
-    /*if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
-        return;
-    }*/
+    // 0 - not need
+    // 1 - object on the left side
+    // 2 - object on the right side
+    short need_to_correction = 0;
 
     if (object_center_x < image_middle_x - FAULT) {
-        chasis_correction = true;
-        ROS_WARN("Follow left to the object...");
-        gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
-        usleep(50000);
-        gpio_command(MoveCommands::FULL_STOP);
-        usleep(50000);
+        need_to_correction = 1;
     }
 
     if (object_center_x > image_middle_x + FAULT) {
-        chasis_correction = true;
-        ROS_WARN("Follow right to the object...");
-        gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-        usleep(50000);
-        gpio_command(MoveCommands::FULL_STOP);
-        usleep(50000);
+        need_to_correction = 2;
     }
 
-//    if (!chasis_correction) {
-//        if (x1 < FAULT || x2 > IMAGE_WIDTH - FAULT || y1 < FAULT || y2 > IMAGE_HEIGHT - FAULT) {
-//            gpio_command(MoveCommands::FULL_STOP);
-//        } else {
-//            gpio_command(MoveCommands::FORWARD_LOW);
-//        }
-//    }
-
-    time_last_object = ros::Time::now();
-    if (!chasis_correction) {
-        gpio_command(MoveCommands::FORWARD_MIDDLE);
-        usleep(100000);
+    if (robot_state == MOVE_TO_OBJECT) {
+        if (need_to_correction)
+            change_robot_state(TARGETING_OBJECT_WAIT_RESULTS);
+        else {
+            if ((y1 < 5 || y1 == IMAGE_HEIGHT - 5) && (y2 < 5 || y2 == IMAGE_HEIGHT)) {
+                // Robot reached the target object
+                change_robot_state(STOP);
+            } else
+                gpio_command(MoveCommands::FORWARD_MIDDLE);
+        }
+    } else {
+        // robot state = TARGETING_OBJECT
+        if (!need_to_correction) {
+            change_robot_state(MOVE_TO_OBJECT);
+            return;
+        }
+        if (last_change_state.toSec() + 0.3 < time_now.toSec()) {
+            change_robot_state(TARGETING_OBJECT_WAIT_RESULTS);
+        }
+        //It is targeting object state
+        switch (need_to_correction) {
+            case 1:
+                gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+                break;
+            case 2:
+                gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+                break;
+            default:
+                ROS_ERROR("State of need_to_correction doesn't exist!");
+        }
     }
-
 }
 
 void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     float backward_lm = 0, left_lm = 0, forward_lm = 0, right_lm = 0;
     for (int i = 0; i < 719; ++i) {
-        /*if (message->ranges[i] > 1) {
-            ROS_WARN("Range on %d > 1 !!! and equals %f", i, message->ranges[i]);
-        }*/
-        if (i > 270 && i < 450) {
+         if (i > 270 && i < 450) {
             backward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
-        } else
-            if (i > 90 && i < 270) {
-//        if (i > 90 && i < 180) {
+         } else
+         if (i > 90 && i < 270) {
             left_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
-        } else
-        if (i > 630 || i < 90) {
+         } else
+         if (i > 630 || i < 90) {
             forward_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
-        } else
-            if (i > 450 && i < 630) {
-//        if (i > 540 && i < 630) {
+         } else
+         if (i > 450 && i < 630) {
             right_lm += message->ranges[i] > 0 ? message->ranges[i] : 1;
-        }
+         }
     }
     backward_m = backward_lm / 180;
-//    left_m = left_lm / 180;
-    left_m = left_lm / 90;
+    left_m = left_lm / 180;
     forward_m = forward_lm / 180;
-//    right_m = right_lm / 180;
-    right_m = right_lm / 90;
-    /*if (message->ranges[360] > 0 && message->ranges[360] < 0.2f) {
-    }*/
+    right_m = right_lm / 180;
     left = right = backward = forward = false;
     for (int i = 0; i < 720; i++) {
-        if (message->ranges[i] > 0 && message->ranges[i] <= 0.2f) {
-            if (i > 270 && i < 450) {
+        if (message->ranges[i] > 0 && message->ranges[i] <= 0.3f) {
+            if (!backward && i > 270 && i < 450) {
                 //ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 backward = true;
                 return;
             } else
-            if (i > 90 && i < 270) {
+            if (!left && i > 90 && i < 270) {
                 //ROS_WARN("Left obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 left = true;
                 return;
             } else
-//            if (i > 630 || i < 90) {
-            if (i > 675 || i < 45) {
-                ROS_WARN("Forward obstacle");
+            if (!forward && (i > 630 || i < 90)) {
+//                ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
                 return;
             } else
-            if (i > 450 && i < 630) {
+            if (!forward_ride && (i > 675 || i < 45)) {
+//                ROS_WARN("Forward obstacle");
+                //ROS_INFO("Range %f", message->ranges[i]);
+                forward_ride = true;
+                return;
+            } else
+            if (!right && i > 450 && i < 630) {
                 //ROS_WARN("Right obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 right = true;
@@ -215,43 +229,65 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     }
 }
 
+void move_to_the_side() {
+    switch (min_left_right) {
+        case 0:
+            gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+            break;
+        case 1:
+            gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+            break;
+        default:
+            ROS_ERROR("State of move to side doesn't exist!");
+    }
+}
+
 void movement() {
-    if (object_detected) return;
-    if (forward) {
-        if (can_switch_side)
-            min_left_right = left_m <= right_m ? 0 : 1;
-        can_switch_side = false;
-        switch (min_left_right) {
-            case 0:
-                ROS_WARN("Going to the left side");
-                gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
-                usleep(300000);
-//                sleep(1);
-//                gpio_command(MoveCommands::FORWARD_LOW);
-                break;
-            case 1:
-                ROS_WARN("Going to the right side");
-                gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
-                usleep(300000);
-//                sleep(1);
-//                gpio_command(MoveCommands::FORWARD_LOW);
-                break;
-            default:
-                ROS_ERROR("Case doesn't exist!");
+    ros::Time time_now = ros::Time::now();
+    if ((robot_state == FREE_RIDE || robot_state == AVOID_OBSTACLE ) && robot_stuck && last_change_state.toSec() + 0.5 < time_now.toSec()) {
+        stuck_x = x;
+        stuck_y = y;
+        stuck_r = r;
+        change_robot_state(STUCK);
+    }
+    if (robot_state == FREE_RIDE && forward_ride) {
+        min_left_right = left_m <= right_m ? 0 : 1;
+        change_robot_state(AVOID_OBSTACLE);
+    }
+    if (robot_state == FREE_RIDE) {
+        gpio_command(MoveCommands::FORWARD_FAST);
+        return;
+    }
+    if (robot_state == AVOID_OBSTACLE) {
+        if (forward_ride) {
+            change_robot_state(FREE_RIDE);
+            return;
         }
-    } else {
-        gpio_command(MoveCommands::FORWARD_MIDDLE);
-        can_switch_side = true;
+        move_to_the_side();
+        return;
+    }
+    if (robot_state == STUCK) {
+        if (std::abs(x - stuck_x) < 5 && std::abs(y - stuck_y) < 5) {
+            if (robot_stuck && last_change_state.toSec() + 0.5 < time_now.toSec()) {
+                move_to_the_side();
+                return;
+            }
+            gpio_command(MoveCommands::BACKWARD_FAST);
+            return;
+        }
+        if (std::abs(r - stuck_r) < 30) {
+            if (robot_stuck && last_change_state.toSec() + 0.5 < time_now.toSec()) {
+                gpio_command(MoveCommands::BACKWARD_FAST);
+                return;
+            }
+            move_to_the_side();
+            return;
+        }
+        change_robot_state(FREE_RIDE);
     }
 }
 
 void stuck_detect() {
-    ros::Time now = ros::Time::now();
-    if (now.toSec() - transform_time_sec < 1) {
-        return;
-    }
-//    if (object_detected) return;
-    //ROS_WARN("Time passed!");
     try {
         transformListener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(1.0));
         transformListener->lookupTransform("base_link", "map", ros::Time(0), transform_bot);
@@ -273,21 +309,22 @@ void stuck_detect() {
     double dY = std::abs(bot_y - y);
     double dR = std::abs(bot_dir - r);
 
-    if (dX < 0.05 && dY < 0.05 && dR < 3.0 && !object_detected) {
-        ROS_WARN("Stuck detected!!!");
-        gpio_command(MoveCommands::BACKWARD_FAST);
-        sleep(1);
-        ros::spinOnce();
-        forward = true;
-        movement();
+    robot_stuck = false;
+
+    if (robot_state == FREE_RIDE && dX < 0.0005 && dY < 0.0005) {
+        robot_stuck = true;
+    } else if (robot_state == AVOID_OBSTACLE && dR < 3.0) {
+        robot_stuck = true;
+    } else if (robot_state == STUCK && dX < 0.0005 && dY < 0.0005 && dR < 3.0) {
+        robot_stuck = true;
     }
+
 
     ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
 
     x = bot_x;
     y = bot_y;
     r = bot_dir;
-    transform_time_sec = ros::Time::now().toSec();
 }
 
 int main(int argc, char **argv) {
@@ -303,22 +340,27 @@ int main(int argc, char **argv) {
     ros::Subscriber inferenceSub =
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
-    gpio_jetson_service::gpio_srv service;
-    service.request.command = MoveCommands::FULL_STOP;
-    gpio_client.call(service);
+    change_robot_state(FREE_RIDE);
     while (ros::ok()) {
-        //ROS_WARN("%f", ros::Time::now().toSec() - time_last_object.toSec());
-        /*if (ros::Time::now().toSec() - time_last_object.toSec() > 1) {
-            object_detected = false;
-        }*/
-        if (!object_detected) {
+        ros::spinOnce();
+        ros::Time time_now = ros::Time::now();
+        stuck_detect();
+        if (robot_state == DETECTING_OBJECT && last_change_state.toSec() + 1.5 < time_now.toSec()) {
+            // False alarm, return robot to free ride state
+            change_robot_state(FREE_RIDE);
+        }
+        if ((robot_state == TARGETING_OBJECT || robot_state == MOVE_TO_OBJECT || robot_state == TARGETING_OBJECT_WAIT_RESULTS)
+        && !inference_at_this_spin && last_change_state.toSec() + 1 < time_now.toSec()) {
+            // Robot lost the object when target or move to him, return to free ride
+            change_robot_state(FREE_RIDE);
+        }
+        if (robot_state == FREE_RIDE || robot_state == AVOID_OBSTACLE || robot_state == STUCK) {
             movement();
         }
-        stuck_detect();
-        //ROS_INFO("Forward: %f, Left: %f, Right: %f, Backward: %f", forward_m, left_m, right_m, backward_m);
-        object_detected = false;
-        ros::spinOnce();
+        inference_at_this_spin = false;
+        spins_last_change_state++;
     }
     gpio_command(MoveCommands::FULL_STOP);
+    sleep(1);
     return EXIT_SUCCESS;
 }
