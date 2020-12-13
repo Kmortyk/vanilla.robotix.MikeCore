@@ -3,3 +3,7 @@ devel
 src/.idea
 .idea/
 .catkin_tools
+install/
+__pycache__/
+__init__.py
+__init__.py.save

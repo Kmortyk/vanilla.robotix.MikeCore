@@ -9,9 +9,7 @@
 #include <ctime>
 #include <sys/stat.h>
 
-const char* path = "/media/B6CE9388CE934013/video/";
-// const char* path = "/mnt/sda1/Projects/Mike/video/";
-
+const char* path = "/media/01D61CFFCE66A540/video2/";
 const char* base_name = "mike-video-";
 const char* extension = ".avi";
 

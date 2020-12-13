@@ -1,3 +1,5 @@
+import cv2
+
 class CropPreprocessor:
     def __init__(self, width, height, horiz=True, inter=cv2.INTER_AREA):
         # store the target image width, height, whether or not
