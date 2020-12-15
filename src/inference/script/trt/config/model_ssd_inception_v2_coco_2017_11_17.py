@@ -1,6 +1,6 @@
 import graphsurgeon as gs
 
-path = '/home/xavier/ROS/vanilla.robotix.MikeCore/src/inference/script/trt/weights/inception_v2_numClasses3.pb'
+path = '/home/xavier/vanilla.robotix.MikeCore/src/inference/script/trt/weights/inception_v2_numClasses3.pb'
 TRTbin = 'TRT_ssd_inception_v2_coco_2017_11_17.bin'
 output_name = ['NMS']
 dims = [3, 300, 300]

@@ -29,7 +29,7 @@ class TrtModel:
         self.dp = [MinThreshold, NonMaximumSuppression]
 
     def initialize(self):
-        ctypes.CDLL(os.path.abspath("/home/xavier/ROS/vanilla.robotix.MikeCore/src/inference/script/trt/lib/libflattenconcat.so"))
+        ctypes.CDLL(os.path.abspath("/home/xavier/vanilla.robotix.MikeCore/src/inference/script/trt/lib/libflattenconcat.so"))
         self.logger = trt.Logger(trt.Logger.INFO)
         trt.init_libnvinfer_plugins(self.logger, '')
         self.prep = ResizePreprocessor(300, 300)
