@@ -1,3 +1,6 @@
+# install pycuda
+sudo -H pip3 install --global-option=build_ext --global-option="-I/usr/local/cuda-10.2/targets/aarch64-linux/include/" --global-option="-L/usr/local/cuda-10.2/targets/aarch64-linux/lib/" pycuda
+
 # запуск без ROS
 cd ~/ROS/vanilla.robotix.MikeCore/
 workon tf1.15
