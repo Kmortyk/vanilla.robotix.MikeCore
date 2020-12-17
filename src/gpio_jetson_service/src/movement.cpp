@@ -7,6 +7,17 @@
 // 421, 422, 393, 448, 482, 429, 447, 446
 // Jetson Xavier NX
 
+// Xavier NX new GPIO
+// 35 - right backard
+// 37 - right forward
+// 33 - right pwm
+// 32 - left pwm
+// 38 - left forward
+// 40 - left backward
+
+// 033 035 037 032 038 040
+// 393 448 482 424 447 446
+
 #include "movement.hpp"
 
 bool initialized = false;
