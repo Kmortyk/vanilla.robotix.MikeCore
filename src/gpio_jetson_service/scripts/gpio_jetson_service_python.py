@@ -7,7 +7,7 @@ import gpio_constants
 
 
 def handle_gpio_command(req):
-    rospy.loginfo("GPIO Command: %s", gpio_constants.Command[req.command].title)
+    rospy.loginfo("GPIO Command: %s", gpio_constants.Command(req.command).title)
     return gpio_srvResponse(1)
 
 
