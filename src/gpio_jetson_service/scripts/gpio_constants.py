@@ -1,4 +1,5 @@
 from enum import Enum
+gpio_pins = [32,33,35,37,38,40]
 
 
 class Command(Enum):

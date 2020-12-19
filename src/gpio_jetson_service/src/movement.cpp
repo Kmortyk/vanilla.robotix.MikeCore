@@ -8,7 +8,7 @@
 // Jetson Xavier NX
 
 // Xavier NX new GPIO
-// 35 - right backard
+// 35 - right backward
 // 37 - right forward
 // 33 - right pwm
 // 32 - left pwm

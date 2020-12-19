@@ -1,14 +1,89 @@
 #!/usr/bin/env python
 
 from gpio_jetson_service.srv import gpio_srv, gpio_srvResponse
-import rospy
 from gpio_movement import *
-import gpio_constants
-from enum import Enum
 
 
 def handle_gpio_command(req):
-    rospy.loginfo("GPIO Command: %s", gpio_constants.Command(req.command).name)
+    gpio_current_command = Command(req.command)
+    rospy.loginfo("GPIO Command: %s", gpio_current_command.name)
+    if gpio_current_command is Command.FULL_STOP:
+        gpio_stop(Motor.left)
+        gpio_stop(Motor.right)
+
+    elif gpio_current_command is Command.LEFT_STOP:
+        gpio_stop(Motor.left)
+
+    elif gpio_current_command is Command.RIGHT_STOP:
+        gpio_stop(Motor.right)
+
+    elif gpio_current_command is Command.FORWARD_LOW:
+        gpio_move(Motor.left, Direction.forward, Speed.low)
+        gpio_move(Motor.right, Direction.forward, Speed.low)
+
+    elif gpio_current_command is Command.FORWARD_MIDDLE:
+        gpio_move(Motor.left, Direction.forward, Speed.middle)
+        gpio_move(Motor.right, Direction.forward, Speed.middle)
+
+    elif gpio_current_command is Command.FORWARD_FAST:
+        gpio_move(Motor.left, Direction.forward, Speed.fast)
+        gpio_move(Motor.right, Direction.forward, Speed.fast)
+
+    elif gpio_current_command is Command.BACKWARD_LOW:
+        gpio_move(Motor.left, Direction.backward, Speed.low)
+        gpio_move(Motor.right, Direction.backward, Speed.low)
+
+    elif gpio_current_command is Command.BACKWARD_MIDDLE:
+        gpio_move(Motor.left, Direction.backward, Speed.middle)
+        gpio_move(Motor.right, Direction.backward, Speed.middle)
+
+    elif gpio_current_command is Command.BACKWARD_FAST:
+        gpio_move(Motor.left, Direction.backward, Speed.fast)
+        gpio_move(Motor.right, Direction.backward, Speed.fast)
+
+    elif gpio_current_command is Command.LEFT_FORWARD_LOW:
+        gpio_move(Motor.left, Direction.forward, Speed.low)
+
+    elif gpio_current_command is Command.LEFT_FORWARD_MIDDLE:
+        gpio_move(Motor.left, Direction.forward, Speed.middle)
+        gpio_move(Motor.right, Direction.backward, Speed.middle)
+
+    elif gpio_current_command is Command.LEFT_FORWARD_FAST:
+        gpio_move(Motor.left, Direction.forward, Speed.fast)
+
+    elif gpio_current_command is Command.LEFT_BACKWARD_LOW:
+        gpio_move(Motor.left, Direction.backward, Speed.low)
+
+    elif gpio_current_command is Command.LEFT_BACKWARD_MIDDLE:
+        gpio_move(Motor.left, Direction.backward, Speed.middle)
+        gpio_move(Motor.right, Direction.forward, Speed.middle)
+
+    elif gpio_current_command is Command.LEFT_BACKWARD_FAST:
+        gpio_move(Motor.left, Direction.backward, Speed.fast)
+
+    elif gpio_current_command is Command.RIGHT_FORWARD_LOW:
+        gpio_move(Motor.right, Direction.forward, Speed.low)
+
+    elif gpio_current_command is Command.RIGHT_FORWARD_MIDDLE:
+        gpio_move(Motor.right, Direction.forward, Speed.middle)
+        gpio_move(Motor.left, Direction.backward, Speed.middle)
+
+    elif gpio_current_command is Command.RIGHT_FORWARD_FAST:
+        gpio_move(Motor.right, Direction.forward, Speed.fast)
+
+    elif gpio_current_command is Command.RIGHT_BACKWARD_LOW:
+        gpio_move(Motor.right, Direction.backward, Speed.low)
+
+    elif gpio_current_command is Command.RIGHT_BACKWARD_MIDDLE:
+        gpio_move(Motor.right, Direction.backward, Speed.middle)
+        gpio_move(Motor.left, Direction.forward, Speed.middle)
+
+    elif gpio_current_command is Command.RIGHT_BACKWARD_FAST:
+        gpio_move(Motor.right, Direction.backward, Speed.fast)
+
+    else:
+        return gpio_srvResponse(0)
+
     return gpio_srvResponse(1)
 
 
@@ -21,8 +96,8 @@ def gpio_jetson_service():
         return
     rospy.loginfo("GPIO Jetson Service started")
     rospy.spin()
-    gpio_stop(gpio_constants.Motor.left)
-    gpio_stop(gpio_constants.Motor.right)
+    gpio_stop(Motor.left)
+    gpio_stop(Motor.right)
     if not gpio_deinit():
         rospy.logfatal("GPIO Jetson service didn't finish properly!")
         return
