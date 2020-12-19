@@ -4,10 +4,11 @@ from gpio_jetson_service.srv import gpio_srv, gpio_srvResponse
 import rospy
 from gpio_movement import *
 import gpio_constants
+from enum import Enum
 
 
 def handle_gpio_command(req):
-    rospy.loginfo("GPIO Command: %s", gpio_constants.Command(req.command).title)
+    rospy.loginfo("GPIO Command: %s", gpio_constants.Command(req.command).name)
     return gpio_srvResponse(1)
 
 
