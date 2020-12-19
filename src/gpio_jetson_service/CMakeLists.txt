@@ -165,6 +165,10 @@ target_link_libraries(${PROJECT_NAME}_manual_full
         ${catkin_LIBRARIES}
 )
 
+catkin_install_python(PROGRAMS scripts/gpio_jetson_service_python.py
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ## Install ##
 #############
