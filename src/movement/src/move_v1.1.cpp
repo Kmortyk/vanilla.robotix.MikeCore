@@ -29,6 +29,7 @@ float backward_m = 0, left_m = 0, forward_m = 0, right_m = 0;
 // Last position and angle of robot
 double x = 0, y = 0, r = 0;
 double stuck_x, stuck_y, stuck_r;
+double last_x, last_y, last_r;
 
 double transform_time_sec;
 ros::ServiceClient gpio_client;
@@ -44,10 +45,15 @@ int min_left_right = 0;
 // Time when the last chage was applied
 ros::Time last_change_state;
 
+// Time when last stuck detected loop passed
+ros::Time last_stuck_detected_loop;
+
 // Counter of spins from last change state
 unsigned int spins_last_change_state;
 
 uint8_t last_move_command;
+
+bool first_loop = true;
 
 void gpio_command(const uint8_t command) {
     if (command != last_move_command && command != MoveCommands::FULL_STOP) {
@@ -298,34 +304,38 @@ void stuck_detect() {
     }
     //ROS_WARN("Wait for transform passed");
 
-    double bot_x = transform_bot.getOrigin().x();
-    double bot_y = transform_bot.getOrigin().y();
+    x = transform_bot.getOrigin().x();
+    y = transform_bot.getOrigin().y();
 
     double roll, pitch, yaw;
     transform_bot.getBasis().getRPY(roll, pitch, yaw);
 
-    double bot_dir = yaw * 180.0 / M_PI;
+    r = yaw * 180.0 / M_PI;
 
-    double dX = std::abs(bot_x - x);
-    double dY = std::abs(bot_y - y);
-    double dR = std::abs(bot_dir - r);
+    if (first_loop) {
+        last_x = x;
+        last_y = y;
+        last_r = r;
+    }
 
-    robot_stuck = false;
+    if (last_stuck_detected_loop.toSec() + 0.5 < ros::Time::now().toSec()) {
+        double dX = std::abs(last_x - x);
+        double dY = std::abs(last_y - y);
+        double dR = std::abs(last_r - r);
 
-    if (robot_state == FREE_RIDE && dX < 0.0005 && dY < 0.0005) {
-        robot_stuck = true;
-    } else if (robot_state == AVOID_OBSTACLE && dR < 3.0) {
-        robot_stuck = true;
-    } else if (robot_state == STUCK && dX < 0.0005 && dY < 0.0005 && dR < 3.0) {
-        robot_stuck = true;
+        robot_stuck = false;
+
+        if ((robot_state == FREE_RIDE && dX < 0.15 && dY < 0.15) ||
+            (robot_state == AVOID_OBSTACLE && dR < 1.5) ||
+            (robot_state == STUCK && dX < 0.15 && dY < 0.15 && dR < 1.5)) {
+
+            robot_stuck = true;
+        }
+        last_stuck_detected_loop = ros::Time::now();
     }
 
 
-    ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
-
-    x = bot_x;
-    y = bot_y;
-    r = bot_dir;
+//    ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
 }
 
 int main(int argc, char **argv) {
@@ -342,6 +352,7 @@ int main(int argc, char **argv) {
             nodeHandle.subscribe<inference::Bboxes>("/bboxes", 1, inferenceCallback);
     gpio_client = nodeHandle.serviceClient<gpio_jetson_service::gpio_srv>("gpio_jetson_service");
     change_robot_state(FREE_RIDE);
+    last_stuck_detected_loop = ros::Time::now();
     while (ros::ok()) {
         ros::spinOnce();
         ros::Time time_now = ros::Time::now();
@@ -360,6 +371,7 @@ int main(int argc, char **argv) {
         }
         inference_at_this_spin = false;
         spins_last_change_state++;
+        first_loop = false;
     }
     gpio_command(MoveCommands::FULL_STOP);
     sleep(1);
