@@ -1,5 +1,22 @@
 from enum import Enum
-gpio_pins = [32,33,35,37,38,40]
+
+
+class GPIOPins(Enum):
+    LEFT_PWM = 32
+    LEFT_FORWARD = 38
+    LEFT_BACKWARD = 40
+    RIGHT_PWM = 33
+    RIGHT_FORWARD = 37
+    RIGHT_BACKWARD = 35
+
+
+GPIO_PINS_ALL = [GPIOPins.LEFT_PWM.value, GPIOPins.RIGHT_PWM.value, GPIOPins.RIGHT_BACKWARD.value,
+                 GPIOPins.RIGHT_FORWARD.value, GPIOPins.LEFT_FORWARD.value, GPIOPins.LEFT_BACKWARD.value]
+
+PWM_FREQUENCY = 20
+PWM_LOW = 25
+PWM_MID = 65
+PWM_FAST = 100
 
 
 class Command(Enum):
