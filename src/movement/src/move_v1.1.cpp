@@ -10,6 +10,7 @@
 #include <vector>
 #include "tf/transform_listener.h"
 #include "inference/Bboxes.h"
+#include <signal.h>
 
 #define IMAGE_WIDTH 300
 #define IMAGE_HEIGHT 300
@@ -56,7 +57,7 @@ uint8_t last_move_command;
 bool first_loop = true;
 
 void gpio_command(const uint8_t command) {
-    if (command != last_move_command && command != MoveCommands::FULL_STOP) {
+    /*if (command != last_move_command && command != MoveCommands::FULL_STOP) {
         gpio_jetson_service::gpio_srv service;
         service.request.command = MoveCommands::FULL_STOP;
         gpio_client.call(service);
@@ -64,7 +65,16 @@ void gpio_command(const uint8_t command) {
     gpio_jetson_service::gpio_srv service2;
     service2.request.command = command;
     gpio_client.call(service2);
-    last_move_command = command;
+    last_move_command = command;*/
+    if (command != last_move_command) {
+	gpio_jetson_service::gpio_srv service;
+        service.request.command = MoveCommands::FULL_STOP;
+        gpio_client.call(service);
+        gpio_jetson_service::gpio_srv service2;
+    	service2.request.command = command;
+    	gpio_client.call(service2);
+    	last_move_command = command;
+    }
 }
 
 void change_robot_state(ROBOT_STATES state) {
@@ -199,38 +209,33 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
     left_m = left_lm / 180;
     forward_m = forward_lm / 180;
     right_m = right_lm / 180;
-    left = right = backward = forward = false;
+    left = right = backward = forward = forward_ride = false;
     for (int i = 0; i < 720; i++) {
         if (message->ranges[i] > 0 && message->ranges[i] <= 0.3f) {
             if (!backward && i > 270 && i < 450) {
                 //ROS_WARN("Backward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 backward = true;
-                return;
             } else
             if (!left && i > 90 && i < 270) {
                 //ROS_WARN("Left obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 left = true;
-                return;
             } else
             if (!forward && (i > 630 || i < 90)) {
 //                ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
-                return;
             } else
-            if (!forward_ride && (i > 675 || i < 45)) {
+            if (!forward_ride && (i > 670 || i < 50)) {
 //                ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward_ride = true;
-                return;
             } else
             if (!right && i > 450 && i < 630) {
                 //ROS_WARN("Right obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 right = true;
-                return;
             }
         }
     }
@@ -266,7 +271,7 @@ void movement() {
         return;
     }
     if (robot_state == AVOID_OBSTACLE) {
-        if (forward_ride) {
+        if (!forward_ride) {
             change_robot_state(FREE_RIDE);
             return;
         }
@@ -274,7 +279,7 @@ void movement() {
         return;
     }
     if (robot_state == STUCK) {
-        if (std::abs(x - stuck_x) < 5 && std::abs(y - stuck_y) < 5) {
+        if (std::abs(x - stuck_x) < 0.3 && std::abs(y - stuck_y) < 0.3) {
             if (robot_stuck && last_change_state.toSec() + 0.5 < time_now.toSec()) {
                 move_to_the_side();
                 return;
@@ -325,9 +330,9 @@ void stuck_detect() {
 
         robot_stuck = false;
 
-        if ((robot_state == FREE_RIDE && dX < 0.15 && dY < 0.15) ||
+        if ((robot_state == FREE_RIDE && dX < 0.1 && dY < 0.1) ||
             (robot_state == AVOID_OBSTACLE && dR < 1.5) ||
-            (robot_state == STUCK && dX < 0.15 && dY < 0.15 && dR < 1.5)) {
+            (robot_state == STUCK && dX < 0.1 && dY < 0.1 && dR < 1.5)) {
 
             robot_stuck = true;
         }
@@ -338,11 +343,17 @@ void stuck_detect() {
 //    ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
 }
 
+void shutdownHandler(int sig) {
+    gpio_command(MoveCommands::FULL_STOP);
+    ros::shutdown();
+}
+
 int main(int argc, char **argv) {
     ros::init(argc, argv, "movement");
     image_middle_x = IMAGE_WIDTH / 2.0;
     image_middle_y = IMAGE_HEIGHT / 2.0;
     ros::NodeHandle nodeHandle;
+    signal(SIGINT, shutdownHandler);
     //sleep(5);
     transform_time_sec = ros::Time::now().toSec();
     transformListener = new tf::TransformListener(nodeHandle);
@@ -373,7 +384,7 @@ int main(int argc, char **argv) {
         spins_last_change_state++;
         first_loop = false;
     }
-    gpio_command(MoveCommands::FULL_STOP);
-    sleep(1);
+    //gpio_command(MoveCommands::FULL_STOP);
+    //sleep(1);
     return EXIT_SUCCESS;
 }
