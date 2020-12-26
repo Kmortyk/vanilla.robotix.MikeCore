@@ -83,6 +83,9 @@ void change_robot_state(ROBOT_STATES state) {
     robot_state = state;
     last_change_state = ros::Time::now();
     spins_last_change_state = 0;
+    last_x = x;
+    last_y = y;
+    last_r = r;
 }
 
 void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
@@ -244,10 +247,10 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
 void move_to_the_side() {
     switch (min_left_right) {
         case 0:
-            gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+            gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
             break;
         case 1:
-            gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+            gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
             break;
         default:
             ROS_ERROR("State of move to side doesn't exist!");
@@ -287,7 +290,7 @@ void movement() {
             gpio_command(MoveCommands::BACKWARD_FAST);
             return;
         }
-        if (std::abs(r - stuck_r) < 30) {
+        if (std::abs(r - stuck_r) < 90) {
             if (robot_stuck && last_change_state.toSec() + 0.5 < time_now.toSec()) {
                 gpio_command(MoveCommands::BACKWARD_FAST);
                 return;
@@ -330,13 +333,17 @@ void stuck_detect() {
 
         robot_stuck = false;
 
-        if ((robot_state == FREE_RIDE && dX < 0.1 && dY < 0.1) ||
+        if ((robot_state == FREE_RIDE && dX < 0.05 && dY < 0.05 && last_change_state.toSec() + 1.5 < ros::Time::now().toSec()) ||
             (robot_state == AVOID_OBSTACLE && dR < 1.5) ||
             (robot_state == STUCK && dX < 0.1 && dY < 0.1 && dR < 1.5)) {
 
             robot_stuck = true;
         }
+	last_x = x;
+	last_y = y;
+	last_r = r;
         last_stuck_detected_loop = ros::Time::now();
+	ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
     }
 
 
