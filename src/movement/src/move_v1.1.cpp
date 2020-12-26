@@ -227,7 +227,7 @@ void ydLidarPointsCallback(const sensor_msgs::LaserScanConstPtr& message) {
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward = true;
             } else
-            if (!forward_ride && (i > 670 || i < 50)) {
+            if (!forward_ride && (i > 660 || i < 60)) {
 //                ROS_WARN("Forward obstacle");
                 //ROS_INFO("Range %f", message->ranges[i]);
                 forward_ride = true;
