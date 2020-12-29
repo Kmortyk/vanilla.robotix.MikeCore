@@ -61,3 +61,4 @@ if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
     image_subscriber = rospy.Subscriber("raw", Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
+    rospy.spin()
