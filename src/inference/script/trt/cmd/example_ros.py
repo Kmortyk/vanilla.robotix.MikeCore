@@ -25,20 +25,20 @@ prep = ResizePreprocessor(300, 300)
 copy = None
 bridge = None
 image = None
-# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 
 def camera_callback(data):
     # read frame from the camera
-    # ret, image = cap.read()
+    ret, image = cap.read()
     # image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
 
     # print('Test')
 
-    try:
-        image = bridge.imgmsg_to_cv2(data, "bgr8")
-    except CvBridgeError as e:
-        print(e)
+    # try:
+    #     image = bridge.imgmsg_to_cv2(data, "bgr8")
+    # except CvBridgeError as e:
+    #     print(e)
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
@@ -61,7 +61,7 @@ def camera_callback(data):
 
 if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
-    bridge = CvBridge()
+    # bridge = CvBridge()
     image_subscriber = rospy.Subscriber('/jetbot_camera/raw', Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
     rospy.spin()
