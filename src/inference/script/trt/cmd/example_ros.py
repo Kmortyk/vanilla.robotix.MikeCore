@@ -6,6 +6,7 @@ from src.inference.script.preprocess import *
 
 import cv2
 from src.inference.script.trt.model_ros_nms import TrtModel
+from cv_bridge import CvBridge
 import src.inference.script.trt.config as config
 import rospy
 
@@ -16,46 +17,20 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
 
-def gstreamer_pipeline(
-        capture_width=1280,
-        capture_height=720,
-        display_width=1280,
-        display_height=720,
-        framerate=60,
-        flip_method=0,
-):
-    return (
-            "nvarguscamerasrc ! "
-            "video/x-raw(memory:NVMM), "
-            "width=(int)%d, height=(int)%d, "
-            "format=(string)NV12, framerate=(fraction)%d/1 ! "
-            "nvvidconv flip-method=%d ! "
-            "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
-            "videoconvert ! "
-            "video/x-raw, format=(string)BGR ! appsink"
-            % (
-                capture_width,
-                capture_height,
-                framerate,
-                flip_method,
-                display_width,
-                display_height,
-            )
-    )
-
-
 LABELS = ["background", "bottle", "soup"]
 SHOW_IMAGE = True
 model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LABELS)
 obj_publisher = None
 prep = ResizePreprocessor(300, 300)
 copy = None
-cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+bridge = CvBridge()
+# cap = cv2.VideoCapture(0)
 
 
 def step():
     # read frame from the camera
-    ret, image = cap.read()
+    # ret, image = cap.read()
+    image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
