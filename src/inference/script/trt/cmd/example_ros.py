@@ -61,7 +61,7 @@ def camera_callback(data):
 
 if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
-    bridge = Bridge()
+    bridge = CvBridge()
     image_subscriber = rospy.Subscriber('/jetbot_camera/raw', Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
     rospy.spin()
