@@ -166,7 +166,7 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
                 // Robot reached the target object
                 change_robot_state(STOP);
             } else
-                gpio_command(MoveCommands::FORWARD_MIDDLE);
+                gpio_command(MoveCommands::FORWARD_LOW);
         }
     } else {
         // robot state = TARGETING_OBJECT
@@ -181,10 +181,10 @@ void inferenceCallback(const inference::BboxesConstPtr &bboxes) {
         //It is targeting object state
         switch (need_to_correction) {
             case 1:
-                gpio_command(MoveCommands::RIGHT_FORWARD_MIDDLE);
+                gpio_command(MoveCommands::RIGHT_FORWARD_LOW);
                 break;
             case 2:
-                gpio_command(MoveCommands::LEFT_FORWARD_MIDDLE);
+                gpio_command(MoveCommands::LEFT_FORWARD_LOW);
                 break;
             default:
                 ROS_ERROR("State of need_to_correction doesn't exist!");
@@ -326,7 +326,7 @@ void stuck_detect() {
         last_r = r;
     }
 
-    if (last_stuck_detected_loop.toSec() + 0.5 < ros::Time::now().toSec()) {
+    if (last_stuck_detected_loop.toSec() + 1 < ros::Time::now().toSec()) {
         double dX = std::abs(last_x - x);
         double dY = std::abs(last_y - y);
         double dR = std::abs(last_r - r);
@@ -334,16 +334,20 @@ void stuck_detect() {
         robot_stuck = false;
 
         if ((robot_state == FREE_RIDE && dX < 0.05 && dY < 0.05 && last_change_state.toSec() + 1.5 < ros::Time::now().toSec()) ||
-            (robot_state == AVOID_OBSTACLE && dR < 1.5) ||
+            (robot_state == AVOID_OBSTACLE && dR < 1) ||
             (robot_state == STUCK && dX < 0.1 && dY < 0.1 && dR < 1.5)) {
 
             robot_stuck = true;
+
+            if (robot_state == AVOID_OBSTACLE) {
+                ROS_ERROR("Stuck on avoid obstacle");
+            }
         }
 	last_x = x;
 	last_y = y;
 	last_r = r;
         last_stuck_detected_loop = ros::Time::now();
-	ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
+//	ROS_WARN("dX = %f dY = %f dR = %f", dX, dY, dR);
     }
 
 
