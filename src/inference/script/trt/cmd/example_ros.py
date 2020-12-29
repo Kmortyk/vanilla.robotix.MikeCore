@@ -32,6 +32,8 @@ def camera_callback(data):
     # ret, image = cap.read()
     # image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
 
+    print('Test')
+
     global image
     try:
         image = self.bridge.imgmsg_to_cv2(data, "bgr8")
