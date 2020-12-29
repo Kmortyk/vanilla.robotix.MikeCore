@@ -25,7 +25,7 @@ prep = ResizePreprocessor(300, 300)
 copy = None
 bridge = None
 image = None
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 
 def camera_callback(data):
