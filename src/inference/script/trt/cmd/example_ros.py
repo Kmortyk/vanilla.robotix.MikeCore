@@ -36,7 +36,7 @@ def camera_callback(data):
 
     global image
     try:
-        image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+        image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
         print(e)
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
