@@ -14,7 +14,7 @@ import inference.msg._Bboxes as Bboxes
 import inference.msg._Bbox as Bbox
 
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge
+from cv_bridge import CvBridge, CvBridgeError
 
 
 LABELS = ["background", "bottle", "soup"]
@@ -27,10 +27,16 @@ bridge = CvBridge()
 # cap = cv2.VideoCapture(0)
 
 
-def step():
+def camera_callback(data):
     # read frame from the camera
     # ret, image = cap.read()
-    image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
+    # image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
+
+    global image
+    try:
+        image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+    except CvBridgeError as e:
+        print(e)
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
@@ -53,11 +59,5 @@ def step():
 
 if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
+    image_subscriber = rospy.Subscriber("raw", Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
-
-    r = rospy.Rate(10)
-
-    while not rospy.is_shutdown():
-        rospy.loginfo("[INFO] camera step...")
-        step()
-        r.sleep()
