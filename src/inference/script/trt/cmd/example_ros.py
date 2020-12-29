@@ -23,7 +23,8 @@ model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LAB
 obj_publisher = None
 prep = ResizePreprocessor(300, 300)
 copy = None
-bridge = CvBridge()
+bridge = None
+image = None
 # cap = cv2.VideoCapture(0)
 
 
@@ -32,9 +33,8 @@ def camera_callback(data):
     # ret, image = cap.read()
     # image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
 
-    print('Test')
+    # print('Test')
 
-    global image
     try:
         image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
@@ -61,6 +61,7 @@ def camera_callback(data):
 
 if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
-    image_subscriber = rospy.Subscriber("raw", Image, camera_callback)
+    bridge = Bridge()
+    image_subscriber = rospy.Subscriber('/jetbot_camera/raw', Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
     rospy.spin()
