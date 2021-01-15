@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 import rospy
 import tf
+import pyautogui
 
 from sensor_msgs.msg import LaserScan
+
+
+def take_rviz_screenshot():
+    pyautogui.screenshot('screenshots/screen.jpg', region=(0, 0, 300, 300))
 
 
 def transform_listen():
@@ -17,6 +22,7 @@ def transform_listen():
 
 def laser_callback(data):
     transform_listen()
+    take_rviz_screenshot()
     rospy.loginfo(data)
 
 
