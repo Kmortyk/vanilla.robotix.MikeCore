@@ -13,9 +13,19 @@ rotations = None
 times = None
 lasers = None
 time_now = 0
+transform = []
+rotation = []
 
 screenshots_folder = Path(os.path.realpath(__file__))\
                          .parent.parent.as_posix() + os.sep + 'data' + os.sep + 'temp_screenshots' + os.sep
+
+
+def create_dir_securely(path):
+    try:
+        os.mkdir(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
 
 
 def take_rviz_screenshot():
@@ -28,7 +38,7 @@ def transform_listen():
         (transform, rotation) = transform_listener.lookupTransform('base_link',
                                                                    'map',
                                                                    rospy.Time(0))
-        print(transform, rotation)
+        rospy.logdebug("", transform, rotation)
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         rospy.logerr("Exception when transform listen")
 
@@ -55,15 +65,20 @@ def laser_callback(data):
     time_now = rospy.Time.now().to_nsec()
     transform_listen()
     take_rviz_screenshot()
-    rospy.loginfo(data)
+    rospy.logdebug(data)
     if transform is not None:
         save_data(data)
+    rospy.loginfo("Frame passed")
 
 
 def finalize_data():
     name_situation = raw_input("Enter name of this situation: ")
     situation_folder = Path(os.path.realpath(__file__)) \
         .parent.parent.as_posix() + os.sep + 'data' + os.sep + 'situations' + os.sep + name_situation + os.sep
+    if os.path.isdir(situation_folder):
+        rospy.logerr("Situation already exists!")
+        finalize_data()
+        return
     os.mkdir(situation_folder)
     os.mkdir(situation_folder + os.sep + 'screenshots' + os.sep)
     numpy.savez(situation_folder + 'data.npz', transforms, rotations, times, lasers)
@@ -73,6 +88,7 @@ def finalize_data():
 
 
 if __name__ == '__main__':
+    create_dir_securely(Path(os.path.realpath(__file__)).parent.parent.as_posix() + os.sep + 'data')
     rospy.init_node('exporter')
     transform_listener = tf.TransformListener()
     rospy.Subscriber('scan', LaserScan, laser_callback)
