@@ -7,7 +7,7 @@ import os
 from sensor_msgs.msg import LaserScan
 from pathlib import Path
 
-screenshot_region = (400, 100, 950, 650)
+screenshot_region = (300, 90, 850, 600)
 transforms = None
 rotations = None
 times = None
