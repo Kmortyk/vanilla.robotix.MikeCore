@@ -89,6 +89,8 @@ def finalize_data():
 
 if __name__ == '__main__':
     create_dir_securely(Path(os.path.realpath(__file__)).parent.parent.as_posix() + os.sep + 'data')
+    create_dir_securely(Path(os.path.realpath(__file__)).parent.parent.as_posix() + os.sep + 'data'
+                        + os.sep + 'temp_screenshots' + os.sep)
     rospy.init_node('exporter')
     transform_listener = tf.TransformListener()
     rospy.Subscriber('scan', LaserScan, laser_callback)
