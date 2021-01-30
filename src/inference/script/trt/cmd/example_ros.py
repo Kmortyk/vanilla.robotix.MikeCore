@@ -6,7 +6,6 @@ from src.inference.script.preprocess import *
 
 import cv2
 from src.inference.script.trt.model_ros_nms import TrtModel
-from cv_bridge import CvBridge
 import src.inference.script.trt.config as config
 import rospy
 
@@ -14,7 +13,34 @@ import inference.msg._Bboxes as Bboxes
 import inference.msg._Bbox as Bbox
 
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
+from cv_bridge import CvBridge
+
+def gstreamer_pipeline(
+    capture_width=3280,
+    capture_height=2464,
+    display_width=960,
+    display_height=720,
+    framerate=21,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc ! "
+        "video/x-raw(memory:NVMM), "
+        "width=(int)%d, height=(int)%d, "
+        "format=(string)NV12, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
 
 
 LABELS = ["background", "bottle", "soup"]
@@ -23,22 +49,15 @@ model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LAB
 obj_publisher = None
 prep = ResizePreprocessor(300, 300)
 copy = None
-bridge = None
-image = None
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
-
-def camera_callback(data):
+def step():
+    #print(gstreamer_pipeline())
+    if not cap.isOpened():
+        rospy.logerr("Camera doesn't open")
+        return
     # read frame from the camera
     ret, image = cap.read()
-    # image = bridge.imgmsg_to_cv2(image_message, desired_encoding='passthrough')
-
-    # print('Test')
-
-    # try:
-    #     image = bridge.imgmsg_to_cv2(data, "bgr8")
-    # except CvBridgeError as e:
-    #     print(e)
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
@@ -61,7 +80,11 @@ def camera_callback(data):
 
 if __name__ == '__main__':
     rospy.init_node('mike_inference', anonymous=True)
-    # bridge = CvBridge()
-    image_subscriber = rospy.Subscriber('/jetbot_camera/raw', Image, camera_callback)
     obj_publisher = rospy.Publisher('/bboxes', Bboxes.Bboxes, queue_size=10)
-    rospy.spin()
+
+    r = rospy.Rate(10)
+
+    while not rospy.is_shutdown():
+        rospy.loginfo("[INFO] camera step...")
+        step()
+        r.sleep()
