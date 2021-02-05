@@ -86,7 +86,7 @@ def step():
 
     # predict and publish predicted objects
     objs = model.predict_bboxes(image)
-    objs = convert_neural_to_show(objs)
+    # objs = convert_neural_to_show(objs)
     obj_publisher.publish(objs)
 
     # show image with bounding boxes if needed
