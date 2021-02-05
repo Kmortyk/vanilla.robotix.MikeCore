@@ -15,8 +15,8 @@ import inference.msg._Bbox as Bbox
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
-SHOW_FRAME_SIZE_X = 1198
-SHOW_FRAME_SIZE_Y = 900
+SHOW_FRAME_SIZE_X = 960
+SHOW_FRAME_SIZE_Y = 720
 NEURAL_FRAME_SIZE = 300
 
 NEURAL_TO_SHOW_COEFFICIENT_X = SHOW_FRAME_SIZE_X / NEURAL_FRAME_SIZE
@@ -54,20 +54,17 @@ LABELS = ["background", "bottle", "soup"]
 SHOW_IMAGE = True
 model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LABELS)
 obj_publisher = None
-# prep = ResizePreprocessor(SHOW_FRAME_SIZE, SHOW_FRAME_SIZE)
-# copy = None
+prep = ResizePreprocessor(SHOW_FRAME_SIZE_Y, SHOW_FRAME_SIZE_Y)
+copy = None
 cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
 
 def convert_neural_to_show(objs):
-    try:
-        for bbox in objs.bboxes:
-            bbox.x_min *= NEURAL_TO_SHOW_COEFFICIENT_X
-            bbox.y_min *= NEURAL_TO_SHOW_COEFFICIENT_Y
-            bbox.x_max *= NEURAL_TO_SHOW_COEFFICIENT_X
-            bbox.y_max *= NEURAL_TO_SHOW_COEFFICIENT_Y
-    except AttributeError:
-        rospy.logerr("AttributeError: 'list' object has no attribute 'bboxes'")
+    for bbox in objs.bboxes:
+        bbox.x_min = int(bbox.x_min * NEURAL_TO_SHOW_COEFFICIENT_Y)
+        bbox.y_min = int(bbox.y_min * NEURAL_TO_SHOW_COEFFICIENT_Y)
+        bbox.x_max = int(bbox.x_max * NEURAL_TO_SHOW_COEFFICIENT_Y)
+        bbox.y_max = int(bbox.y_max * NEURAL_TO_SHOW_COEFFICIENT_Y)
     return objs
 
 
@@ -81,20 +78,20 @@ def step():
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
-    # if SHOW_IMAGE:
-    #     copy = prep.preprocess(image.copy())
+    if SHOW_IMAGE:
+       copy = prep.preprocess(image.copy())
 
     # predict and publish predicted objects
     objs = model.predict_bboxes(image)
-    # objs = convert_neural_to_show(objs)
+    objs = convert_neural_to_show(objs)
     obj_publisher.publish(objs)
 
     # show image with bounding boxes if needed
     if SHOW_IMAGE:
         for bbox in objs.bboxes:
-            cv2.rectangle(image, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
-            cv2.putText(image, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow("Output", image)
+            cv2.rectangle(copy, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
+            cv2.putText(copy, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.imshow("Output", copy)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             return
 
