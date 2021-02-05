@@ -82,7 +82,8 @@ def step():
     #     copy = prep.preprocess(image.copy())
 
     # predict and publish predicted objects
-    objs = convert_neural_to_show(model.predict_bboxes(image))
+    objs = model.predict_bboxes(image)
+    objs = convert_neural_to_show(objs)
     obj_publisher.publish(objs)
 
     # show image with bounding boxes if needed
