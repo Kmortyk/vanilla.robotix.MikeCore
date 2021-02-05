@@ -60,11 +60,14 @@ cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
 
 def convert_neural_to_show(objs):
-    for bbox in objs.bboxes:
-        bbox.x_min *= NEURAL_TO_SHOW_COEFFICIENT_X
-        bbox.y_min *= NEURAL_TO_SHOW_COEFFICIENT_Y
-        bbox.x_max *= NEURAL_TO_SHOW_COEFFICIENT_X
-        bbox.y_max *= NEURAL_TO_SHOW_COEFFICIENT_Y
+    try:
+        for bbox in objs.bboxes:
+            bbox.x_min *= NEURAL_TO_SHOW_COEFFICIENT_X
+            bbox.y_min *= NEURAL_TO_SHOW_COEFFICIENT_Y
+            bbox.x_max *= NEURAL_TO_SHOW_COEFFICIENT_X
+            bbox.y_max *= NEURAL_TO_SHOW_COEFFICIENT_Y
+    except AttributeError:
+        rospy.logerr("AttributeError: 'list' object has no attribute 'bboxes'")
     return objs
 
 
