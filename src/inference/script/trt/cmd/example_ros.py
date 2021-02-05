@@ -54,8 +54,8 @@ LABELS = ["background", "bottle", "soup"]
 SHOW_IMAGE = True
 model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LABELS)
 obj_publisher = None
-prep = ResizePreprocessor(SHOW_FRAME_SIZE, SHOW_FRAME_SIZE)
-copy = None
+# prep = ResizePreprocessor(SHOW_FRAME_SIZE, SHOW_FRAME_SIZE)
+# copy = None
 cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
 
@@ -65,6 +65,7 @@ def convert_neural_to_show(objs):
         bbox.y_min *= NEURAL_TO_SHOW_COEFFICIENT_Y
         bbox.x_max *= NEURAL_TO_SHOW_COEFFICIENT_X
         bbox.y_max *= NEURAL_TO_SHOW_COEFFICIENT_Y
+    return objs
 
 
 def step():
@@ -77,20 +78,19 @@ def step():
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
-    if SHOW_IMAGE:
-        copy = prep.preprocess(image.copy())
+    # if SHOW_IMAGE:
+    #     copy = prep.preprocess(image.copy())
 
     # predict and publish predicted objects
-    objs = model.predict_bboxes(image)
-    convert_neural_to_show(objs)
+    objs = convert_neural_to_show(model.predict_bboxes(image))
     obj_publisher.publish(objs)
 
     # show image with bounding boxes if needed
     if SHOW_IMAGE:
         for bbox in objs.bboxes:
-            cv2.rectangle(copy, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
-            cv2.putText(copy, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow("Output", copy)
+            cv2.rectangle(image, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
+            cv2.putText(image, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.imshow("Output", image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             return
 
