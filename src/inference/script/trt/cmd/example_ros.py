@@ -47,7 +47,7 @@ LABELS = ["background", "bottle", "soup"]
 SHOW_IMAGE = True
 model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LABELS)
 obj_publisher = None
-prep = ResizePreprocessor(300, 300)
+prep = ResizePreprocessor(900, 900)
 copy = None
 cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
@@ -71,7 +71,7 @@ def step():
     # show image with bounding boxes if needed
     if SHOW_IMAGE:
         for bbox in objs.bboxes:
-            cv2.rectangle(copy, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
+            cv2.rectangle(copy, (bbox.x_min * 3, bbox.y_min * 3), (bbox.x_max * 3, bbox.y_max * 3), (172, 217, 153), 2)
             cv2.putText(copy, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.imshow("Output", copy)
         if cv2.waitKey(1) & 0xFF == ord('q'):
