@@ -89,9 +89,9 @@ def step():
     # show image with bounding boxes if needed
     if SHOW_IMAGE:
         for bbox in objs.bboxes:
-            cv2.rectangle(copy, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
-            cv2.putText(copy, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow("Output", copy)
+            cv2.rectangle(image, (bbox.x_min, bbox.y_min), (bbox.x_max, bbox.y_max), (172, 217, 153), 2)
+            cv2.putText(image, bbox.label, (bbox.x_min + 10, bbox.y_min + 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.imshow("Output", image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             return
 
