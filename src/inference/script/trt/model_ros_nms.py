@@ -38,10 +38,11 @@ class TrtModel:
 
     def preprocess(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image, shape = ResizePreprocessor(300, 300).preprocess(image)
+        image, small_width, dw = ResizePreprocessor(300, 300).preprocess(image)
         image = (2.0/255.0) * image - 1.0
         image = image.transpose((2, 0, 1))
-        return image, shape
+
+        return image, small_width, dw
 
     def predict_bboxes(self, image, width = 300, height = 300):
         if not self.initialized:
@@ -52,8 +53,11 @@ class TrtModel:
             print("image is none")
             return []
 
-        image, shape = self.preprocess(image)
-        ratio_width = (width * 300) / shape
+        image, small_width, dw = self.preprocess(image)
+
+        ratio = width/small_width
+        dw_big = dw*ratio
+        big_cropped_width = 300*ratio
 
         context = self.context
         stream = self.stream
@@ -75,9 +79,9 @@ class TrtModel:
             prefix = i * self.model.layout
             lid = int(output[prefix + 1])
             conf = output[prefix + 2]
-            xmin = int(output[prefix + 3] * ratio_width) + height / 2
+            xmin = int(output[prefix + 3] * big_cropped_width + dw_big)
             ymin = int(output[prefix + 4] * height)
-            xmax = int(output[prefix + 5] * ratio_width) + height / 2
+            xmax = int(output[prefix + 5] * big_cropped_width + dw_big)
             ymax = int(output[prefix + 6] * height)
             label = self.labels[lid]
 
