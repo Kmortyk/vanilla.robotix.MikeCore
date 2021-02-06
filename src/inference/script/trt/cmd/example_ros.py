@@ -17,10 +17,10 @@ from cv_bridge import CvBridge
 
 SHOW_FRAME_SIZE_X = 960
 SHOW_FRAME_SIZE_Y = 720
-NEURAL_FRAME_SIZE = 300
+#NEURAL_FRAME_SIZE = 300
 
-NEURAL_TO_SHOW_COEFFICIENT_X = SHOW_FRAME_SIZE_X / NEURAL_FRAME_SIZE
-NEURAL_TO_SHOW_COEFFICIENT_Y = SHOW_FRAME_SIZE_Y / NEURAL_FRAME_SIZE
+# NEURAL_TO_SHOW_COEFFICIENT_X = SHOW_FRAME_SIZE_X / NEURAL_FRAME_SIZE
+# NEURAL_TO_SHOW_COEFFICIENT_Y = SHOW_FRAME_SIZE_Y / NEURAL_FRAME_SIZE
 
 def gstreamer_pipeline(
     capture_width=3280,
@@ -54,8 +54,8 @@ LABELS = ["background", "bottle", "soup"]
 SHOW_IMAGE = True
 model = TrtModel(model=config.model_ssd_inception_v2_coco_2017_11_17, labels=LABELS)
 obj_publisher = None
-prep = ResizePreprocessor(SHOW_FRAME_SIZE_Y, SHOW_FRAME_SIZE_Y)
-copy = None
+# prep = ResizePreprocessor(SHOW_FRAME_SIZE_Y, SHOW_FRAME_SIZE_Y)
+# copy = None
 cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
 
 
@@ -78,12 +78,12 @@ def step():
     rospy.loginfo("[INFO] receive image from the mike_camera/raw")
 
     # if show image - create copy
-    if SHOW_IMAGE:
-       copy = prep.preprocess(image.copy())
+    # if SHOW_IMAGE:
+       # copy = prep.preprocess(image.copy())
 
     # predict and publish predicted objects
-    objs = model.predict_bboxes(image)
-    objs = convert_neural_to_show(objs)
+    objs = model.predict_bboxes(image, SHOW_FRAME_SIZE_X, SHOW_FRAME_SIZE_Y)
+    # objs = convert_neural_to_show(objs)
     obj_publisher.publish(objs)
 
     # show image with bounding boxes if needed

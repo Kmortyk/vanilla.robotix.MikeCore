@@ -43,7 +43,7 @@ class TrtModel:
         image = image.transpose((2, 0, 1))
         return image
 
-    def predict_bboxes(self, image):
+    def predict_bboxes(self, image, width = 300, height = 300):
         if not self.initialized:
             self.initialize()
             self.initialized = True
@@ -65,7 +65,6 @@ class TrtModel:
         stream.synchronize()
 
         output = self.host_outputs[0]
-        width = height = 300
 
         bboxes = []
         scores = []
