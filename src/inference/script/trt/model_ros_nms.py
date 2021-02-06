@@ -32,13 +32,13 @@ class TrtModel:
         ctypes.CDLL(os.path.abspath("/home/xavier/vanilla.robotix.MikeCore/src/inference/script/trt/lib/libflattenconcat.so"))
         self.logger = trt.Logger(trt.Logger.INFO)
         trt.init_libnvinfer_plugins(self.logger, '')
-        self.prep = ResizePreprocessor(300, 300)
+        self.prep = SimplePreprocessor(300, 300)
         self.runtime = trt.Runtime(self.logger)
         self.__compile(self.model)
 
     def preprocess(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = ResizePreprocessor(300, 300).preprocess(image)
+        image = SimplePreprocessor(300, 300).preprocess(image)
         image = (2.0/255.0) * image - 1.0
         image = image.transpose((2, 0, 1))
         return image
