@@ -52,7 +52,7 @@ class TrtModel:
             print("image is none")
             return []
 
-        dw = int((image.shape[1] - width) / 2)
+        dw = int((image.shape[1] - 300) / 2)
 
         image = self.preprocess(image)
 
