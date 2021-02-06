@@ -52,9 +52,8 @@ class TrtModel:
             print("image is none")
             return []
 
-        dw = int((image.shape[1] - 300) / 2)
-
-        image = self.preprocess(image)
+        image, shape = self.preprocess(image)
+        dw = int((shape - 300) / 2)
 
         context = self.context
         stream = self.stream
