@@ -20,12 +20,12 @@ class ResizePreprocessor:
             image = imutils.resize(image, height=self.height, inter=self.inter)
             dw = int((image.shape[1] - self.width) / 2)
 
-        shape = image.shape[1]
+        small_width = image.shape[1]
 
         # perform the crop
         (h, w) = image.shape[:2]
         image = image[dh:h-dh, dw:w-dw]
 
         # resize last time to ensure a fixed size
-        return cv2.resize(image, (self.width, self.height), interpolation=self.inter), shape
+        return cv2.resize(image, (self.width, self.height), interpolation=self.inter), small_width, dw
 
