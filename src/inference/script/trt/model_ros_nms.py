@@ -53,7 +53,7 @@ class TrtModel:
             return []
 
         image, shape = self.preprocess(image)
-        dw = int((shape - 300) / 2)
+        dw = int((width/shape)*(shape - 300) / 2)
 
         context = self.context
         stream = self.stream
