@@ -75,9 +75,9 @@ class TrtModel:
             prefix = i * self.model.layout
             lid = int(output[prefix + 1])
             conf = output[prefix + 2]
-            xmin = int(output[prefix + 3] * ratio_width) #+ height / 2
+            xmin = int(output[prefix + 3] * ratio_width) + height / 4
             ymin = int(output[prefix + 4] * height)
-            xmax = int(output[prefix + 5] * ratio_width) #+ height / 2
+            xmax = int(output[prefix + 5] * ratio_width) + height / 4
             ymax = int(output[prefix + 6] * height)
             label = self.labels[lid]
 
