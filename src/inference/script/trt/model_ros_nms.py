@@ -38,10 +38,10 @@ class TrtModel:
 
     def preprocess(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = ResizePreprocessor(300, 300).preprocess(image)
+        image, shape = ResizePreprocessor(300, 300).preprocess(image)
         image = (2.0/255.0) * image - 1.0
         image = image.transpose((2, 0, 1))
-        return image
+        return image, shape
 
     def predict_bboxes(self, image, width = 300, height = 300):
         if not self.initialized:
