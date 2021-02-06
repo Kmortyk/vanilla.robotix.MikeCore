@@ -53,7 +53,7 @@ class TrtModel:
             return []
 
         image, shape = self.preprocess(image)
-        dw = int((width/shape)*(shape - 300) / 2)
+        ratio_width = (width * 300) / shape
 
         context = self.context
         stream = self.stream
@@ -75,9 +75,9 @@ class TrtModel:
             prefix = i * self.model.layout
             lid = int(output[prefix + 1])
             conf = output[prefix + 2]
-            xmin = int(output[prefix + 3] * width) + dw
+            xmin = int(output[prefix + 3] * ratio_width) + height
             ymin = int(output[prefix + 4] * height)
-            xmax = int(output[prefix + 5] * width) + dw
+            xmax = int(output[prefix + 5] * ratio_width) + height
             ymax = int(output[prefix + 6] * height)
             label = self.labels[lid]
 
