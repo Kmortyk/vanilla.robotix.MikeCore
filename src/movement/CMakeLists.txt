@@ -108,7 +108,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES movement
-  CATKIN_DEPENDS cartographer_ydlidar ros_cpp std_msgs ydlidar_ros
+  CATKIN_DEPENDS cartographer_ydlidar roscpp std_msgs ydlidar_ros
 #  DEPENDS system_lib
 )
 
