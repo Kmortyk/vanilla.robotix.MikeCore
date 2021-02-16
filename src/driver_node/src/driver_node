@@ -38,7 +38,7 @@ class Motor:
     def move(self, speed_percent):
         speed = _clip(abs(speed_percent), 0, 100)
         self._pwm_pin.start(speed)
-        print(self._name, speed)
+        #print(self._name, speed)
 
         if speed_percent < 0:
             GPIO.output(self._backward_pin, GPIO.HIGH)
@@ -56,7 +56,7 @@ class Driver:
         self._timeout = rospy.get_param('~timeout', 2)
         self._rate = rospy.get_param('~rate', 10)
         self._max_speed = rospy.get_param('~max_speed', 0.5)
-        self._wheel_base = rospy.get_param('~wheel_base', 0.091)
+        self._wheel_base = rospy.get_param('~wheel_base', 0.791)
 
         # Assign pins to motors. These may be distributed
         # differently depending on how you've built your robot
@@ -72,7 +72,7 @@ class Driver:
             'cmd_vel', Twist, self.velocity_received_callback)
 
     def velocity_received_callback(self, message):
-        print(message)
+        #print(message)
         """Handle new velocity command message."""
 
         self._last_received = rospy.get_time()
@@ -120,6 +120,7 @@ def main():
 
     # Run driver. This will block
     driver.run()
+    GPIO.cleanup()
 
 
 if __name__ == '__main__':
