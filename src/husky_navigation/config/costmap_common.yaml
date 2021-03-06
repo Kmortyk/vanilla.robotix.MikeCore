@@ -6,7 +6,7 @@ robot_base_frame: base_link
 #robot_base_frame: laser_frame
 update_frequency: 4.0
 publish_frequency: 3.0
-transform_tolerance: 0.5
+transform_tolerance: 0.1
 
 resolution: 0.05
 
