@@ -1,0 +1,1 @@
+https://github.com/SmartArduino/SZDOITWiKi/wiki/9V-motor-with-Hall-sensor
