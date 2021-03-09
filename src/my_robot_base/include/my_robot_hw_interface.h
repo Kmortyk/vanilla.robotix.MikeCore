@@ -171,7 +171,7 @@ MyRobotHWInterface::MyRobotHWInterface()
   , start_srv_(nh.advertiseService("start", &MyRobotHWInterface::start_callback, this))
   , stop_srv_(nh.advertiseService("stop", &MyRobotHWInterface::stop_callback, this)) 
   {
-    private_nh.param<double>("wheel_diameter", _wheel_diameter, 0.064);
+    private_nh.param<double>("wheel_diameter", _wheel_diameter, 0.045);
     private_nh.param<double>("max_speed", _max_speed, 1.0);
   
     // Intialize raw data
