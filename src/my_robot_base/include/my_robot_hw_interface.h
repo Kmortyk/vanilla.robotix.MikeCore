@@ -196,9 +196,9 @@ MyRobotHWInterface::MyRobotHWInterface()
     registerInterface(&jnt_vel_interface);
 
 	// Initialize publishers and subscribers
-	left_wheel_vel_pub_ = nh.advertise<std_msgs::Float32>("my_robot/left_wheel_vel", 1);
-	right_wheel_vel_pub_ = nh.advertise<std_msgs::Float32>("my_robot/right_wheel_vel", 1);
+	left_wheel_vel_pub_ = nh.advertise<std_msgs::Float32>("left_wheel_vel", 1);
+	right_wheel_vel_pub_ = nh.advertise<std_msgs::Float32>("right_wheel_vel", 1);
 
-	left_wheel_angle_sub_ = nh.subscribe("my_robot/left_wheel_angle", 1, &MyRobotHWInterface::leftWheelAngleCallback, this);
-	right_wheel_angle_sub_ = nh.subscribe("my_robot/right_wheel_angle", 1, &MyRobotHWInterface::rightWheelAngleCallback, this);
+	left_wheel_angle_sub_ = nh.subscribe("left_wheel_angle", 1, &MyRobotHWInterface::leftWheelAngleCallback, this);
+	right_wheel_angle_sub_ = nh.subscribe("right_wheel_angle", 1, &MyRobotHWInterface::rightWheelAngleCallback, this);
 }
