@@ -16,6 +16,7 @@ def main():
     rate = rospy.Rate(10)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup({21, 22, 23, 24}, GPIO.IN)
+    GPIO.add_event_callback({21, 22, 23, 24}, GPIO.BOTH)
     while not rospy.is_shutdown():
         publish_angle()
         rate.sleep()
