@@ -3,12 +3,26 @@
 import rospy
 import Jetson.GPIO as GPIO
 
+tick21 = 0
+tick22 = 0
+tick23 = 0
+tick24 = 0
+
+
 def gpio_callback(channel):
-    print(channel)
+    global tick21, tick22, tick23, tick24
+    if channel == 21:
+        tick21 += 1
+    if channel == 22:
+        tick22 += 1
+    if channel == 23:
+        tick23 += 1
+    if channel == 24:
+        tick24 += 1
 
 
-def publish_angle():
-    print("")
+# def publish_angle():
+#     print("")
 
 
 def main():
@@ -25,8 +39,12 @@ def main():
     GPIO.add_event_callback(23, gpio_callback)
     GPIO.add_event_callback(24, gpio_callback)
     while not rospy.is_shutdown():
-        publish_angle()
-        rate.sleep()
+        print("21 ", tick21)
+        print("22 ", tick22)
+        print("23 ", tick23)
+        print("24 ", tick24)
+        # publish_angle()
+        # rate.sleep()
     GPIO.cleanup({21, 22, 23, 24})
 
 
