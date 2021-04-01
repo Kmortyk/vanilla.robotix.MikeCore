@@ -30,7 +30,7 @@
       name="cartographer_node"
       pkg="cartographer_ros"
       type="cartographer_node"
-      args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar_2d.lua"
+      args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar+imu.lua"
       output="screen">
       <remap from="imu" to="imu/data" />
       <remap from="odom" to="odometry/filtered" />
