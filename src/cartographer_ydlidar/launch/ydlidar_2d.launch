@@ -16,6 +16,8 @@
     <param name="samp_rate"    type="int"    value="5"/>
   </node>
 
+  <remap from="imu" to="imu/data" />
+
   <node
       pkg="tf"
       type="static_transform_publisher"
@@ -32,6 +34,6 @@
       name="cartographer_node"
       pkg="cartographer_ros"
       type="cartographer_node"
-      args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar_2d.lua"
+      args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar+imu.lua"
       output="screen"/>
 </launch>
