@@ -7,9 +7,9 @@ import Jetson.GPIO as GPIO
 import os
 
 pin_l_f = 22
-pin_r_f = 21
+pin_r_f = 23
 pin_l_b = 24
-pin_r_b = 23
+pin_r_b = 21
 
 value_l_f = 0
 value_l_b = 0
@@ -93,9 +93,9 @@ def calc_direction_r():
 
 
 def gpio_callback21(channel):
-    global tick21, value_r_f, status_r, direction_r
+    global tick21, value_r_b, status_r, direction_r
     tick21 += 1
-    value_r_f = GPIO.input(21)
+    value_r_b = GPIO.input(21)
     calc_direction_r()
 
 
@@ -107,9 +107,9 @@ def gpio_callback22(channel):
 
 
 def gpio_callback23(channel):
-    global tick23, value_r_b, status_r, direction_r
+    global tick23, value_r_f, status_r, direction_r
     tick23 += 1
-    value_r_b = GPIO.input(23)
+    value_r_f = GPIO.input(23)
     calc_direction_r()
 
 
