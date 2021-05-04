@@ -32,31 +32,31 @@ def calc_direction_l():
     global value_l_f, value_l_b, direction_l, status_l
     if status_l is 0:
         if value_l_f is 0:
-            direction_l = 1
+            direction_l = 0
             status_l = 3
         if value_l_f is 1:
-            direction_l = 0
+            direction_l = 1
             status_l = 1
     elif status_l is 1:
         if value_l_b is 0:
-            direction_l = 1
+            direction_l = 0
             status_l = 0
         if value_l_b is 1:
-            direction_l = 0
+            direction_l = 1
             status_l = 2
     elif status_l is 2:
         if value_l_f is 1:
-            direction_l = 1
+            direction_l = 0
             status_l = 1
         if value_l_f is 0:
-            direction_l = 0
+            direction_l = 1
             status_l = 3
     elif status_l is 3:
         if value_l_f is 1:
-            direction_l = 1
+            direction_l = 0
             status_l = 2
         if value_l_f is 0:
-            direction_l = 0
+            direction_l = 1
             status_l = 0
 
 
