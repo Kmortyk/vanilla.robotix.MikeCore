@@ -6,7 +6,7 @@ import rospy
 import Jetson.GPIO as GPIO
 import os
 
-angle_tick = 2.4
+angle_tick = 1.2
 
 pin_l_f = 22
 pin_r_f = 21
