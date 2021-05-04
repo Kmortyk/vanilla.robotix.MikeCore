@@ -93,10 +93,11 @@ def calc_direction_r():
 
 
 def gpio_callback21(channel):
-    global tick21, value_r_b, status_r, direction_r
+    global tick21, value_r_f, status_r, direction_r
     tick21 += 1
-    value_r_b = GPIO.input(21)
+    value_r_f = GPIO.input(21)
     calc_direction_r()
+
 
 
 def gpio_callback22(channel):
@@ -107,9 +108,9 @@ def gpio_callback22(channel):
 
 
 def gpio_callback23(channel):
-    global tick23, value_r_f, status_r, direction_r
+    global tick23, value_r_b, status_r, direction_r
     tick23 += 1
-    value_r_f = GPIO.input(23)
+    value_r_b = GPIO.input(23)
     calc_direction_r()
 
 
@@ -118,6 +119,27 @@ def gpio_callback24(channel):
     tick24 += 1
     value_l_b = GPIO.input(24)
     calc_direction_l()
+
+
+def calc_status():
+    global value_l_f, value_l_b, value_r_f, value_r_b, status_l, status_r
+    if value_l_f is 0 and value_l_b is 0:
+        status_l = 0
+    elif value_l_f is 1 and value_l_b is 0:
+        status_l = 1
+    elif value_l_f is 1 and value_l_b is 1:
+        status_l = 2
+    elif value_l_f is 0 and value_l_b is 1:
+        status_l = 3
+
+    if value_r_f is 0 and value_r_b is 0:
+        status_r = 0
+    elif value_r_f is 1 and value_r_b is 0:
+        status_r = 1
+    elif value_r_f is 1 and value_r_b is 1:
+        status_r = 2
+    elif value_r_f is 0 and value_r_b is 1:
+        status_r = 3
 
 
 def main():
@@ -130,6 +152,7 @@ def main():
     value_l_b = GPIO.input(pin_l_b)
     value_r_f = GPIO.input(pin_r_f)
     value_r_b = GPIO.input(pin_r_b)
+    calc_status()
     GPIO.add_event_detect(21, GPIO.BOTH, callback=gpio_callback21)
     GPIO.add_event_detect(22, GPIO.BOTH, callback=gpio_callback22)
     GPIO.add_event_detect(23, GPIO.BOTH, callback=gpio_callback23)
