@@ -7,9 +7,9 @@ import Jetson.GPIO as GPIO
 import os
 
 pin_l_f = 22
-pin_r_f = 23
+pin_r_f = 21
 pin_l_b = 24
-pin_r_b = 21
+pin_r_b = 23
 
 value_l_f = 0
 value_l_b = 0
