@@ -6,6 +6,8 @@ import rospy
 import Jetson.GPIO as GPIO
 import os
 
+angle_tick = 2.4
+
 pin_l_f = 22
 pin_r_f = 21
 pin_l_b = 24
@@ -21,6 +23,9 @@ status_r = 0
 
 direction_l = 0
 direction_r = 0
+
+angle_l = 0
+angle_r = 0
 
 tick21 = 0
 tick22 = 0
@@ -93,32 +98,47 @@ def calc_direction_r():
 
 
 def gpio_callback21(channel):
-    global tick21, value_r_f, status_r, direction_r
+    global tick21, value_r_f, status_r, direction_r, angle_r
     tick21 += 1
     value_r_f = GPIO.input(21)
     calc_direction_r()
-
+    if direction_r is 0:
+        angle_r += angle_tick
+    else:
+        angle_r -= angle_tick
 
 
 def gpio_callback22(channel):
-    global tick22, value_l_f, status_l, direction_l
+    global tick22, value_l_f, status_l, direction_l, angle_l
     tick22 += 1
     value_l_f = GPIO.input(22)
     calc_direction_l()
+    if direction_l is 0:
+        angle_l += angle_tick
+    else:
+        angle_l -= angle_tick
 
 
 def gpio_callback23(channel):
-    global tick23, value_r_b, status_r, direction_r
+    global tick23, value_r_b, status_r, direction_r, angle_r
     tick23 += 1
     value_r_b = GPIO.input(23)
     calc_direction_r()
+    if direction_r is 0:
+        angle_r += angle_tick
+    else:
+        angle_r -= angle_tick
 
 
 def gpio_callback24(channel):
-    global tick24, value_l_b, status_l, direction_l
+    global tick24, value_l_b, status_l, direction_l, angle_l
     tick24 += 1
     value_l_b = GPIO.input(24)
     calc_direction_l()
+    if direction_l is 0:
+        angle_l += angle_tick
+    else:
+        angle_l -= angle_tick
 
 
 def calc_status():
