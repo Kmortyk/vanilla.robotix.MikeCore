@@ -1,4 +1,6 @@
-#!/usr/bin/env python 75
+#!/usr/bin/env python
+
+# 75 ticks
 
 import rospy
 import Jetson.GPIO as GPIO
