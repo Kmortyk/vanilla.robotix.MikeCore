@@ -185,6 +185,7 @@ def main():
         print("24 ", tick24)
         print(value_l_f, " ", value_l_b, " ", value_r_f, " ", value_r_b)
         print(direction_l, direction_r)
+        print(angle_l, angle_r)
     GPIO.cleanup({21, 22, 23, 24})
 
 
