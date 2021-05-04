@@ -16,8 +16,8 @@ value_l_b = 0
 value_r_f = 0
 value_r_b = 0
 
-ticker_l = 0
-ticker_r = 0
+status_l = 0
+status_r = 0
 
 direction_l = 0
 direction_r = 0
@@ -28,40 +28,96 @@ tick23 = 0
 tick24 = 0
 
 
+def calc_direction_l():
+    global value_l_f, value_l_b, direction_l, status_l
+    if status_l is 0:
+        if value_l_f is 0:
+            direction_l = 1
+            status_l = 3
+        if value_l_f is 1:
+            direction_l = 0
+            status_l = 1
+    elif status_l is 1:
+        if value_l_b is 0:
+            direction_l = 1
+            status_l = 0
+        if value_l_b is 1:
+            direction_l = 0
+            status_l = 2
+    elif status_l is 2:
+        if value_l_f is 1:
+            direction_l = 1
+            status_l = 1
+        if value_l_f is 0:
+            direction_l = 0
+            status_l = 3
+    elif status_l is 3:
+        if value_l_f is 1:
+            direction_l = 1
+            status_l = 2
+        if value_l_f is 0:
+            direction_l = 0
+            status_l = 0
+
+
+def calc_direction_r():
+    global value_r_f, value_r_b, direction_r, status_r
+    if status_r is 0:
+        if value_r_f is 0:
+            direction_r = 1
+            status_r = 3
+        if value_r_f is 1:
+            direction_r = 0
+            status_r = 1
+    elif status_r is 1:
+        if value_r_b is 0:
+            direction_r = 1
+            status_r = 0
+        if value_r_b is 1:
+            direction_r = 0
+            status_r = 2
+    elif status_r is 2:
+        if value_r_f is 1:
+            direction_r = 1
+            status_r = 1
+        if value_r_f is 0:
+            direction_r = 0
+            status_r = 3
+    elif status_r is 3:
+        if value_r_f is 1:
+            direction_r = 1
+            status_r = 2
+        if value_r_f is 0:
+            direction_r = 0
+            status_r = 0
+
+
 def gpio_callback21(channel):
-    global tick21, value_r_f, ticker_r, direction_r
+    global tick21, value_r_f, status_r, direction_r
     tick21 += 1
     value_r_f = GPIO.input(21)
-    if ticker_r is 0:
-        direction_r = 1
-    ticker_r = 0
+    calc_direction_r()
 
 
 def gpio_callback22(channel):
-    global tick22, value_l_f, ticker_l, direction_l
+    global tick22, value_l_f, status_l, direction_l
     tick22 += 1
     value_l_f = GPIO.input(22)
-    if ticker_l is 0:
-        direction_l = 1
-    ticker_l = 0
+    calc_direction_l()
 
 
 def gpio_callback23(channel):
-    global tick23, value_r_b, ticker_r, direction_r
+    global tick23, value_r_b, status_r, direction_r
     tick23 += 1
     value_r_b = GPIO.input(23)
-    if ticker_r is 1:
-        direction_r = 0
-    ticker_r = 1
+    calc_direction_r()
 
 
 def gpio_callback24(channel):
-    global tick24, value_l_b, ticker_l, direction_l
+    global tick24, value_l_b, status_l, direction_l
     tick24 += 1
     value_l_b = GPIO.input(24)
-    if ticker_l is 1:
-        direction_l = 0
-    ticker_l = 1
+    calc_direction_l()
 
 
 def main():
