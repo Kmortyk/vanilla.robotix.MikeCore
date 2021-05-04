@@ -22,52 +22,28 @@ tick23 = 0
 tick24 = 0
 
 
-def gpio_callback21_r(channel):
+def gpio_callback21(channel):
     global tick21, value_r_f
     tick21 += 1
-    value_r_f = 1
-        
+    value_r_f = GPIO.input(21)
 
-def gpio_callback22_r(channel):
+
+def gpio_callback22(channel):
     global tick22, value_l_f
     tick22 += 1
-    value_l_f = 1
+    value_l_f = GPIO.input(22)
 
 
-def gpio_callback23_r(channel):
+def gpio_callback23(channel):
     global tick23, value_r_b
     tick23 += 1
-    value_r_b = 1
+    value_r_b = GPIO.input(23)
 
 
-def gpio_callback24_r(channel):
+def gpio_callback24(channel):
     global tick24, value_l_b
     tick24 += 1
-    value_l_b = 1
-
-
-def gpio_callback21_f(channel):
-    global tick21, value_r_f
-    tick21 += 1
-    value_r_f = 0
-
-
-def gpio_callback22_f(channel):
-    global tick22, value_l_f
-    tick22 += 1
-    value_l_f = 0
-
-
-def gpio_callback23_f(channel):
-    global tick23, value_r_b
-    tick23 += 1
-    value_r_b = 0
-
-
-def gpio_callback24_f(channel):
-    global tick24, value_l_b
-    tick24 += 1
-    value_l_b = 0
+    value_l_b = GPIO.input(24)
 
 
 def main():
@@ -80,14 +56,10 @@ def main():
     value_l_b = GPIO.input(pin_l_b)
     value_r_f = GPIO.input(pin_r_f)
     value_r_b = GPIO.input(pin_r_b)
-    GPIO.add_event_detect(21, GPIO.RISING, callback=gpio_callback21_r)
-    GPIO.add_event_detect(22, GPIO.RISING, callback=gpio_callback22_r)
-    GPIO.add_event_detect(23, GPIO.RISING, callback=gpio_callback23_r)
-    GPIO.add_event_detect(24, GPIO.RISING, callback=gpio_callback24_r)
-    GPIO.add_event_detect(21, GPIO.FALLING, callback=gpio_callback21_f)
-    GPIO.add_event_detect(22, GPIO.FALLING, callback=gpio_callback22_f)
-    GPIO.add_event_detect(23, GPIO.FALLING, callback=gpio_callback23_f)
-    GPIO.add_event_detect(24, GPIO.FALLING, callback=gpio_callback24_f)
+    GPIO.add_event_detect(21, GPIO.BOTH, callback=gpio_callback21)
+    GPIO.add_event_detect(22, GPIO.BOTH, callback=gpio_callback22)
+    GPIO.add_event_detect(23, GPIO.BOTH, callback=gpio_callback23)
+    GPIO.add_event_detect(24, GPIO.BOTH, callback=gpio_callback24)
     while not rospy.is_shutdown():
         os.system('clear')
         print("21 ", tick21)
