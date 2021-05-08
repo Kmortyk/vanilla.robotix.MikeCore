@@ -5,6 +5,7 @@
 import rospy
 import Jetson.GPIO as GPIO
 import os
+import math
 
 import std_msgs.msg
 
@@ -190,9 +191,9 @@ def main():
         print(value_l_f, " ", value_l_b, " ", value_r_f, " ", value_r_b)
         print(direction_l, direction_r)
         print(angle_l, angle_r)
-        print(abs(angle_l) % 360, abs(angle_r) % 360)
-        pub_l.publish(abs(angle_l) % 360)
-        pub_r.publish(abs(angle_r) % 360)
+        print(math.radians(abs(angle_l) % 360), math.radians(abs(angle_r) % 360))
+        pub_l.publish(math.radians(abs(angle_l) % 360))
+        pub_r.publish(math.radians(abs(angle_r) % 360))
     GPIO.cleanup({21, 22, 23, 24})
 
 
