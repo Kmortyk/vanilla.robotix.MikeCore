@@ -6,6 +6,8 @@ import rospy
 import Jetson.GPIO as GPIO
 import os
 
+import std_msgs.msg
+
 angle_tick = 1.2
 
 pin_l_f = 22
@@ -164,6 +166,8 @@ def calc_status():
 
 def main():
     global value_l_f, value_l_b, value_r_f, value_r_b
+    pub_l = rospy.Publisher('left_wheel_angle', std_msgs.msg.Float32)
+    pub_r = rospy.Publisher('right_wheel_angle', std_msgs.msg.Float32)
     rospy.init_node('encoder')
     rate = rospy.Rate(10)
     GPIO.setmode(GPIO.BOARD)
@@ -186,6 +190,10 @@ def main():
         print(value_l_f, " ", value_l_b, " ", value_r_f, " ", value_r_b)
         print(direction_l, direction_r)
         print(angle_l, angle_r)
+        print(abs(angle_l) % 360)
+        print(abs(angle_r) % 360)
+        pub_l.publish(abs(angle_l) % 360)
+        pub_r.publish(abs(angle_r) % 360)
     GPIO.cleanup({21, 22, 23, 24})
 
 
