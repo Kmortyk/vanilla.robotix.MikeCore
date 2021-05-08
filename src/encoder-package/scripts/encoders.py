@@ -166,7 +166,7 @@ def calc_status():
 
 
 def main():
-    global value_l_f, value_l_b, value_r_f, value_r_b
+    global value_l_f, value_l_b, value_r_f, value_r_b, angle_l, angle_r
     pub_l = rospy.Publisher('left_wheel_angle', std_msgs.msg.Float32)
     pub_r = rospy.Publisher('right_wheel_angle', std_msgs.msg.Float32)
     rospy.init_node('encoder')
@@ -194,6 +194,8 @@ def main():
         print(math.radians(abs(angle_l) % 360), math.radians(abs(angle_r) % 360))
         pub_l.publish(math.radians(abs(angle_l) % 360))
         pub_r.publish(math.radians(abs(angle_r) % 360))
+        angle_l = 0
+        angle_r = 0
     GPIO.cleanup({21, 22, 23, 24})
 
 
