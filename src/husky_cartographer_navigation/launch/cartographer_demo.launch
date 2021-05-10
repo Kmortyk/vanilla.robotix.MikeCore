@@ -33,7 +33,13 @@
       args="-configuration_directory $(find cartographer_ydlidar)/configuration_files -configuration_basename ydlidar+imu.lua"
       output="screen">
       <remap from="imu" to="imu/data" />
-      <remap from="odom" to="odometry/filtered" />
+      <remap from="/mobile_base_controller/odom" to="odom" />
+  </node>
+
+  <node
+      name="rv"
+      pkg="rviz"
+      type="rviz">
   </node>
 
   <!--node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
