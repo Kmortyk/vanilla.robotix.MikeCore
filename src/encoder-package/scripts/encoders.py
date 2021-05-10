@@ -10,6 +10,7 @@ import math
 import std_msgs.msg
 
 angle_tick = 1.2
+#angle_tick = 3
 
 pin_l_f = 22
 pin_r_f = 21
@@ -192,8 +193,8 @@ def main():
         print(direction_l, direction_r)
         print(angle_l, angle_r)
         print(math.radians(abs(angle_l) % 360), math.radians(abs(angle_r) % 360))
-        pub_l.publish(abs(angle_l) % 360)
-        pub_r.publish(abs(angle_r) % 360)
+        pub_l.publish(angle_l / 10)
+        pub_r.publish(angle_r / 10)
         angle_l = 0
         angle_r = 0
     GPIO.cleanup({21, 22, 23, 24})
