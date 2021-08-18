@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch>
+    <include file="$(find ydlidar_ros)/launch/X4.launch" />
+    <include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch" />
+    <node pkg="edukit_bot" type="driver_node" respawn="true" name="driver_node" output="screen" />
+    <include file="$(find husky_navigation)/launch/exploration_demo.launch" />
+    <include file="$(find husky_viz)/launch/view_robot.launch" />
+    <include file="$(find movement)/launch/explore_lite.launch" />
+</launch>
