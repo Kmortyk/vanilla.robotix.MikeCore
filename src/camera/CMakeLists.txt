@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.12)
 project(camera)
 
 find_package(catkin REQUIRED COMPONENTS cv_bridge roscpp rospy std_msgs sensor_msgs)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.12)
 project(hard_drive)
 set(CMAKE_CXX_STANDARD 11)
 find_package(catkin REQUIRED COMPONENTS cv_bridge roscpp std_msgs sensor_msgs)
