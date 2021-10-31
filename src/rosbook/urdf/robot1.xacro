@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="Robot1_xacro">
+    <xacro:property name="length_wheel" value="0.05" />
+    <xacro:property name="radius_wheel" value="0.05" />
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="0.2 .3 .1"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0.05"/>
+            <material name="white">
+                <color rgba="1 1 1 1"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.2 .3 .1"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0.05"/>
+            <inertial>
+                <mass value="20"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </collision>
+    </link>
+    <link name="wheel_1">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="black">
+                <color rgba="0 0 0 1" />
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <inertial>
+                <mass value="10"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </collision>
+    </link>
+    <link name="wheel_2">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="black" />
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <inertial>
+                <mass value="10"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </collision>
+    </link>
+    <link name="wheel_3">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="black" />
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <inertial>
+                <mass value="10"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </collision>
+    </link>
+    <link name="wheel_4">
+        <visual>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <material name="black" />
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <inertial>
+                <mass value="10"/>
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+            </inertial>
+        </collision>
+    </link>
+    <joint name="base_to_wheel1" type="revolute">
+        <parent link="base_link"/>
+        <child link="wheel_1"/>
+        <axis xyz="0 0 1" />
+        <origin rpy="0 1.5 0" xyz="0.1 0.1 0" />
+        <limit effort="1000.0" lower="-1.0" upper="1.0" velocity="0.5"/>
+    </joint>
+    <joint name="base_to_wheel2" type="revolute">
+        <parent link="base_link"/>
+        <child link="wheel_2"/>
+        <axis xyz="0 0 1" />
+        <origin rpy="0 1.5 0" xyz="-0.1 0.1 0" />
+        <limit effort="1000.0" lower="-1.0" upper="1.0" velocity="0.5"/>
+    </joint>
+    <joint name="base_to_wheel3" type="revolute">
+        <parent link="base_link"/>
+        <child link="wheel_3"/>
+        <axis xyz="0 0 1" />
+        <origin rpy="0 1.5 0" xyz="0.1 -0.1 0" />
+        <limit effort="1000.0" lower="-1.0" upper="1.0" velocity="0.5"/>
+    </joint>
+    <joint name="base_to_wheel4" type="revolute">
+        <parent link="base_link"/>
+        <child link="wheel_4"/>
+        <axis xyz="0 0 1" />
+        <origin rpy="0 1.5 0" xyz="-0.1 -0.1 0" />
+        <limit effort="1000.0" lower="-1.0" upper="1.0" velocity="0.5"/>
+    </joint>
+</robot>
