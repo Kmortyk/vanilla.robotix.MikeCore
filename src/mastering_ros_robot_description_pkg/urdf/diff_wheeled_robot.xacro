@@ -258,34 +258,37 @@
   
   <!-- hokuyo -->
 
-  <link name="hokuyo_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <box size="${hokuyo_size} ${hokuyo_size} ${hokuyo_size}"/>
-      </geometry>
-      <material name="Blue" />
-    </visual>
-  </link>
-  <joint name="hokuyo_joint" type="fixed">
-    <origin xyz="${base_radius - hokuyo_size/2} 0 ${base_height+hokuyo_size/4}" rpy="0 0 0" />
-    <parent link="base_link"/>
-    <child link="hokuyo_link" />
-  </joint>
-  <gazebo reference="hokuyo_link">
+<!--  <link name="hokuyo_link">-->
+<!--    <visual>-->
+<!--      <origin xyz="0 0 0" rpy="0 0 0" />-->
+<!--      <geometry>-->
+<!--        <box size="${hokuyo_size} ${hokuyo_size} ${hokuyo_size}"/>-->
+<!--      </geometry>-->
+<!--      <material name="Blue" />-->
+<!--    </visual>-->
+<!--  </link>-->
+<!--  <joint name="hokuyo_joint" type="fixed">-->
+<!--    <origin xyz="${base_radius - hokuyo_size/2} 0 ${base_height+hokuyo_size/4}" rpy="0 0 0" />-->
+<!--    <parent link="base_link"/>-->
+<!--    <child link="hokuyo_link" />-->
+<!--  </joint>-->
+
+  <xacro:include filename="$(find ydlidar_ros)/urdf/ydlidar.urdf" />
+
+  <gazebo reference="base_laser">
     <material>Gazebo/Blue</material>
     <turnGravityOff>false</turnGravityOff>
     <sensor type="ray" name="head_hokuyo_sensor">
       <pose>${hokuyo_size/2} 0 0 0 0 0</pose>
-      <visualize>false</visualize>
-      <update_rate>40</update_rate>
+      <visualize>true</visualize>
+      <update_rate>12</update_rate>
       <ray>
         <scan>
           <horizontal>
             <samples>720</samples>
             <resolution>1</resolution>
-            <min_angle>-1.570796</min_angle>
-            <max_angle>1.570796</max_angle>
+            <min_angle>-180</min_angle>
+            <max_angle>180</max_angle>
           </horizontal>
         </scan>
         <range>
@@ -296,7 +299,7 @@
       </ray>
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
         <topicName>/scan</topicName>
-        <frameName>hokuyo_link</frameName>
+        <frameName>laser_frame</frameName>
       </plugin>
     </sensor>
   </gazebo>
