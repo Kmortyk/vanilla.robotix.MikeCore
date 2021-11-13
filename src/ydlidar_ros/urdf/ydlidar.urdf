@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <robot
   name="ydlidar_ros">
   <link
@@ -90,6 +91,19 @@
       link="base_laser" />
     <child
       link="laser_frame" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <joint
+    name="base_laser_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0.3"
+      rpy="0 0 0" />
+    <parent
+      link="base_footprint" />
+    <child
+      link="base_laser" />
     <axis
       xyz="0 0 0" />
   </joint>
