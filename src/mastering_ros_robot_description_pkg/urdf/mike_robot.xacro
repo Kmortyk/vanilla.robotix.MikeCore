@@ -134,22 +134,22 @@
   
   <!-- hokuyo -->
 
-<!--  <link name="hokuyo_link">-->
-<!--    <visual>-->
-<!--      <origin xyz="0 0 0" rpy="0 0 0" />-->
-<!--      <geometry>-->
-<!--        <box size="${hokuyo_size} ${hokuyo_size} ${hokuyo_size}"/>-->
-<!--      </geometry>-->
-<!--      <material name="Blue" />-->
-<!--    </visual>-->
-<!--  </link>-->
-<!--  <joint name="hokuyo_joint" type="fixed">-->
-<!--    <origin xyz="${base_radius - hokuyo_size/2} 0 ${base_height+hokuyo_size/4}" rpy="0 0 0" />-->
-<!--    <parent link="base_link"/>-->
-<!--    <child link="hokuyo_link" />-->
-<!--  </joint>-->
+  <link name="hokuyo_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${hokuyo_size} ${hokuyo_size} ${hokuyo_size}"/>
+      </geometry>
+      <material name="Blue" />
+    </visual>
+  </link>
+  <joint name="hokuyo_joint" type="fixed">
+    <origin xyz="${base_radius - hokuyo_size/2} 0 ${base_height+hokuyo_size/4}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="hokuyo_link" />
+  </joint>
 
-  <xacro:include filename="$(find ydlidar_ros)/urdf/ydlidar.urdf" />
+<!--  <xacro:include filename="$(find ydlidar_ros)/urdf/ydlidar.urdf" />-->
 
   <gazebo reference="base_laser">
     <material>Gazebo/Blue</material>
